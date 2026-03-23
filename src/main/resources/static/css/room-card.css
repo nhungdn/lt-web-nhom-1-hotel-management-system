@@ -1,4 +1,104 @@
 /* ============================================
+   GLASS CARD BASE
+============================================ */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: var(--card-padding);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+.glass-card:hover {
+    background: var(--glass-hover);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 25px 50px -12px var(--glass-shadow),
+        0 0 40px rgba(52, 211, 153, 0.1);
+}
+
+/* 3D Tilt Effect */
+.glass-card-3d {
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+}
+
+.glass-card-3d:hover {
+    transform: rotateX(5deg) rotateY(-5deg) translateZ(10px);
+}
+
+/* ============================================
+   CONTENT GRID
+============================================ */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+/* ============================================
+   CARD BUTTON
+============================================ */
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.card-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.card-btn {
+    padding: 8px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.card-btn:hover,
+.card-btn.active {
+    background: var(--glass-hover);
+    border-color: var(--emerald-light);
+    color: var(--text-primary);
+}
+
+/* ============================================
    DATA TABLE
 ============================================ */
 .table-card {
@@ -113,34 +213,44 @@
     border-radius: 50%;
 }
 
-.status-badge.completed {
+.status-badge.green {
     background: rgba(16, 185, 129, 0.15);
     color: var(--success);
 }
 
-.status-badge.completed::before {
+.status-badge.green::before {
     background: var(--success);
     box-shadow: 0 0 8px var(--success);
 }
 
-.status-badge.pending {
+.status-badge.yellow {
     background: rgba(245, 158, 11, 0.15);
     color: var(--warning);
 }
 
-.status-badge.pending::before {
+.status-badge.yellow::before {
     background: var(--warning);
     box-shadow: 0 0 8px var(--warning);
 }
 
-.status-badge.processing {
+.status-badge.blue {
     background: rgba(59, 130, 246, 0.15);
     color: var(--info);
 }
 
-.status-badge.processing::before {
+.status-badge.blue::before {
     background: var(--info);
     box-shadow: 0 0 8px var(--info);
+}
+
+.status-badge.red {
+    background: rgba(224, 122, 95, 0.15);
+    color: var(--amber);
+}
+
+.status-badge.red::before {
+    background: var(--amber);
+    box-shadow: 0 0 8px var(--amber);
 }
 
 .table-amount {

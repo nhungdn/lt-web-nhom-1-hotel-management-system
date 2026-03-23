@@ -21,4 +21,29 @@ public class BookingDetail {
     @ManyToOne
     @JoinColumn(name = "roomId")
     private Room room;
+
+    public Long getBookingDetailId() {
+        return bookingDetailId;
+    }
+
+    public void setBookingDetailId(Long bookingDetailId) {
+        this.bookingDetailId = bookingDetailId;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+    
 }
