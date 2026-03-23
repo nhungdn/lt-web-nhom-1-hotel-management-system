@@ -3,6 +3,7 @@ package com.nhom1.hotelmanagement.controllers;
 import com.nhom1.hotelmanagement.dto.LoginRequest;
 import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.services.AuthService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +22,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest request, Model model) {
+    public String login(@ModelAttribute LoginRequest request, Model model, HttpSession session) {
 
         LoginResponse response = authService.login(request);
 
         if (response != null) {
             // lưu session (cơ bản)
-            return "redirect:/dashboard";
+            session.setAttribute("user", response);
+            return "redirect:/";
         } else {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             return "login";
