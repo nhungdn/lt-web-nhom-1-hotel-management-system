@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
       xmlns:layout="http://www.ulraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout/base">
+      layout:decorate="~{layout/base}">
     <head>
         <title>Room Status</title>
         <meta charset="UTF-8"/>
@@ -117,6 +117,8 @@
                     </div>
                 </div>
             </section>
+            <div class="form-overlay"> <div th:replace="fragments/bookingform"></div></div>
+            <script th:src="@{/js/booking.js}"></script>
         </div>
     </body>
 </html>

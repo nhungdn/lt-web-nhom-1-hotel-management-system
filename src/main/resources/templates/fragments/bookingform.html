@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <title>Booking</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" th:href="@{/css/form.css}"/>
+    </head>
+    <body>
+        
+        <div class="booking-form glass">
+            <div class="form-header">
+                    <h2>Booking Form</h2>
+                    <button class="close-btn"> x </button>
+            </div>
+            <form th:action="@{/booking}" th:object="${bookingRequest}" method="post">
+                
+                <div class="form-group">
+                    <div class="form-grid grid1">
+                        <div class="one-liner">
+                            <label>SĐT khách:</label>
+                            <input type="text" id="phoneSearch" placeholder="Nhập SĐT để check..."/>
+                        </div>
+                        <button type="button" class="check-sdt-btn">Check Khách</button>
+                    </div>
+                </div>
+                <div class="form-grid grid3">
+                    <div class="form-group">
+                        <label for="name">Room ID</label>
+                        <input type="text" id="name" name="name" placeholder="Select room ID" required=''/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Room ID</label>
+                        <input type="text" id="name" name="name" placeholder="Select room ID" required=''/>
+                    </div>
+                </div>
+                <div class="form-grid grid2">
+                    <div class="form-group">
+                        <label for="email">Check-in Date</label>
+                        <input type="email" id="email" name="checkin" value="${Today}" required=''/>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Check-out Date</label>
+                        <input type="email" id="email" name="checkin" value="${Today}" required=''/>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </body>
+</html>
