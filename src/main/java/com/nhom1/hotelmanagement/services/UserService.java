@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 
 import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.repositories.UserRepository;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
