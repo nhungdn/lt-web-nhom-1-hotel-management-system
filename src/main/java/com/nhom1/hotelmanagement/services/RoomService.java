@@ -1,0 +1,87 @@
+package com.nhom1.hotelmanagement.services;
+
+import com.nhom1.hotelmanagement.dto.RoomRequest;
+import com.nhom1.hotelmanagement.dto.RoomResponse;
+import com.nhom1.hotelmanagement.entities.Room;
+import com.nhom1.hotelmanagement.entities.RoomType;
+import com.nhom1.hotelmanagement.repositories.RoomRepository;
+import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class RoomService {
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private RoomTypeRepository roomTypeRepository;
+
+    public List<Room> listAll() {
+        return roomRepository.findAll();
+    }
+
+    public List<Room> listAvailable() {
+        return roomRepository.findByStatus(Room.Status.AVAILABLE);
+    }
+
+    public Room getById(Long roomId) {
+        return roomRepository.findById(roomId).orElse(null);
+    }
+
+    public Room create(RoomRequest request) {
+        Room room = new Room();
+        room.setRoomNumber(request.getRoomNumber());
+        room.setStatus(Room.Status.valueOf(request.getStatus() == null ? "AVAILABLE" : request.getStatus()));
+
+        if (request.getRoomTypeId() != null) {
+            Optional<RoomType> roomType = roomTypeRepository.findById(request.getRoomTypeId());
+            roomType.ifPresent(room::setRoomType);
+        }
+
+        return roomRepository.save(room);
+    }
+
+    public Room update(Long roomId, RoomRequest request) {
+        Optional<Room> optionalRoom = roomRepository.findById(roomId);
+        if (!optionalRoom.isPresent()) {
+            return null;
+        }
+
+        Room room = optionalRoom.get();
+        if (request.getRoomNumber() != null) {
+            room.setRoomNumber(request.getRoomNumber());
+        }
+        if (request.getStatus() != null) {
+            room.setStatus(Room.Status.valueOf(request.getStatus()));
+        }
+        if (request.getRoomTypeId() != null) {
+            roomTypeRepository.findById(request.getRoomTypeId()).ifPresent(room::setRoomType);
+        }
+        return roomRepository.save(room);
+    }
+
+    public void delete(Long roomId) {
+        roomRepository.deleteById(roomId);
+    }
+
+    public List<RoomResponse> listAllDto() {
+        return listAll().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public RoomResponse toDto(Room room) {
+        if (room == null) return null;
+
+        RoomResponse dto = new RoomResponse();
+        dto.setRoomId(room.getRoomId());
+        dto.setRoomNumber(room.getRoomNumber());
+        dto.setStatus(room.getStatus() == null ? null : room.getStatus().name());
+        dto.setRoomTypeId(room.getRoomType() == null ? null : room.getRoomType().getRoomTypeId());
+        return dto;
+    }
+}

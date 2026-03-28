@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Create/Update Room</title></head>
+<body>
+<h1>Room Form</h1>
+<form th:action="@{${room.roomId} != null ? '/rooms/update/' + ${room.roomId} : '/rooms/create'}" th:object="${room}" method="post">
+    <input type="hidden" th:if="${room.roomId} != null" th:field="*{roomId}"/>
+    <p>Room Number: <input type="text" th:field="*{roomNumber}"/></p>
+    <p>Status: <input type="text" th:field="*{status}"/></p>
+    <p>RoomTypeId: <input type="number" th:field="*{roomTypeId}"/></p>
+    <p><button type="submit">Save</button></p>
+</form>
+<a th:href="@{/rooms}">Back to rooms</a>
+</body>
+</html>

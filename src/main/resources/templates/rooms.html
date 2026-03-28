@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Rooms</title></head>
+<body>
+<h1>Rooms</h1>
+<a th:href="@{/rooms/create}">Create room</a><br><br>
+<table border="1">
+    <tr><th>ID</th><th>Number</th><th>Status</th><th>RoomTypeId</th><th>Action</th></tr>
+    <tr th:each="room : ${rooms}">
+        <td th:text="${room.roomId}"></td>
+        <td th:text="${room.roomNumber}"></td>
+        <td th:text="${room.status}"></td>
+        <td th:text="${room.roomTypeId}"></td>
+        <td>
+            <a th:href="@{/rooms/edit/{id}(id=${room.roomId})}">Edit</a>
+            <a th:href="@{/rooms/delete/{id}(id=${room.roomId})}">Delete</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
