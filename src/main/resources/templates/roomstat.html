@@ -9,6 +9,7 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+        <link rel="stylesheet" th:href="@{/css/calendar.css}"/>
     </head>
     
     <body>
@@ -27,8 +28,12 @@
                             <button class="card-btn booking-btn">New Booking</button>
                         </div>
                     </div>
+                    <div class="booking-div">
+                            <input type="date" id="start"/>
+                            <input type="date" id="end"/>
+                    </div>
                     <div class="table-wrapper">
-                        <table class="data-table">
+                        <table class="data-table" id="roomTable" th:rooms-list="${roomList}">
                             <thead>
                                 <tr>
                                     <th>Room Type</th>
@@ -36,89 +41,37 @@
                                     <th>Status</th>
                                     <th>Check-in Date</th>
                                     <th>Check-out Date</th>
+                                    <th>Book</th>
                                     <th th:if="${session.user?.role.toString() == 'ADMIN'}">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"></div>
-                                            <div class="table-user-info">
-                                                <span class="table-user-name">Double Room</span>
-                                                <span class="table-user-email">Ocean view</span>
+                                <template id="tr-template">
+                                    <tr>
+                                        <td>
+                                            <div class="table-room">
+                                                <span class="table-room-name"></span>
+                                                <span class="table-room-desc"></span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>101</td>
-                                    <td>Jan 14, 2025</td>
-                                    <td>Jan 16, 2025</td>
-                                    <td><span class="status-badge red">Booked</span></td>
-                                    <td th:if="${session.user?.role.toString() == 'ADMIN'}">
-                                        <button class="card-btn" style="padding: 6px 12px;">Edit</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"></div>
-                                            <div class="table-user-info">
-                                                <span class="table-user-name">Double Room</span>
-                                                <span class="table-user-email">Ocean view</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>101</td>
-                                    <td>None</td>
-                                    <td>None</td>
-                                    <td><span class="status-badge blue">Cleaning</span></td>
-                                    <td th:if="${session.user?.role.toString() == 'ADMIN'}">
-                                        <button class="card-btn" style="padding: 6px 12px;">Edit</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"></div>
-                                            <div class="table-user-info">
-                                                <span class="table-user-name">Double Room</span>
-                                                <span class="table-user-email">Ocean view</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>101</td>
-                                    <td>None</td>
-                                    <td>None</td>
-                                    <td><span class="status-badge green">Empty</span></td>
-                                    <td th:if="${session.user?.role.toString() == 'ADMIN'}">
-                                        <button class="card-btn" style="padding: 6px 12px;">Edit</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="table-user">
-                                            <div class="table-avatar"></div>
-                                            <div class="table-user-info">
-                                                <span class="table-user-name">Double Room</span>
-                                                <span class="table-user-email">Ocean view</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>101</td>
-                                    <td>Jan 14, 2025</td>
-                                    <td>Jan 16, 2025</td>
-                                    <td><span class="status-badge yellow">Something</span></td>
-                                    <td th:if="${session.user?.role.toString() == 'ADMIN'}">
-                                        <button class="card-btn" style="padding: 6px 12px;">Edit</button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="room-id"></td>
+                                        <td><span class="status-badge"></span></td>
+                                        <td class="checkin"></td>
+                                        <td class="checkout"></td>
+                                        <td><input type="checkbox"/></td>
+                                        <td th:if="${session.user?.role.toString() == 'ADMIN'}">
+                                            <button class="card-btn" style="padding: 6px 12px;">Edit</button>
+                                        </td>
+                                    </tr>
+                                </template>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </section>
-            <div class="form-overlay"> <div th:replace="fragments/bookingform"></div></div>
+            <div class="form-overlay"> <div th:replace="~{fragments/bookingform}"></div></div>
             <script th:src="@{/js/booking.js}"></script>
+            <script th:src="@{/js/roomlist.js}"></script>
         </div>
     </body>
 </html>

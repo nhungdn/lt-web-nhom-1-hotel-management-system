@@ -28,4 +28,22 @@ public class Room {
     public enum Status {
         AVAILABLE, BOOKED, OCCUPIED, CLEANING
     }
+
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+    
+    
 }

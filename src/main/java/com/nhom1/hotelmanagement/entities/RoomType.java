@@ -15,4 +15,22 @@ public class RoomType {
     private String name;
     private Double price;
     private String description;
+
+    public Long getRoomTypeId() {
+        return roomTypeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    
+    
 }
