@@ -16,5 +16,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.calendar {
     margin: 10px;
 }

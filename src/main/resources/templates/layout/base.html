@@ -2,7 +2,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:fragment="main_layout(main_content, page_title, extra_head)">
     
 <head>
     <meta charset="UTF-8"/>
@@ -10,6 +11,7 @@
     <title>Hotel Management</title>
     <link rel="icon" type="image/x-icon" th:href="@{/images/review.png}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <th:block th:replace="${extra_head} ?: ~{}"></th:block>
 </head>
 
 <body>
@@ -128,7 +130,7 @@
         <main class="main-content">
             <!-- Top Navbar -->
             <nav class="navbar">
-                <h1 class="page-title" layout:fragment="title">Main Menu</h1>
+                <h1 class="page-title" th:replace="${page_title}">Main Menu</h1>
                 <div class="navbar-right">
                     <div class="search-box">
                         <svg xmlns="http://www.w3.org/2000/svg" 
@@ -154,7 +156,7 @@
                 </div>
             </nav>
             
-            <div layout:fragment="content"></div>
+            <div th:replace="${main_content}"></div>
             
         </main>
     </div>

@@ -2,19 +2,21 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ulraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
     <head>
         <title>Room Status</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" th:href="@{/css/room-card.css}" />
-        <link rel="stylesheet" th:href="@{/css/calendar.css}"/>
+        <th:block th:fragment="head">
+            <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+            <link rel="stylesheet" th:href="@{/css/calendar.css}"/>
+            <link rel="stylesheet" th:href="@{/css/form.css}"/>
+        </th:block>
     </head>
     
     <body>
-        <h1 layout:fragment="title">Room Status</h1>
-        <div layout:fragment="content">
+        <h1 th:fragment="title">Room Status</h1>
+        <div th:fragment="content">
             <section class="content-grid">
                 <!-- Data Table -->
                 <div class="glass-card table-card">
@@ -62,18 +64,21 @@
                                     <th class="roomtab">Check-out Date</th>
                                     
                                     <th class="hidden booktab">Price/Day</th>
-                                    <th class="hidden booktab">Book</th>
+                                    <th class="hidden booktab" style="text-align: center;">Book</th>
                                     
-                                    <th th:if="${session.user?.role.toString() == 'ADMIN'}">Action</th>
+                                    <th th:if="${session.user?.role.toString() == 'ADMIN'}" class="roomtab">Action</th>
+                                    <th th:if="${session.user?.role.toString() == 'ADMIN'}" class="hidden booktab">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template id="tr-template">
                                     <tr>
-                                        <td><div class="table-room">
+                                        <td>
+                                            <div class="table-room">
                                                 <span class="table-room-name"></span>
                                                 <span class="table-room-desc"></span>
-                                        </div></td>
+                                            </div>
+                                        </td>
                                         <td class="room-id"></td>
                                         <td><span class="status-badge"></span></td>
                                         
@@ -81,12 +86,15 @@
                                         <td class="roomtab checkout"></td>
                                         
                                         <td class="hidden booktab price"></td>
-                                        <td class="hidden booktab" style="justify-content: center;align-content: center;">
+                                        <td class="hidden booktab" style="justify-content: center;text-align: center;">
                                             <input type="checkbox" name="book-checkbox"/>
                                         </td>
                                         
-                                        <td th:if="${session.user?.role.toString() == 'ADMIN'}">
+                                        <td th:if="${session.user?.role.toString() == 'ADMIN'}" class="roomtab">
                                             <button class="card-btn" style="padding: 6px 12px;">Edit</button>
+                                        </td>
+                                        <td th:if="${session.user?.role.toString() == 'ADMIN'}" class="hidden booktab">
+                                            <button class="card-btn" style="padding: 6px 12px;">Edit Book</button>
                                         </td>
                                     </tr>
                                 </template>
@@ -96,8 +104,9 @@
                 </div>
             </section>
             <div class="form-overlay"> <div th:replace="~{fragments/bookingform}"></div></div>
-            <script th:src="@{/js/roomlist.js}"></script>
             <script th:src="@{/js/booking.js}"></script>
+
+            <script th:src="@{/js/roomlist.js}"></script>
         </div>
     </body>
 </html>

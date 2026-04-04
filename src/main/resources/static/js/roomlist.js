@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const roomTable = document.getElementById("roomTable");
         const roomTbody = roomTable.querySelector("tbody");
         const rooms = JSON.parse(roomTable.getAttribute("rooms-list"));
-//        console.log(rooms);
+        console.log(rooms);
         for(const room of rooms){
             const temp = document.querySelector("#tr-template");
             const clone = temp.content.cloneNode(true);
@@ -30,13 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             clone.querySelector(".checkin").textContent = room.checkIn || "-";
             clone.querySelector(".checkout").textContent = room.checkOut || "-";
-            clone.querySelector(".price").textContent = room.price;
             clone.querySelector("input").setAttribute('id', room.roomNumber+"Check");
-            clone.querySelector("button").setAttribute('id', room.roomNumber+"EditBtn");
+            clone.querySelector(".roomtab button").setAttribute('id', room.roomNumber+"EditRoomBtn");
+            clone.querySelector(".booktab button").setAttribute('id', room.roomNumber+"EditBookBtn");
             roomTbody.appendChild(clone);
         }
     }
     console.log("Roomlist script has run.");
     getRoomList();
-    
+
 });
