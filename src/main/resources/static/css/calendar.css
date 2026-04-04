@@ -3,7 +3,7 @@
 ============================================ */
 
 .booking-div {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
@@ -16,10 +16,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-.calendar {
-    
+    margin: 10px;
 }

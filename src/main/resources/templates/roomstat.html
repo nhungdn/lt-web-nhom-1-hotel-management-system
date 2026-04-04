@@ -28,9 +28,27 @@
                             <button class="card-btn booking-btn">New Booking</button>
                         </div>
                     </div>
-                    <div class="booking-div">
+                    <div class="booking-div booktab hidden">
+                        <div>
                             <input type="date" id="start"/>
                             <input type="date" id="end"/>
+                        </div>
+
+                        <svg fill="#000000" width="800px" height="800px" 
+                             viewBox="0 0 24 24" data-name="Line Color" 
+                             xmlns="http://www.w3.org/2000/svg" class="booking-guest">
+                            <path id="secondary" d="M17,17h4m-2-2v4" 
+                                  style="fill: none; stroke: rgb(44, 169, 188);
+                                stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">      
+                            </path>
+                            <path id="primary" d="M14,13.29A6.91,6.91,0,0,0,12,13H10a7,7,0,0,0-7,7,1,1,0,0,0,1,1H15" 
+                                  style="fill: none; stroke: rgb(0, 0, 0);
+                                  stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                            <circle id="primary-2" data-name="primary" cx="11" cy="8" r="5" 
+                                    style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round;
+                                stroke-linejoin: round; stroke-width: 2;">
+                            </circle>
+                        </svg>
                     </div>
                     <div class="table-wrapper">
                         <table class="data-table" id="roomTable" th:rooms-list="${roomList}">
@@ -39,26 +57,34 @@
                                     <th>Room Type</th>
                                     <th>Room ID</th>
                                     <th>Status</th>
-                                    <th>Check-in Date</th>
-                                    <th>Check-out Date</th>
-                                    <th>Book</th>
+                                    
+                                    <th class="roomtab">Check-in Date</th>
+                                    <th class="roomtab">Check-out Date</th>
+                                    
+                                    <th class="hidden booktab">Price/Day</th>
+                                    <th class="hidden booktab">Book</th>
+                                    
                                     <th th:if="${session.user?.role.toString() == 'ADMIN'}">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template id="tr-template">
                                     <tr>
-                                        <td>
-                                            <div class="table-room">
+                                        <td><div class="table-room">
                                                 <span class="table-room-name"></span>
                                                 <span class="table-room-desc"></span>
-                                            </div>
-                                        </td>
+                                        </div></td>
                                         <td class="room-id"></td>
                                         <td><span class="status-badge"></span></td>
-                                        <td class="checkin"></td>
-                                        <td class="checkout"></td>
-                                        <td><input type="checkbox"/></td>
+                                        
+                                        <td class="roomtab checkin"></td>
+                                        <td class="roomtab checkout"></td>
+                                        
+                                        <td class="hidden booktab price"></td>
+                                        <td class="hidden booktab" style="justify-content: center;align-content: center;">
+                                            <input type="checkbox" name="book-checkbox"/>
+                                        </td>
+                                        
                                         <td th:if="${session.user?.role.toString() == 'ADMIN'}">
                                             <button class="card-btn" style="padding: 6px 12px;">Edit</button>
                                         </td>
@@ -70,8 +96,8 @@
                 </div>
             </section>
             <div class="form-overlay"> <div th:replace="~{fragments/bookingform}"></div></div>
-            <script th:src="@{/js/booking.js}"></script>
             <script th:src="@{/js/roomlist.js}"></script>
+            <script th:src="@{/js/booking.js}"></script>
         </div>
     </body>
 </html>

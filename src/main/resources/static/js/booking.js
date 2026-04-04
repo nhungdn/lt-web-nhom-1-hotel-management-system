@@ -1,33 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const closeBtn = document.querySelectorAll(".close-btn");
     const enterBookingBtn = document.querySelector(".booking-btn");
-    const roomRow = document.querySelectorAll("tbody tr btn");
-    const overlayDiv = document.querySelector(".detail-overlay");
-    const bookingDiv = document.querySelector(".booking-div");
-    console.log("Booking script has run.");
-    if (enterBookingBtn) {
-        enterBookingBtn.addEventListener("click", () => {
-            console.log("Open form!"); 
-            if(bookingDiv.style.display === "flex")
-                bookingDiv.style.display = "none";
-            else
-                bookingDiv.style.display = "flex";
-        });
-    }
+    const booktab = document.querySelectorAll(".booktab");
+    const roomtab = document.querySelectorAll(".roomtab");
     
+    console.log("Booking script has run.");
+    
+    enterBookingBtn.addEventListener("click", () => {
+        console.log("Toggle!"); 
+        booktab.forEach((e) => e.classList.toggle("hidden"));
+        roomtab.forEach((e) => e.classList.toggle("hidden"));
+    });
+    
+    const roomRow = document.querySelectorAll("tbody tr");
+    const detailPopup = document.querySelector(".detail-overlay");
+    const closeBtn = document.querySelectorAll(".close-btn");
     roomRow.forEach((row)=>{
         row.addEventListener('click', () => {
             console.log('Row clicked!');
-            overlayDiv.style.display = "block";
+            detailPopup.style.display = "block";
         });
     });
     
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            overlayDiv.style.display = "none";
-            bookingDiv.style.display = "none";
-        });
-    }
+    closeBtn.addEventListener("click", () => {
+        detailPopup.classList.add("hidden");
+    });
+    
 });
 
 document.querySelector('form').addEventListener('submit', function(e) {
