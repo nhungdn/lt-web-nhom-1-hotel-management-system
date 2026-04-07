@@ -1,9 +1,8 @@
 package com.nhom1.hotelmanagement.controllers;
 
 import com.nhom1.hotelmanagement.dto.LoginRequest;
-import com.nhom1.hotelmanagement.dto.LoginResponse;
+import com.nhom1.hotelmanagement.dto.SignUpRequest;
 import com.nhom1.hotelmanagement.services.AuthService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,23 +15,36 @@ public class AuthController {
     private AuthService authService;
 
     @GetMapping("/login")
-    public String showLogin(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
+    public String showLogin(Model model,
+                            @RequestParam(value = "error", required = false) String error,
+                            @RequestParam(value = "logout", required = false) String logout) {
+        LoginRequest loginRequest = new LoginRequest();
+        model.addAttribute("loginRequest", loginRequest);
+        model.addAttribute("loginError", error != null);
+        model.addAttribute("logoutSuccess", logout != null);
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest request, Model model, HttpSession session) {
+    @GetMapping("/signup")
+    public String showSignup(Model model,
+                             @RequestParam(value = "created", required = false) String created) {
+        if (!model.containsAttribute("signupRequest")) {
+            model.addAttribute("signupRequest", new SignUpRequest());
+        }
+        model.addAttribute("createdSuccess", created != null);
+        return "signup";
+    }
 
-        LoginResponse response = authService.login(request);
-
-        if (response != null) {
-            // lưu session (cơ bản)
-            session.setAttribute("user", response);
-            return "redirect:/";
-        } else {
-            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
-            return "login";
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute SignUpRequest request, Model model) {
+        try {
+            authService.signup(request);
+            return "redirect:/signup?created=true";
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("signupRequest", request);
+            model.addAttribute("signupError", ex.getMessage());
+            model.addAttribute("createdSuccess", false);
+            return "signup";
         }
     }
 }

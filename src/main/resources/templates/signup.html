@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dang ky tai khoan - Hotel Management</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+  </head>
+  <body>
+    <main class="login-page">
+      <section class="login-card signup-card">
+        <div class="brand-block">
+          <p class="eyebrow">Hotel Management System</p>
+          <h1>Tao tai khoan moi</h1>
+          <p class="subtitle">Chi tai khoan ADMIN moi co quyen tao nguoi dung moi.</p>
+        </div>
+
+        <div class="alert success" th:if="${createdSuccess}">
+          Tao tai khoan thanh cong.
+        </div>
+        <div class="alert error" th:if="${signupError}" th:text="${signupError}"></div>
+
+        <form class="login-form" th:action="@{/signup}" th:object="${signupRequest}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+          <label for="username">Ten dang nhap</label>
+          <input id="username" type="text" th:field="*{username}" required />
+
+          <label for="fullname">Ho va ten</label>
+          <input id="fullname" type="text" th:field="*{fullname}" required />
+
+          <label for="phoneNumber">So dien thoai</label>
+          <input id="phoneNumber" type="tel" th:field="*{phoneNumber}" required />
+
+          <label for="role">Vai tro</label>
+          <select id="role" th:field="*{role}">
+            <option value="STAFF">STAFF</option>
+            <option value="RECEPTIONIST">RECEPTIONIST</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+
+          <label for="password">Mat khau</label>
+          <input id="password" type="password" th:field="*{password}" required />
+
+          <label for="confirmPassword">Nhap lai mat khau</label>
+          <input id="confirmPassword" type="password" th:field="*{confirmPassword}" required />
+
+          <button type="submit">Dang ky</button>
+        </form>
+
+        <p class="auth-switch">
+          Quay ve trang chinh
+          <a th:href="@{/}">Tai day</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
