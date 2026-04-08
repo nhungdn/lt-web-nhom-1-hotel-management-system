@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     stat.classList.add("blue");
                     break;
             }
-            clone.querySelector(".checkin").textContent = room.checkIn || "-";
-            clone.querySelector(".checkout").textContent = room.checkOut || "-";
+            clone.querySelector(".checkin").innerHTML = formatDateTime(room.checkIn) || "-";
+            clone.querySelector(".checkout").innerHTML = formatDateTime(room.checkOut) || "-";
             clone.querySelector(".price").textContent = room.price;
             clone.querySelector("input").setAttribute('id', room.roomNumber+"Check");
             clone.querySelector(".roomtab button").setAttribute('id', room.roomNumber+"EditRoomBtn");
@@ -41,3 +41,24 @@ document.addEventListener("DOMContentLoaded", () => {
     getRoomList();
 
 });
+
+function formatDateTime(isoString) {
+    if (!isoString || isoString === "-") return "-";
+
+    const date = new Date(isoString);
+    
+    // Lấy tên Thứ bằng tiếng Việt
+    const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+    const dayName = days[date.getDay()];
+
+    // Format ngày/tháng/năm
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    // Format giờ:phút
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${dayName}, ${day}/${month}/${year} <br/> ${hours}:${minutes}`;
+}
