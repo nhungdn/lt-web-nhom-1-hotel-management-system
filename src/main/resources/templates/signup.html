@@ -12,16 +12,31 @@
         <div class="brand-block">
           <p class="eyebrow">Hotel Management System</p>
           <h1>Tao tai khoan moi</h1>
-          <p class="subtitle">Chi tai khoan ADMIN moi co quyen tao nguoi dung moi.</p>
+          <p class="subtitle">
+            Chi tai khoan ADMIN moi co quyen tao nguoi dung moi.
+          </p>
         </div>
 
         <div class="alert success" th:if="${createdSuccess}">
           Tao tai khoan thanh cong.
         </div>
-        <div class="alert error" th:if="${signupError}" th:text="${signupError}"></div>
+        <div
+          class="alert error"
+          th:if="${signupError}"
+          th:text="${signupError}"
+        ></div>
 
-        <form class="login-form" th:action="@{/signup}" th:object="${signupRequest}" method="post">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <form
+          class="login-form"
+          th:action="@{/signup}"
+          th:object="${signupRequest}"
+          method="post"
+        >
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
 
           <label for="username">Ten dang nhap</label>
           <input id="username" type="text" th:field="*{username}" required />
@@ -30,7 +45,12 @@
           <input id="fullname" type="text" th:field="*{fullname}" required />
 
           <label for="phoneNumber">So dien thoai</label>
-          <input id="phoneNumber" type="tel" th:field="*{phoneNumber}" required />
+          <input
+            id="phoneNumber"
+            type="tel"
+            th:field="*{phoneNumber}"
+            required
+          />
 
           <label for="role">Vai tro</label>
           <select id="role" th:field="*{role}">
@@ -40,10 +60,20 @@
           </select>
 
           <label for="password">Mat khau</label>
-          <input id="password" type="password" th:field="*{password}" required />
+          <input
+            id="password"
+            type="password"
+            th:field="*{password}"
+            required
+          />
 
           <label for="confirmPassword">Nhap lai mat khau</label>
-          <input id="confirmPassword" type="password" th:field="*{confirmPassword}" required />
+          <input
+            id="confirmPassword"
+            type="password"
+            th:field="*{confirmPassword}"
+            required
+          />
 
           <button type="submit">Dang ky</button>
         </form>

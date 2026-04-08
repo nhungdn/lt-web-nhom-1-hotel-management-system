@@ -6,62 +6,47 @@
 >
   <head>
     <title>Users - Hotel Management</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <th:block th:fragment="head">
       <link rel="stylesheet" th:href="@{/css/users-list.css}" />
+      <link rel="stylesheet" th:href="@{/css/room-card.css}" />
     </th:block>
   </head>
   <body>
     <h1 th:fragment="title">Staff</h1>
 
     <div th:fragment="content">
-      <section class="content-grid user-page-grid">
-        <div class="glass-card user-summary-card">
-          <span class="summary-badge">Staff overview</span>
-          <div>
-            <div class="summary-number" th:text="${#lists.size(users)}">0</div>
-            <div class="summary-label">Total users in the system</div>
-          </div>
-
-          <div class="summary-meta">
-            <div class="meta-row">
-              <span>Current section</span>
-              <strong>Staff management</strong>
-            </div>
-            <div class="meta-row">
-              <span>Access level</span>
-              <strong>ADMIN only</strong>
-            </div>
-          </div>
-
-          <div class="user-page-actions">
-            <a th:href="@{/signup}" class="card-btn">Add new user</a>
-            <a th:href="@{/users}" class="card-btn active">Refresh list</a>
-          </div>
-        </div>
-
-        <div class="glass-card users-table-card">
+      <section class="content-grid">
+        <!-- Data Table -->
+        <div class="glass-card table-card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">All users</h2>
-              <p class="card-subtitle">
-                Danh sách đầy đủ tài khoản trong hệ thống
-              </p>
+              <h2 class="summary-number" th:text="${#lists.size(users)}">0</h2>
+              <p class="summary-label">Total users in the system</p>
+            </div>
+            <div class="card-actions">
+              <a th:href="@{/signup}" class="card-btn"> Add new user </a>
+              <a th:href="@{/users}" class="card-btn">Refresh list</a>
             </div>
           </div>
 
           <div class="table-wrapper">
-            <table class="data-table users-table">
+            <table class="data-table" id="usersTable" th:users-list="${users}">
               <thead>
                 <tr>
                   <th>Username</th>
                   <th>Full name</th>
                   <th>Phone</th>
                   <th>Role</th>
+                  <th th:if="${session.user?.role.toString() == 'ADMIN'}">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr th:if="${#lists.isEmpty(users)}">
-                  <td colspan="4">
+                  <td colspan="5">
                     <div class="empty-state">No users found.</div>
                   </td>
                 </tr>
@@ -85,6 +70,11 @@
                       th:text="${user.role}"
                       >ADMIN</span
                     >
+                  </td>
+                  <td th:if="${session.user?.role.toString() == 'ADMIN'}">
+                    <button class="card-btn" style="padding: 6px 12px">
+                      Edit
+                    </button>
                   </td>
                 </tr>
               </tbody>
