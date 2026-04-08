@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Rooms</title>
+</head>
+<body>
+<h1 layout:fragment="title">Rooms</h1>
+<div layout:fragment="content">
+    <h1>Rooms</h1>
+    <a th:href="@{/rooms/create}">Create room</a><br><br>
+    <table border="1" style="width:100%; border-collapse: collapse;">
+        <tr><th>ID</th><th>Number</th><th>Status</th><th>Room Type</th><th>Action</th></tr>
+        <tr th:each="room : ${rooms}">
+            <td th:text="${room.roomId}"></td>
+            <td th:text="${room.roomNumber}"></td>
+            <td th:text="${room.status}"></td>
+            <td th:text="${room.roomTypeName}"></td>
+            <td>
+                <a th:href="@{/rooms/edit/{id}(id=${room.roomId})}">Edit</a>
+                <form th:action="@{/rooms/delete/{id}(id=${room.roomId})}" method="post" style="display:inline; margin-left: 8px;">
+                    <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -8,8 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "rooms")
 public class Room {
 
     @Id
@@ -27,5 +29,47 @@ public class Room {
 
     public enum Status {
         AVAILABLE, BOOKED, OCCUPIED, CLEANING
+    }
+
+    public Room() {
+        this.status = Status.AVAILABLE;
+    }
+
+    public Room(String roomNumber, Status status, RoomType roomType) {
+        this.roomNumber = roomNumber;
+        this.status = status;
+        this.roomType = roomType;
+    }
+
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 }

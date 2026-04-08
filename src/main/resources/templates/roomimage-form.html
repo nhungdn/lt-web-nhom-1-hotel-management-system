@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create/Update Room Image</title>
+    <style>
+        form { max-width: 400px; margin: auto; }
+        label { display: block; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+        button { margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Room Image Form</h1>
+    <form th:action="${roomimage.roomImageId} != null ? '/roomimages/update/' + ${roomimage.roomImageId} : '/roomimages/create'" th:object="${roomimage}" method="post">
+        <input type="hidden" th:if="${roomimage.roomImageId} != null" th:field="*{roomImageId}"/>
+
+        <label for="imageUrl">Image URL:</label>
+        <input type="url" th:field="*{imageUrl}" id="imageUrl" required/>
+
+        <label for="description">Description:</label>
+        <textarea th:field="*{description}" id="description" rows="4"></textarea>
+
+        <label for="roomId">Room ID:</label>
+        <input type="number" th:field="*{roomId}" id="roomId"/>
+
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

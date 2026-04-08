@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>Room Types</title>
+</head>
+<body>
+<h1 layout:fragment="title">Room Types</h1>
+<div layout:fragment="content">
+    <h1>Room Types Management</h1>
+    <a th:href="@{/roomtypes/create}" class="btn btn-primary">Create Room Type</a><br><br>
+
+    <table style="width:100%; border-collapse: collapse;" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${roomtypes}">
+                <td th:text="${item.roomTypeId}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.price}"></td>
+                <td th:text="${item.description}"></td>
+                <td>
+                    <a th:href="@{/roomtypes/edit/{id}(id=${item.roomTypeId})}" class="btn btn-warning">Edit</a>
+                    <form th:action="@{/roomtypes/delete/{id}(id=${item.roomTypeId})}" method="post" style="display:inline; margin-left:8px;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

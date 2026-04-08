@@ -13,7 +13,7 @@
     <name>Hotel Management</name>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <start-class>com.nhom1.hotelmanagement.HotelmsApplication</start-class>
     </properties>
 
