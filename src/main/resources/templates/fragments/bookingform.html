@@ -13,7 +13,7 @@
         
         <div class="booking-form glass">
             <div class="form-header">
-                    <h2>Booking Form</h2>
+                    <h2>Customer Info</h2>
                     <button class="close-btn"> x </button>
             </div>
             <form th:action="@{/booking}" th:object="${bookingRequest}" method="post">
@@ -24,11 +24,10 @@
                             <label>SĐT khách:</label>
                             <input type="text" id="phoneSearch" placeholder="Nhập SĐT để check..."/>
                         </div>
-                        <button type="button" class="check-sdt-btn">Check Khách</button>
+                        <button class="check-sdt-btn">Check Khách</button>
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn">Add Booking</button>
             </form>
         </div>
     </body>

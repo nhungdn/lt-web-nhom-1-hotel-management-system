@@ -32,25 +32,27 @@
                     </div>
                     <div class="booking-div booktab hidden">
                         <div>
-                            <input type="date" id="start"/>
-                            <input type="date" id="end"/>
+                            <input type="date" id="start" required=""/>
+                            <input type="date" id="end" required=""/>
+                            <button type="submit" id="filterdateBtn">Lọc</button>
                         </div>
-
-                        <svg fill="#000000" width="800px" height="800px" 
-                             viewBox="0 0 24 24" data-name="Line Color" 
-                             xmlns="http://www.w3.org/2000/svg" class="booking-guest">
-                            <path id="secondary" d="M17,17h4m-2-2v4" 
-                                  style="fill: none; stroke: rgb(44, 169, 188);
-                                stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">      
-                            </path>
-                            <path id="primary" d="M14,13.29A6.91,6.91,0,0,0,12,13H10a7,7,0,0,0-7,7,1,1,0,0,0,1,1H15" 
-                                  style="fill: none; stroke: rgb(0, 0, 0);
-                                  stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                            <circle id="primary-2" data-name="primary" cx="11" cy="8" r="5" 
-                                    style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round;
-                                stroke-linejoin: round; stroke-width: 2;">
-                            </circle>
-                        </svg>
+                        <button id="custInfo">
+                            <svg fill="#000000" width="800px" height="800px" 
+                                 viewBox="0 0 24 24" data-name="Line Color" 
+                                 xmlns="http://www.w3.org/2000/svg" class="booking-guest">
+                                <path id="secondary" d="M17,17h4m-2-2v4" 
+                                      style="fill: none; stroke: rgb(44, 169, 188);
+                                    stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">      
+                                </path>
+                                <path id="primary" d="M14,13.29A6.91,6.91,0,0,0,12,13H10a7,7,0,0,0-7,7,1,1,0,0,0,1,1H15" 
+                                      style="fill: none; stroke: rgb(0, 0, 0);
+                                      stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                                <circle id="primary-2" data-name="primary" cx="11" cy="8" r="5" 
+                                        style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round;
+                                    stroke-linejoin: round; stroke-width: 2;">
+                                </circle>
+                            </svg>
+                        </button>
                     </div>
                     <div class="table-wrapper">
                         <table class="data-table" id="roomTable" th:rooms-list="${roomList}">
@@ -103,10 +105,10 @@
                     </div>
                 </div>
             </section>
-            <div class="form-overlay"> <div th:replace="~{fragments/bookingform}"></div></div>
-            <script th:src="@{/js/booking.js}"></script>
+            <div th:replace="~{fragments/bookingform}" class="booktab"></div>
 
             <script th:src="@{/js/roomlist.js}"></script>
+            <script th:src="@{/js/booking.js}"></script>
         </div>
     </body>
 </html>

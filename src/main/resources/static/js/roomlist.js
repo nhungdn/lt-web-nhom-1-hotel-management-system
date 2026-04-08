@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             clone.querySelector(".checkin").textContent = room.checkIn || "-";
             clone.querySelector(".checkout").textContent = room.checkOut || "-";
+            clone.querySelector(".price").textContent = room.price;
             clone.querySelector("input").setAttribute('id', room.roomNumber+"Check");
             clone.querySelector(".roomtab button").setAttribute('id', room.roomNumber+"EditRoomBtn");
             clone.querySelector(".booktab button").setAttribute('id', room.roomNumber+"EditBookBtn");

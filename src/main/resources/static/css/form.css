@@ -41,6 +41,9 @@
     cursor: auto;
     z-index: 1000;
 }
+.form-overlay active{
+    display: flex;
+}
 
 /* ============================================
    FORM BASE

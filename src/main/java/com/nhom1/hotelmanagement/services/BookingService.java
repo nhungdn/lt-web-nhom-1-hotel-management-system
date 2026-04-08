@@ -17,6 +17,7 @@ import com.nhom1.hotelmanagement.repositories.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,17 @@ public class BookingService {
     public boolean checkRoomOpen(String roomNum, String checkin, String checkout) {
         long count = detailRepo.countOverlappingBookings(roomNum, checkin, checkout);
         return count == 0; 
+    }
+    
+    public List<String> checkRooms(BookingDTO.MultiSubmitRequest request) {
+        List<String> errorRooms = new ArrayList<>();
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            boolean isOpen = checkRoomOpen(item.getRoomNum(), item.getCheckIn(), item.getCheckOut());
+            if (!isOpen) {
+                errorRooms.add(item.getRoomNum());
+            }
+        }
+        return errorRooms;
     }
     
     public boolean createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session){
