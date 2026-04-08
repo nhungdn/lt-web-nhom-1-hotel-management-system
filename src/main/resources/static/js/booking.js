@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
 });
 
-document.querySelector('form').addEventListener('submit', function(e) {
+document.querySelector('.booking-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
     // Create success message
