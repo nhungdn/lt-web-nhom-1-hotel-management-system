@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head><title>Services</title></head>
+<body>
+<h1 layout:fragment="title">Services</h1>
+<div layout:fragment="content">
+    <h1>Service Management</h1>
+    <a th:href="@{/services/create}">Create service</a><br><br>
+    <table border="1" style="width:100%; border-collapse: collapse;">
+        <tr><th>ID</th><th>Name</th><th>Price</th><th>Action</th></tr>
+        <tr th:each="item : ${services}">
+            <td th:text="${item.serviceId}"></td>
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.price}"></td>
+            <td>
+                <a th:href="@{/services/edit/{id}(id=${item.serviceId})}">Edit</a>
+                <form th:action="@{/services/delete/{id}(id=${item.serviceId})}" method="post" style="display:inline; margin-left: 8px;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

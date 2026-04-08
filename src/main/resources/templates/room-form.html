@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create/Update Room</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+<h1>Room Form</h1>
+<form th:action="@{${room.roomId} != null ? '/rooms/update/' + ${room.roomId} : '/rooms/create'}" th:object="${room}" method="post">
+    <input type="hidden" th:if="${room.roomId} != null" th:field="*{roomId}"/>
+    
+    <p>Room Number: <input type="text" th:field="*{roomNumber}" required/></p>
+    <p>Status:
+        <select th:field="*{status}">
+            <option value="AVAILABLE">Available</option>
+            <option value="BOOKED">Booked</option>
+            <option value="OCCUPIED">Occupied</option>
+            <option value="CLEANING">Cleaning</option>
+        </select>
+    </p>
+    <p>Room Type:
+        <select th:field="*{roomTypeId}">
+            <option value="">-- Select Room Type --</option>
+            <option th:each="rt : ${roomTypes}" th:value="${rt.roomTypeId}" th:text="${rt.name}"></option>
+        </select>
+    </p>
+
+    <!-- <div class="form-group">
+        <fieldset>
+            <legend>Room Images</legend>
+            <label for="imageUrl0">Image URL 1:</label>
+            <input type="url" id="imageUrl0" th:field="*{imageUrls[0]}" placeholder="https://example.com/image1.jpg"/>
+            
+            <label for="imageUrl1">Image URL 2:</label>
+            <input type="url" id="imageUrl1" th:field="*{imageUrls[1]}" placeholder="https://example.com/image2.jpg"/>
+            
+            <label for="imageUrl2">Image URL 3:</label>
+            <input type="url" id="imageUrl2" th:field="*{imageUrls[2]}" placeholder="https://example.com/image3.jpg"/>
+        </fieldset>
+    </div> -->
+
+    <button type="submit">Save</button>
+</form>
+<a th:href="@{/rooms}">Back to rooms</a>
+</body>
+</html>

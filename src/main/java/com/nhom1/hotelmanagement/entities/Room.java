@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "rooms")
 @Getter @Setter
 @NoArgsConstructor
 public class Room {
@@ -33,22 +35,4 @@ public class Room {
     public enum Status {
         AVAILABLE, BOOKED, OCCUPIED, CLEANING
     }
-
-//    public Long getRoomId() {
-//        return roomId;
-//    }
-//
-//    public String getRoomNumber() {
-//        return roomNumber;
-//    }
-//
-//    public Status getStatus() {
-//        return status;
-//    }
-//
-//    public RoomType getRoomType() {
-//        return roomType;
-//    }
-    
-    
 }

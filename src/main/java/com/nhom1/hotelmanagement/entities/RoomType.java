@@ -1,36 +1,26 @@
 package com.nhom1.hotelmanagement.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.math.BigDecimal;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Table(name = "roomtypes")
+@Getter @Setter
+@NoArgsConstructor
 public class RoomType {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomTypeId;
 
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
-    private Double price;
+
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @Column(name = "description", length = 500)
     private String description;
-
-    public Long getRoomTypeId() {
-        return roomTypeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-    
-    
 }

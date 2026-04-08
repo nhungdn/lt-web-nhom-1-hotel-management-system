@@ -1,6 +1,8 @@
 
 package com.nhom1.hotelmanagement.dto;
 
+import java.math.BigDecimal;
+
 import com.nhom1.hotelmanagement.entities.Room.Status;
 
 public class RoomStatDTO {
@@ -8,7 +10,7 @@ public class RoomStatDTO {
     private String roomDesc;
     private String roomNumber;
     private Status status;
-    private Double price;
+    private BigDecimal price;
     private String checkIn;
     private String checkOut;
     private String cusName;
@@ -90,11 +92,11 @@ public class RoomStatDTO {
         this.cusIdCard = cusIdCard;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

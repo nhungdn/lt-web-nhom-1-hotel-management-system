@@ -6,8 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "roomimages")
 public class RoomImage {
 
     @Id
@@ -20,4 +22,45 @@ public class RoomImage {
     @ManyToOne
     @JoinColumn(name = "roomId")
     private Room room;
+
+    public RoomImage() {
+    }
+
+    public RoomImage(String imageUrl, String description, Room room) {
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.room = room;
+    }
+
+    public Long getRoomImageId() {
+        return roomImageId;
+    }
+
+    public void setRoomImageId(Long roomImageId) {
+        this.roomImageId = roomImageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }
