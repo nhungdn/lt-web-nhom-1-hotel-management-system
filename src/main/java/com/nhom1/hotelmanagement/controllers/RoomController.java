@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.dto.RoomRequest;
+import com.nhom1.hotelmanagement.dto.RoomStatDTO;
 import com.nhom1.hotelmanagement.entities.Room;
 import com.nhom1.hotelmanagement.services.RoomService;
 import com.nhom1.hotelmanagement.services.RoomTypeService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
 @Controller
 @RequestMapping("/rooms")

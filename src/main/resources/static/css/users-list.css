@@ -1,0 +1,154 @@
+/* ============================================
+   USERS PAGE
+============================================ */
+.user-page-grid {
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+}
+
+.user-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--emerald-light);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.summary-number {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.summary-meta {
+  display: grid;
+  gap: 12px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.meta-row strong {
+  color: var(--text-primary);
+}
+
+.users-table-card {
+  grid-column: span 1;
+}
+
+.users-table {
+  min-width: 0;
+}
+
+.users-table th,
+.users-table td {
+  white-space: nowrap;
+}
+
+.users-table tbody tr:hover {
+  background: rgba(52, 211, 153, 0.06);
+}
+
+.user-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-name-cell .primary {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.user-name-cell .secondary {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.role-pill.admin {
+  background: rgba(212, 165, 116, 0.16);
+  color: var(--gold-light);
+}
+
+.role-pill.receptionist {
+  background: rgba(14, 165, 233, 0.16);
+  color: #7dd3fc;
+}
+
+.role-pill.staff {
+  background: rgba(34, 197, 94, 0.16);
+  color: #86efac;
+}
+
+.empty-state {
+  padding: 30px 16px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.user-page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1100px) {
+  .user-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .users-table-card {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .summary-number {
+    font-size: 40px;
+  }
+
+  .user-page-actions {
+    flex-direction: column;
+  }
+
+  .user-page-actions .card-btn {
+    width: 100%;
+  }
+}

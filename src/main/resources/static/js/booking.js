@@ -1,24 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const closeBtn = document.querySelector(".close-btn");
-    const openBtn = document.querySelector(".booking-btn"); // Nút này phải tồn tại trên trang
-    const overlayDiv = document.querySelector(".form-overlay");
-
-    console.log("Script has run");
-    if (openBtn && overlayDiv) {
-        openBtn.addEventListener("click", () => {
-            console.log("Open form!"); 
-            overlayDiv.style.display = "block";
+    const enterBookingBtn = document.querySelector(".booking-btn");
+    const booktab = document.querySelectorAll(".booktab");
+    const roomtab = document.querySelectorAll(".roomtab");
+    
+    console.log("Booking script has run.");
+    
+    enterBookingBtn.addEventListener("click", () => {
+        console.log("Toggle!"); 
+        booktab.forEach((e) => e.classList.toggle("hidden"));
+        roomtab.forEach((e) => e.classList.toggle("hidden"));
+    });
+    
+    const roomRow = document.querySelectorAll("tbody tr");
+    const detailPopup = document.querySelector(".detail-overlay");
+    const closeBtn = document.querySelectorAll(".close-btn");
+    roomRow.forEach((row)=>{
+        row.addEventListener('click', () => {
+            console.log('Row clicked!');
+            detailPopup.style.display = "block";
         });
-    }
-
-    if (closeBtn && overlayDiv) {
-        closeBtn.addEventListener("click", () => {
-            overlayDiv.style.display = "none";
-        });
-    }
+    });
+    
+    closeBtn.addEventListener("click", () => {
+        detailPopup.classList.add("hidden");
+    });
+    
 });
 
-document.querySelector('form').addEventListener('submit', function(e) {
+document.querySelector('.booking-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
     // Create success message

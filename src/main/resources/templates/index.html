@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ulraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout/base">
-    <head>
-        <title>Home - Hotel Management</title>
-    </head>
-    
-    <body>
-        <h1 layout:fragment="title">Home page</h1>
-        <div layout:fragment="content">
-            <section>
-                <h1>Chào mừng tới Hotel Management</h1>
-            </section>
-        </div>
+      th:replace="~{layout/base :: main_layout(~{::index_content}, ~{::index_title}, ~{})}">
+<head>
+    <title>Home - Hotel Management</title>
+</head>
+<body>
 
-    </body>
+    <h1 th:fragment="index_title">Home page</h1>
+
+    <div th:fragment="index_content">
+        <h1>Chào mừng tới Hotel Management</h1>
+        <p>Nội dung trang chủ ở đây.</p>
+    </div>
+
+</body>
 </html>

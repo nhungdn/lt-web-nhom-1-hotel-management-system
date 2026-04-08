@@ -1,0 +1,97 @@
+<!doctype html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}"
+>
+  <head>
+    <title>Users - Hotel Management</title>
+    <th:block th:fragment="head">
+      <link rel="stylesheet" th:href="@{/css/users-list.css}" />
+    </th:block>
+  </head>
+  <body>
+    <h1 th:fragment="title">Staff</h1>
+
+    <div th:fragment="content">
+      <section class="content-grid user-page-grid">
+        <div class="glass-card user-summary-card">
+          <span class="summary-badge">Staff overview</span>
+          <div>
+            <div class="summary-number" th:text="${#lists.size(users)}">0</div>
+            <div class="summary-label">Total users in the system</div>
+          </div>
+
+          <div class="summary-meta">
+            <div class="meta-row">
+              <span>Current section</span>
+              <strong>Staff management</strong>
+            </div>
+            <div class="meta-row">
+              <span>Access level</span>
+              <strong>ADMIN only</strong>
+            </div>
+          </div>
+
+          <div class="user-page-actions">
+            <a th:href="@{/signup}" class="card-btn">Add new user</a>
+            <a th:href="@{/users}" class="card-btn active">Refresh list</a>
+          </div>
+        </div>
+
+        <div class="glass-card users-table-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">All users</h2>
+              <p class="card-subtitle">
+                Danh sách đầy đủ tài khoản trong hệ thống
+              </p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="data-table users-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Full name</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(users)}">
+                  <td colspan="4">
+                    <div class="empty-state">No users found.</div>
+                  </td>
+                </tr>
+                <tr th:each="user : ${users}">
+                  <td>
+                    <div class="user-name-cell">
+                      <span class="primary" th:text="${user.username}"
+                        >admin</span
+                      >
+                      <span class="secondary" th:text="|ID: ${user.userId}|"
+                        >ID: 1</span
+                      >
+                    </div>
+                  </td>
+                  <td th:text="${user.fullName}">Admin User</td>
+                  <td th:text="${user.phoneNumber}">0123456789</td>
+                  <td>
+                    <span
+                      class="role-pill"
+                      th:classappend="${user.role != null ? ' ' + user.role.name().toLowerCase() : ''}"
+                      th:text="${user.role}"
+                      >ADMIN</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

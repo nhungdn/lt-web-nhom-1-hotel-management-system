@@ -64,30 +64,22 @@ INSERT INTO service (name, price) VALUES
 ('Rental Bike', 100000);
 
 -- 6. Chèn dữ liệu vào bảng Booking
-INSERT INTO booking (customer_id, user_id, check_in_date, check_out_date, status) VALUES
-(1, 2, '2024-03-01', '2024-03-03', 'COMPLETED'),
-(2, 2, '2024-03-05', '2024-03-07', 'COMPLETED'),
-(3, 3, '2024-03-10', '2024-03-12', 'CANCELLED'),
-(4, 4, '2024-03-15', '2024-03-17', 'CHECKED_IN'),
-(5, 5, '2024-03-20', '2024-03-22', 'PENDING'),
-(6, 6, '2024-03-22', '2024-03-25', 'PENDING'),
-(7, 7, '2024-03-24', '2024-03-26', 'CHECKED_IN'),
-(8, 8, '2024-03-25', '2024-03-28', 'PENDING'),
-(9, 9, '2024-03-26', '2024-03-27', 'PENDING'),
-(10, 10, '2024-03-28', '2024-03-30', 'PENDING');
+INSERT INTO booking (customer_id, user_id) VALUES
+(1, 2), (2, 2), (3, 3), (4, 4), (5, 5),
+(6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
 
 -- 7. Chèn dữ liệu vào bảng BookingDetail
-INSERT INTO booking_detail (booking_id, room_id) VALUES
-(1, 1),
-(2, 2),
-(3, 4),
-(4, 5),
-(5, 6),
-(6, 7),
-(7, 8),
-(8, 9),
-(9, 10),
-(10, 4);
+INSERT INTO booking_detail (booking_id, room_id, check_in_date, check_out_date, status, price_at_booking) VALUES
+(1, 1, '2024-03-01 14:00:00', '2024-03-03 12:00:00', 'COMPLETED', 500000),
+(2, 2, '2024-03-05 14:00:00', '2024-03-07 12:00:00', 'COMPLETED', 800000),
+(3, 4, '2024-03-10 14:00:00', '2024-03-12 12:00:00', 'CANCELLED', 500000),
+(4, 5, '2024-03-15 14:00:00', '2024-03-17 12:00:00', 'CHECKED_IN', 800000),
+(5, 6, '2024-03-20 14:00:00', '2024-03-22 12:00:00', 'PENDING', 500000),
+(6, 7, '2024-03-22 14:00:00', '2024-03-25 12:00:00', 'PENDING', 500000),
+(7, 8, '2024-03-24 14:00:00', '2024-03-26 12:00:00', 'CHECKED_IN', 2000000),
+(8, 9, '2024-03-25 14:00:00', '2024-03-28 12:00:00', 'PENDING', 1500000),
+(9, 10, '2024-03-26 14:00:00', '2024-03-27 12:00:00', 'PENDING', 1100000),
+(10, 4, '2024-03-28 14:00:00', '2024-03-30 12:00:00', 'PENDING', 1200000);
 
 -- 8. Chèn dữ liệu vào bảng BookingService
 INSERT INTO booking_service (booking_detail_id, service_id, quantity) VALUES

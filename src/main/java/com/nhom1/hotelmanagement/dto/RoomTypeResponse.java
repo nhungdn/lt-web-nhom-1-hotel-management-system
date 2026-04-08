@@ -1,42 +1,47 @@
 package com.nhom1.hotelmanagement.dto;
 
 import java.math.BigDecimal;
+import lombok.*;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RoomTypeResponse {
     private Long roomTypeId;
     private String name;
     private BigDecimal price;
     private String description;
 
-    public Long getRoomTypeId() {
-        return roomTypeId;
-    }
+    // public Long getRoomTypeId() {
+    //     return roomTypeId;
+    // }
 
-    public void setRoomTypeId(Long roomTypeId) {
-        this.roomTypeId = roomTypeId;
-    }
+    // public void setRoomTypeId(Long roomTypeId) {
+    //     this.roomTypeId = roomTypeId;
+    // }
 
-    public String getName() {
-        return name;
-    }
+    // public String getName() {
+    //     return name;
+    // }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    // public void setName(String name) {
+    //     this.name = name;
+    // }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+    // public BigDecimal getPrice() {
+    //     return price;
+    // }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+    // public void setPrice(BigDecimal price) {
+    //     this.price = price;
+    // }
 
-    public String getDescription() {
-        return description;
-    }
+    // public String getDescription() {
+    //     return description;
+    // }
     
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    // public void setDescription(String description) {
+    //     this.description = description;
+    // }
 }
