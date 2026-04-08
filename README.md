@@ -32,3 +32,7 @@
 ```bash
 mvn spring-boot:run
 ```
+
+### Cách tạo 1 tài khoản để đăng nhập tạm thời
+
+Truy cập `http://localhost:8080/signup` và đăng kí 1 tài khoản mới.
