@@ -4,7 +4,9 @@ package com.nhom1.hotelmanagement.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhom1.hotelmanagement.dto.BookingDTO;
+import com.nhom1.hotelmanagement.dto.BookingDetailDTO;
 import com.nhom1.hotelmanagement.dto.RoomStatDTO;
+import com.nhom1.hotelmanagement.entities.Room;
 import com.nhom1.hotelmanagement.services.BookingService;
 import com.nhom1.hotelmanagement.services.RoomService;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +32,7 @@ public class BookingController {
     private RoomService roomService;
     
     @GetMapping("/status")
-    public String showRoomStat(Model model){
+    public String showAllRoom(Model model){
         List<RoomStatDTO> roomlist = roomService.getFullRoomList();
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -40,7 +42,12 @@ public class BookingController {
         } catch (JsonProcessingException e) {
             model.addAttribute("roomList", "[]");
         }
-        return "roomstat";
+        return "bookstat";
+    }
+    
+    @GetMapping("/status/{id}")
+    public void showBookHistory(){
+         
     }
     
     @PostMapping("/create")
@@ -54,8 +61,11 @@ public class BookingController {
     }
             
     @PostMapping("/edit")
-    public String editBook(){
-        return "roomstat";
+    @ResponseBody
+    public ResponseEntity<?> editBook(@RequestBody BookingDetailDTO request){
+        List<String> error= bookingService.editBooking(request);
+        if(!error.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.ok("Sửa đơn thành công!");
     }
     
     @PostMapping("/cancel")

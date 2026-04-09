@@ -6,9 +6,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-public class BookingService {
+@Table(name="BookingService")
+@Getter @Setter
+@NoArgsConstructor
+public class BookingHotelService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

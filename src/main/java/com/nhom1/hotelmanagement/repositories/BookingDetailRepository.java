@@ -1,6 +1,7 @@
 
 package com.nhom1.hotelmanagement.repositories;
 
+import com.nhom1.hotelmanagement.entities.Booking;
 import com.nhom1.hotelmanagement.entities.BookingDetail;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,7 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, Lo
        "AND bd.checkOutDate > CURRENT_TIMESTAMP " +
        "ORDER BY bd.checkInDate ASC")
     List<BookingDetail> findCurrentOrUpcoming(String roomNum, Pageable pageable);
+
+    public List<BookingDetail> findAllByBooking(Booking b);
+
 }
