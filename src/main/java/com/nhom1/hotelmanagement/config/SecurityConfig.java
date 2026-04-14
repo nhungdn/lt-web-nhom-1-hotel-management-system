@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
-                        .requestMatchers("/users").hasRole("ADMIN") // Chi ADMIN moi duoc truy cap /users
+                    .requestMatchers("/users/**").hasRole("ADMIN") // Chi ADMIN moi duoc truy cap /users
                         .anyRequest().authenticated()) // Bat buoc dang nhap voi moi request khac
                 .userDetailsService(userDetailsService)
                 .formLogin(form -> form
