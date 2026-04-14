@@ -7,20 +7,25 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roomImage")
+@Table(name = "room_image")
 public class RoomImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_image_id")
     private Long roomImageId;
 
+    @Column(name = "image_url")
     private String imageUrl;
+    
+    @Column(name = "description")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "roomId")
+    @JoinColumn(name = "room_id")
     private Room room;
 
     public RoomImage() {

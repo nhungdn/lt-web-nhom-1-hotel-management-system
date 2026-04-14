@@ -12,36 +12,5 @@ public class RoomTypeResponse {
     private String name;
     private BigDecimal price;
     private String description;
-
-    // public Long getRoomTypeId() {
-    //     return roomTypeId;
-    // }
-
-    // public void setRoomTypeId(Long roomTypeId) {
-    //     this.roomTypeId = roomTypeId;
-    // }
-
-    // public String getName() {
-    //     return name;
-    // }
-
-    // public void setName(String name) {
-    //     this.name = name;
-    // }
-
-    // public BigDecimal getPrice() {
-    //     return price;
-    // }
-
-    // public void setPrice(BigDecimal price) {
-    //     this.price = price;
-    // }
-
-    // public String getDescription() {
-    //     return description;
-    // }
-    
-    // public void setDescription(String description) {
-    //     this.description = description;
-    // }
+    private Integer totalRooms;
 }

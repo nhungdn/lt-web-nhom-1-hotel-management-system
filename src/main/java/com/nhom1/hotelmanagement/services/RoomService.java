@@ -1,6 +1,7 @@
 package com.nhom1.hotelmanagement.services;
 
 import com.nhom1.hotelmanagement.dto.RoomRequest;
+import com.nhom1.hotelmanagement.dto.RoomImageRequest;
 import com.nhom1.hotelmanagement.dto.RoomResponse;
 import com.nhom1.hotelmanagement.dto.RoomStatDTO;
 import com.nhom1.hotelmanagement.entities.BookingDetail;
@@ -29,6 +30,9 @@ public class RoomService {
     @Autowired
     private RoomTypeRepository roomTypeRepository;
 
+    @Autowired
+    private RoomImageRepository roomImageRepository;
+
     public List<Room> listAll() {
         return roomRepository.findAll();
     }
@@ -51,7 +55,24 @@ public class RoomService {
             roomType.ifPresent(room::setRoomType);
         }
 
-        return roomRepository.save(room);
+        // Save room first
+        Room savedRoom = roomRepository.save(room);
+
+        // Then create associated images if provided
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            for (RoomImageRequest imageRequest : request.getImages()) {
+                // Only create image if both URL and description are not empty
+                if (imageRequest.getImageUrl() != null && !imageRequest.getImageUrl().trim().isEmpty()) {
+                    RoomImage roomImage = new RoomImage();
+                    roomImage.setImageUrl(imageRequest.getImageUrl());
+                    roomImage.setDescription(imageRequest.getDescription());
+                    roomImage.setRoom(savedRoom);
+                    roomImageRepository.save(roomImage);
+                }
+            }
+        }
+
+        return savedRoom;
     }
 
     public Room update(Long roomId, RoomRequest request) {
@@ -90,6 +111,8 @@ public class RoomService {
         dto.setStatus(room.getStatus() == null ? null : room.getStatus().name());
         dto.setRoomTypeId(room.getRoomType() == null ? null : room.getRoomType().getRoomTypeId());
         dto.setRoomTypeName(room.getRoomType() == null ? null : room.getRoomType().getName());
+        dto.setPrice(room.getRoomType() == null ? null : room.getRoomType().getPrice());
+        dto.setRoomDescription(room.getRoomType() == null ? null : room.getRoomType().getDescription());
         return dto;
     }
 

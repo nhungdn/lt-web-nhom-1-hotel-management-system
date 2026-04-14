@@ -3,9 +3,18 @@ package com.nhom1.hotelmanagement.dto;
 import java.math.BigDecimal;
 
 public class RoomTypeRequest {
+    private Long roomTypeId;
     private String name;
     private BigDecimal price;
     private String description;
+
+    public Long getRoomTypeId() {
+        return roomTypeId;
+    }
+
+    public void setRoomTypeId(Long roomTypeId) {
+        this.roomTypeId = roomTypeId;
+    }
 
     public String getName() {
         return name;

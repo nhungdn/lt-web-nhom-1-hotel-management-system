@@ -1,9 +1,18 @@
 package com.nhom1.hotelmanagement.dto;
 
 public class RoomImageRequest {
+    private Long roomImageId;
     private String imageUrl;
     private String description;
     private Long roomId;
+
+    public Long getRoomImageId() {
+        return roomImageId;
+    }
+
+    public void setRoomImageId(Long roomImageId) {
+        this.roomImageId = roomImageId;
+    }
 
     public String getImageUrl() {
         return imageUrl;

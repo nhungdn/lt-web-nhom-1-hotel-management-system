@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roomType")
+@Table(name = "room_type")
 @Getter @Setter
 @NoArgsConstructor
 public class RoomType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_type_id")
     private Long roomTypeId;
 
     @Column(name = "name", nullable = false, length = 100)

@@ -3,6 +3,7 @@ package com.nhom1.hotelmanagement.services;
 import com.nhom1.hotelmanagement.dto.RoomTypeRequest;
 import com.nhom1.hotelmanagement.dto.RoomTypeResponse;
 import com.nhom1.hotelmanagement.entities.RoomType;
+import com.nhom1.hotelmanagement.repositories.RoomRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class RoomTypeService {
 
     @Autowired
     private RoomTypeRepository roomTypeRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
 
     public List<RoomType> listAll() {
         return roomTypeRepository.findAll();
@@ -67,6 +71,9 @@ public class RoomTypeService {
         dto.setName(roomType.getName());
         dto.setPrice(roomType.getPrice());
         dto.setDescription(roomType.getDescription());
+        // Count total rooms with this room type
+        int totalRooms = roomRepository.findByRoomTypeRoomTypeId(roomType.getRoomTypeId()).size();
+        dto.setTotalRooms(totalRooms);
         return dto;
     }
 }

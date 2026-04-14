@@ -1,30 +1,178 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Create/Update Room Image</title>
-    <style>
-        form { max-width: 400px; margin: auto; }
-        label { display: block; margin-top: 10px; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 15px; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-    </style>
-</head>
-<body>
-    <h1>Room Image Form</h1>
-    <form th:action="${roomimage.roomImageId} != null ? '/roomimages/update/' + ${roomimage.roomImageId} : '/roomimages/create'" th:object="${roomimage}" method="post">
-        <input type="hidden" th:if="${roomimage.roomImageId} != null" th:field="*{roomImageId}"/>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
+    <head>
+        <title>Room Image Form</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <th:block th:fragment="head">
+            <link rel="stylesheet" th:href="@{/css/room-card.css}"/>
+            <link rel="stylesheet" th:href="@{/css/form.css}"/>
+        </th:block>
+    </head>
+    
+    <body>
+        <h1 th:fragment="title" th:text="${roomimage.roomImageId} != null ? 'Edit Room Image' : 'Add Room Image'">Room Image Form</h1>
+        <div th:fragment="content">
+            <section class="content-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-card table-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title" th:text="${roomimage.roomImageId} != null ? 'Edit Room Image' : 'Add New Room Image'">Room Image Form</h2>
+                            <p class="card-subtitle" th:text="${roomimage.roomImageId} != null ? 'Update image details' : 'Upload a new image for the room'">Form</p>
+                        </div>
+                    </div>
 
-        <label for="imageUrl">Image URL:</label>
-        <input type="url" th:field="*{imageUrl}" id="imageUrl" required/>
+                    <form th:action="${roomimage.roomImageId} != null ? '/roomimages/update/' + ${roomimage.roomImageId} : '/roomimages/create'" 
+                          th:object="${roomimage}" method="post" class="form-container">
+                        
+                        <input type="hidden" th:if="${roomimage.roomImageId} != null" th:field="*{roomImageId}"/>
+                        <input type="hidden" th:if="${roomId} != null" name="roomId" th:value="${roomId}"/>
+                        <input type="hidden" th:if="${returnUrl} != null" name="returnUrl" th:value="${returnUrl}"/>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Image Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="imageUrl" class="form-label">Image URL <span style="color: #ef4444;">*</span></label>
+                                <input type="url" id="imageUrl" th:field="*{imageUrl}" class="form-input glass" required placeholder="https://example.com/image.jpg"/>
+                                <span class="form-error" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></span>
+                            </div>
 
-        <label for="description">Description:</label>
-        <textarea th:field="*{description}" id="description" rows="4"></textarea>
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" th:field="*{description}" class="form-input glass" rows="4" placeholder="Enter image description (optional)"></textarea>
+                                <span class="form-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                            </div>
 
-        <label for="roomId">Room ID:</label>
-        <input type="number" th:field="*{roomId}" id="roomId"/>
+                            <!-- <div class="form-group">
+                                <label for="roomId" class="form-label">Room ID <span style="color: #ef4444;">*</span></label>
+                                <input type="number" id="roomId" th:field="*{roomId}" class="form-input glass" required/>
+                                <span class="form-error" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></span>
+                            </div> -->
+                        </div>
 
-        <button type="submit">Save</button>
-    </form>
-</body>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit" th:text="${roomimage.roomImageId} != null ? 'Update Image' : 'Add Image'">Save</button>
+                            <a th:if="${roomId} != null" th:href="@{/rooms/{id}/images(id=${roomId})}" class="btn-cancel">Cancel</a>
+                            <a th:unless="${roomId} != null" href="/roomimages" class="btn-cancel">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <style>
+                .form-container {
+                    max-width: 600px;
+                }
+
+                .form-section {
+                    margin-bottom: 32px;
+                    padding-bottom: 32px;
+                    border-bottom: 1px solid var(--glass-border);
+                }
+
+                .form-section:last-of-type {
+                    border-bottom: none;
+                }
+
+                .form-section-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: var(--text-primary);
+                }
+
+                .form-section-subtitle {
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-bottom: 16px;
+                }
+
+                .form-group {
+                    margin-bottom: 20px;
+                }
+
+                .form-label {
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    color: var(--text-primary);
+                }
+
+                .form-input {
+                    width: 100%;
+                    padding: 12px 16px;
+                    font-family: inherit;
+                    font-size: 14px;
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    color: #fff;
+                    transition: all 0.2s;
+                    box-sizing: border-box;
+                }
+
+                .form-input:focus {
+                    outline: none;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-color: #34d399;
+                    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
+                }
+
+                .form-error {
+                    display: block;
+                    color: #ef4444;
+                    font-size: 12px;
+                    margin-top: 6px;
+                }
+
+                .form-actions {
+                    display: flex;
+                    gap: 12px;
+                    margin-top: 32px;
+                }
+
+                .btn-submit {
+                    flex: 1;
+                    padding: 12px 24px;
+                    background: linear-gradient(135deg, #34d399, #10b981);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+
+                .btn-submit:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(52, 211, 153, 0.2);
+                }
+
+                .btn-cancel {
+                    flex: 1;
+                    padding: 12px 24px;
+                    background: rgba(255, 255, 255, 0.05);
+                    color: var(--text-secondary);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    text-decoration: none;
+                    text-align: center;
+                    font-size: 14px;
+                    font-weight: 600;
+                    transition: all 0.2s;
+                    cursor: pointer;
+                }
+
+                .btn-cancel:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-color: var(--emerald-light);
+                }
+            </style>
+        </div>
+    </body>
 </html>
