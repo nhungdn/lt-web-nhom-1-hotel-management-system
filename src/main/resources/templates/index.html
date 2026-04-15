@@ -1,18 +1,289 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
-      th:replace="~{layout/base :: main_layout(~{::index_content}, ~{::index_title}, ~{})}">
+      th:replace="~{layout/public-layout :: public_layout(~{::index_content}, ~{::index_title}, ~{::index_head})}">
 <head>
-    <title>Home - Hotel Management</title>
+    <title>Hotel Management - Welcome</title>
+    <th:block th:fragment="index_head">
+        <link rel="stylesheet" th:href="@{/css/room-card.css}"/>
+    </th:block>
 </head>
 <body>
 
-    <h1 th:fragment="index_title">Home page</h1>
+    <h1 th:fragment="index_title">Welcome to Our Hotel</h1>
 
     <div th:fragment="index_content">
-        <h1>Chào mừng tới Hotel Management</h1>
-        <p>Nội dung trang chủ ở đây.</p>
-    </div>
+        <style>
+            /* Các style CSS của bạn giữ nguyên, không thay đổi */
+            .hero-section { text-align: center; margin-bottom: 48px; padding: 40px 20px; background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(34, 197, 94, 0.1)); border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(52, 211, 153, 0.2); }
+            .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+            .hero-subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 24px; }
+            .roomtypes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 40px; }
+            .roomtype-card { background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%; }
+            .roomtype-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(52, 211, 153, 0.2); border-color: rgba(52, 211, 153, 0.4); }
+            .roomtype-image { width: 100%; height: 200px; object-fit: cover; background: rgba(0, 0, 0, 0.3); }
+            .roomtype-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+            .roomtype-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #f5f5f4; }
+            .roomtype-description { font-size: 13px; color: rgba(245, 245, 244, 0.7); margin-bottom: 16px; flex: 1; }
+            .roomtype-price { font-size: 24px; font-weight: 700; color: #34d399; margin-bottom: 16px; }
+            .roomtype-actions { display: flex; gap: 8px; }
+            .btn-book { flex: 1; padding: 10px 16px; background: linear-gradient(135deg, #34d399, #10b981); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; text-align: center; display: inline-block; }
+            .btn-book:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(52, 211, 153, 0.2); }
+            .btn-book:disabled { opacity: 0.5; cursor: not-allowed; }
+            .btn-view-more { flex: 1; padding: 10px 16px; background: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; text-align: center; display: inline-block; }
+            .btn-view-more:hover { background: rgba(52, 211, 153, 0.2); border-color: rgba(52, 211, 153, 0.6); }
+            .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+            .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+            
+            @media (max-width: 768px) {
+                .hero-title { font-size: 24px; }
+                .roomtypes-grid { grid-template-columns: 1fr; }
+            }
 
-</body>
+            /* Details Modal Styles */
+            .details-modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); z-index: 9998; pointer-events: none; }
+            .details-modal-backdrop.active { display: block; pointer-events: auto; }
+            .details-modal-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); z-index: 9999; width: 100%; max-width: 900px; max-height: 90vh; pointer-events: none; }
+            .details-modal-dialog.active { display: block; pointer-events: auto; animation: modalSlideIn 0.3s ease; }
+            @keyframes modalSlideIn {
+                from { transform: translate(-50%, -48%) scale(0.95); opacity: 0; }
+                to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            }
+            .details-modal-content { background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 32px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); max-height: 90vh; overflow-y: auto; }
+            .details-modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            .details-modal-title { font-size: 28px; font-weight: 700; color: #f5f5f4; margin: 0; }
+            .details-modal-close { background: rgba(255, 255, 255, 0.1); border: none; color: #f5f5f4; font-size: 28px; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 0; }
+            .details-modal-close:hover { background: rgba(255, 255, 255, 0.2); transform: rotate(90deg); }
+            .details-description { font-size: 15px; color: rgba(245, 245, 244, 0.85); line-height: 1.6; margin-bottom: 28px; padding: 16px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; border-left: 3px solid #34d399; }
+            .details-images-section { margin-top: 24px; }
+            .details-images-title { font-size: 18px; font-weight: 600; color: #f5f5f4; margin-bottom: 16px; }
+            .details-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+            .detail-image-card { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.3); transition: all 0.3s ease; cursor: pointer; }
+            .detail-image-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(52, 211, 153, 0.2); border-color: rgba(52, 211, 153, 0.4); }
+            .detail-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+            .detail-image-desc { padding: 12px; font-size: 13px; color: rgba(245, 245, 244, 0.7); border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 0; }
+            #loadingMessage { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
+            
+            @media (max-width: 768px) {
+                .details-modal-content { padding: 24px; }
+                .details-modal-title { font-size: 20px; }
+                .details-images-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+                .detail-image { height: 150px; }
+                .details-modal-dialog { max-width: calc(100% - 32px); width: auto; }
+            }
+            /* --- Styles cho Lightbox --- */
+            .image-lightbox {
+                display: none; /* Mặc định ẩn */
+                position: fixed;
+                z-index: 10000; /* Phải cao hơn z-index của modal chi tiết (9999) */
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9); /* Nền đen mờ 90% */
+                backdrop-filter: blur(8px);
+            }
+
+            .image-lightbox.active {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .image-lightbox img {
+                max-width: 90%;
+                max-height: 90vh;
+                object-fit: contain; /* Giữ nguyên tỷ lệ ảnh */
+                border-radius: 8px;
+                box-shadow: 0 0 30px rgba(0,0,0,0.5);
+                cursor: zoom-out;
+            }
+
+            .lightbox-close {
+                position: absolute;
+                top: 20px;
+                right: 40px;
+                color: #f5f5f4;
+                font-size: 40px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: 0.3s;
+                z-index: 10001;
+            }
+
+            .lightbox-close:hover {
+                color: #34d399;
+                transform: scale(1.1);
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        </style>
+
+        <div class="hero-section">
+            <h2 class="hero-title">Experience Luxury & Comfort</h2>
+            <p class="hero-subtitle">Discover our exclusive collection of rooms designed for your perfect stay</p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(roomTypes)}" class="empty-state">
+            <div class="empty-state-icon">🏨</div>
+            <p>No room types available at the moment</p>
+        </div>
+
+        <div class="roomtypes-grid" th:unless="${#lists.isEmpty(roomTypes)}">
+            <div class="roomtype-card" th:each="roomType : ${roomTypes}">
+                <img th:if="${roomTypeImages.get(roomType.roomTypeId) != null and !#lists.isEmpty(roomTypeImages.get(roomType.roomTypeId))}" 
+                     th:src="${roomTypeImages.get(roomType.roomTypeId).get(0).imageUrl}" 
+                     alt="Room" class="roomtype-image"/>
+                <img th:unless="${roomTypeImages.get(roomType.roomTypeId) != null and !#lists.isEmpty(roomTypeImages.get(roomType.roomTypeId))}" 
+                     src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23374151' width='400' height='300'/%3E%3Ctext x='50%' y='50%' font-family='Arial' font-size='24' fill='%239CA3AF' text-anchor='middle' dominant-baseline='middle'%3ENo Image Available%3C/text%3E%3C/svg%3E" 
+                     alt="Room" class="roomtype-image"/>
+                
+                <div class="roomtype-body">
+                    <h3 class="roomtype-name" th:text="${roomType.name}">Room Type</h3>
+                    <p class="roomtype-description" th:text="${roomType.description}">Room description</p>
+                    <div class="roomtype-price" th:text="${#numbers.formatDecimal(roomType.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ/night'}">Price</div>
+                    
+                    <div class="roomtype-actions">
+                        <button class="btn-book" th:disabled="${!isLoggedIn}" th:if="${!isLoggedIn}" title="Please log in to book">📅 Book Now</button>
+                        <a th:href="@{/login}" class="btn-book" th:if="${isLoggedIn}" style="text-decoration: none;">📅 Book Now</a>
+                        <button 
+                            type="button"
+                            class="btn-view-more"
+                            th:attr="data-id=${roomType.roomTypeId},
+                            data-name=${roomType.name},
+                            data-description=${roomType.description}"
+                            onclick="viewRoomTypeDetails(this.dataset.id, this.dataset.name, this.dataset.description)">
+                            View More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-modal-backdrop" id="detailsBackdrop"></div>
+        <div class="details-modal-dialog" id="detailsModal">
+            <div class="details-modal-content">
+                <div class="details-modal-header">
+                    <h2 class="details-modal-title" id="detailsTitle">Room Type Details</h2>
+                    <button class="details-modal-close" onclick="closeDetailsModal()">&times;</button>
+                </div>
+                
+                <div class="details-description" id="detailsDescription">
+                    No description available
+                </div>
+
+                <div class="details-images-section">
+                    <h3 class="details-images-title">Room Images</h3>
+                    <div id="loadingMessage" style="display: none;">Loading images...</div>
+                    <div class="details-images-grid" id="detailsImagesGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
+            <span class="lightbox-close">&times;</span>
+            <img id="lightboxImage" src="" alt="Zoomed Image">
+        </div>
+
+        <script>
+            // Modal functions
+            function viewRoomTypeDetails(roomTypeId, roomTypeName, description) {
+                const modal = document.getElementById('detailsModal');
+                const backdrop = document.getElementById('detailsBackdrop'); // Lấy thêm Backdrop
+                const title = document.getElementById('detailsTitle');
+                const desc = document.getElementById('detailsDescription');
+                const imagesGrid = document.getElementById('detailsImagesGrid');
+                const loadingMsg = document.getElementById('loadingMessage');
+
+                // Set basic info
+                title.textContent = roomTypeName;
+                desc.textContent = description || 'No description available';
+                imagesGrid.innerHTML = '';
+                loadingMsg.style.display = 'block';
+
+                // Fetch images from API
+                fetch('/roomtypeimages/api/by-roomtype/' + roomTypeId)
+                    .then(response => response.json())
+                    .then(images => {
+                        loadingMsg.style.display = 'none';
+                        
+                        if (images && images.length > 0) {
+                            images.forEach(img => {
+                                const imgCard = document.createElement('div');
+                                imgCard.className = 'detail-image-card';
+                                imgCard.innerHTML = `
+                                    <img src="${img.imageUrl}" alt="Room image" class="detail-image"
+                                    style="cursor: zoom-in;" 
+                                    onclick="openImageLightbox('${img.imageUrl}')"/>
+                                    <p class="detail-image-desc">${escapeHtml(img.description || '')}</p>
+                                `;
+                                imagesGrid.appendChild(imgCard);
+                            });
+                        } else {
+                            imagesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No images available</p>';
+                        }
+                    })
+                    .catch(error => {
+                        loadingMsg.style.display = 'none';
+                        console.error('Error fetching images:', error);
+                        imagesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Error loading images</p>';
+                    });
+
+                // Show modal & backdrop (Đã bổ sung active cho backdrop)
+                modal.classList.add('active');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDetailsModal() {
+                const modal = document.getElementById('detailsModal');
+                const backdrop = document.getElementById('detailsBackdrop');
+                
+                modal.classList.remove('active');
+                backdrop.classList.remove('active'); // Đã bổ sung ẩn backdrop
+                document.body.style.overflow = '';
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Close modal when clicking backdrop
+            document.getElementById('detailsBackdrop')?.addEventListener('click', closeDetailsModal);
+
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeDetailsModal();
+                }
+            });
+            // --- Các hàm xử lý Lightbox ---
+            function openImageLightbox(imageSrc) {
+                const lightbox = document.getElementById('imageLightbox');
+                const lightboxImg = document.getElementById('lightboxImage');
+                
+                lightboxImg.src = imageSrc; // Gán link ảnh vào khung to
+                lightbox.classList.add('active'); // Hiện khung
+            }
+
+            function closeImageLightbox() {
+                const lightbox = document.getElementById('imageLightbox');
+                lightbox.classList.remove('active'); // Ẩn khung
+            }
+
+            // Bổ sung: Bấm phím Escape cũng đóng được ảnh to
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeImageLightbox();
+                    // Hàm closeDetailsModal() đã có ở trên sẽ tự chạy để đóng modal ngoài
+                }
+            });
+        </script>
+    </div> </body>
 </html>

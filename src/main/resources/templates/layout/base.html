@@ -37,7 +37,7 @@
             <ul>
               <li
                 class="nav-item"
-                th:if="${session.user?.role.toString() == 'ADMIN'}"
+                th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}"
               >
                 <a th:href="@{/dashboard}" class="nav-link">
                   <svg
@@ -59,7 +59,7 @@
               </li>
               <li
                 class="nav-item"
-                th:if="${session.user?.role.toString() == 'ADMIN'}"
+                th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}"
               >
                 <a
                   th:href="@{/users}"
@@ -124,17 +124,6 @@
                 </a>
               </li>
                         
-              <!-- <li class="nav-item">
-                <a th:href="@{/roomimages}" class="nav-link">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="16" rx="2"/>
-                    <circle cx="8.5" cy="9.5" r="1.5"/>
-                    <path d="M21 15l-5-5-4 4-3-3-4 4"/>
-                  </svg>
-                  Room Images
-                </a>
-              </li> -->
-                        
               <li class="nav-item">
                 <a th:href="@{/services}" class="nav-link">
                   <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -186,7 +175,7 @@
             <ul>
               <!-- <li
                 class="nav-item"
-                th:if="${session.user?.role.toString() == 'ADMIN'}"
+                th:if="${session.user != null and session.user.role.name() == 'ADMIN'}"
               >
                 <a th:href="@{/signup}" class="nav-link">
                   <svg

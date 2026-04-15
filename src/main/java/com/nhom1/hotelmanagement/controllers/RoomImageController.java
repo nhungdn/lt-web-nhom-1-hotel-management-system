@@ -74,15 +74,28 @@ public class RoomImageController {
         return "redirect:/roomimages";
     }
 
+    // @PostMapping("/delete/{id}")
+    // public String deleteRoomImage(@PathVariable Long id, @RequestParam(required = false) String returnUrl) {
+    //     RoomImage roomImage = roomImageService.getById(id);
+    //     roomImageService.delete(id);
+        
+    //     // If returnUrl is provided, redirect there
+    //     if (returnUrl != null && !returnUrl.isEmpty()) {
+    //         return "redirect:" + returnUrl;
+    //     }
+        
+    //     // If image had a room, redirect to room images page
+    //     if (roomImage != null && roomImage.getRoom() != null) {
+    //         return "redirect:/rooms/" + roomImage.getRoom().getRoomId() + "/images";
+    //     }
+        
+    //     return "redirect:/roomimages";
+    // }
+
     @PostMapping("/delete/{id}")
-    public String deleteRoomImage(@PathVariable Long id, @RequestParam(required = false) String returnUrl) {
+    public String deleteRoomImage(@PathVariable Long id) {
         RoomImage roomImage = roomImageService.getById(id);
         roomImageService.delete(id);
-        
-        // If returnUrl is provided, redirect there
-        if (returnUrl != null && !returnUrl.isEmpty()) {
-            return "redirect:" + returnUrl;
-        }
         
         // If image had a room, redirect to room images page
         if (roomImage != null && roomImage.getRoom() != null) {

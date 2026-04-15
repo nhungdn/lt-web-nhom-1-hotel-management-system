@@ -1,8 +1,11 @@
 package com.nhom1.hotelmanagement.controllers;
 
 import com.nhom1.hotelmanagement.dto.RoomTypeRequest;
+import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.entities.RoomType;
 import com.nhom1.hotelmanagement.services.RoomTypeService;
+import com.nhom1.hotelmanagement.services.RoomTypeImageService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,15 +18,25 @@ public class RoomTypeController {
     @Autowired
     private RoomTypeService roomTypeService;
 
+    @Autowired
+    private RoomTypeImageService roomTypeImageService;
+
     @GetMapping
-    public String listRoomTypes(Model model) {
+    public String listRoomTypes(HttpSession session, Model model) {
+        LoginResponse user = (LoginResponse) session.getAttribute("user");
         model.addAttribute("roomtypes", roomTypeService.listAllDto());
+        if (user != null) {
+            model.addAttribute("isAuthenticated", true);
+            model.addAttribute("isAdmin", "ADMIN".equals(user.getRole().toString()));
+        }
         return "roomtypes";
     }
 
     @GetMapping("/create")
     public String createRoomTypeForm(Model model) {
-        model.addAttribute("roomtype", new RoomTypeRequest());
+        RoomTypeRequest roomTypeRequest = new RoomTypeRequest();
+        roomTypeRequest.setImages(new java.util.ArrayList<>());
+        model.addAttribute("roomtype", roomTypeRequest);
         return "roomtype-form";
     }
 
@@ -40,6 +53,7 @@ public class RoomTypeController {
             return "redirect:/roomtypes";
         }
         model.addAttribute("roomtype", roomTypeService.toDto(existing));
+        model.addAttribute("roomTypeImages", roomTypeImageService.listByRoomTypeIdAsDto(id));
         return "roomtype-form";
     }
 
@@ -53,5 +67,16 @@ public class RoomTypeController {
     public String deleteRoomType(@PathVariable Long id) {
         roomTypeService.delete(id);
         return "redirect:/roomtypes";
+    }
+
+    @GetMapping("/{id}/images")
+    public String viewRoomTypeImages(@PathVariable Long id, Model model) {
+        RoomType roomType = roomTypeService.getById(id);
+        if (roomType == null) {
+            return "redirect:/roomtypes";
+        }
+        model.addAttribute("roomType", roomType);
+        model.addAttribute("roomTypeImages", roomTypeImageService.listByRoomTypeId(id));
+        return "roomtypeimages";
     }
 }

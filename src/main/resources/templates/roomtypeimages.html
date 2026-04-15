@@ -1,144 +1,187 @@
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" 
       th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
     <head>
-        <title>Room Types</title>
+        <title>Room Type Images</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <th:block th:fragment="head">
-            <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+            <link rel="stylesheet" th:href="@{/css/room-card.css}"/>
             <link rel="stylesheet" th:href="@{/css/form.css}"/>
         </th:block>
     </head>
     
     <body>
-        <h1 th:fragment="title">Room Types</h1>
+        <h1 th:fragment="title">Room Type Images</h1>
         <div th:fragment="content">
             <section class="content-grid" style="grid-template-columns: 1fr;">
-                <!-- Data Table -->
                 <div class="glass-card table-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Room Types Management</h2>
-                            <p class="card-subtitle">Manage room types and their pricing</p>
+                            <h2 class="card-title" th:text="'Images for ' + ${roomType.name}">Room Type Images</h2>
+                            <p class="card-subtitle">Manage images for this room type</p>
                         </div>
                         <div class="card-actions">
-                            <a th:href="@{/roomtypes/create}" class="card-btn">+ Create New Room Type</a>
+                            <a th:href="@{/roomtypeimages/create/{id}(id=${roomType.roomTypeId}, returnUrl=@{/roomtypes/{rtid}/images(rtid=${roomType.roomTypeId})})}" class="card-btn">+ Add New Image</a>
                         </div>
                     </div>
-                    <div class="table-wrapper">
-                        <table class="data-table" id="roomTypesTable">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Price/Day</th>
-                                    <th>Description</th>
-                                    <th>Rooms</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="roomtype : ${roomtypes}">
-                                    <td>
-                                        <strong th:text="${roomtype.name}"></strong>
-                                    </td>
-                                    <td>
-                                        <span class="price-badge" th:text="${#numbers.formatDecimal(roomtype.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted" th:text="${roomtype.description != null ? roomtype.description : 'N/A'}"></span>
-                                    </td>
-                                    <td>
-                                        <span class="rooms-count" th:text="${roomtype.totalRooms != null ? roomtype.totalRooms : 0}"></span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <a th:href="@{/roomtypes/edit/{id}(id=${roomtype.roomTypeId})}" class="card-btn" style="padding: 6px 12px;">Edit</a>
-                                            <a th:href="@{/roomtypes/{id}/images(id=${roomtype.roomTypeId})}" class="card-btn" style="padding: 6px 12px; background-color: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">Images</a>
-                                            <form th:action="@{/roomtypes/delete/{id}(id=${roomtype.roomTypeId})}" method="post" style="display:inline;" class="delete-form">
-                                                <button type="button" class="card-btn btn-danger" style="padding: 6px 12px; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.5);" onclick="showConfirmDialog(this.form, 'Delete Room Type', 'Are you sure you want to delete ' + this.closest('tr').querySelector('strong').textContent + '?')">Delete</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(roomtypes)}">
-                                    <td colspan="5" style="text-align: center; padding: 40px;">
-                                        <p>No room types found. <a th:href="@{/roomtypes/create}">Create one now</a></p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    <div class="images-grid-view">
+                        <div class="image-card" th:each="img : ${roomTypeImages}">
+                            <img th:src="${img.imageUrl}" alt="Room type image" class="image-preview"/>
+                            <div class="image-info">
+                                <p class="image-desc" th:text="${img.description != null ? img.description : 'No description'}"></p>
+                            </div>
+                            <div class="image-actions">
+                                <a th:href="@{/roomtypeimages/edit/{id}(id=${img.roomTypeImageId}, returnUrl=@{/roomtypes/{rtid}/images(rtid=${roomType.roomTypeId})})}" class="btn-link btn-edit">Edit</a>
+                                <form th:action="@{/roomtypeimages/delete/{id}(id=${img.roomTypeImageId}, returnUrl=@{/roomtypes/{rtid}/images(rtid=${roomType.roomTypeId})})}" method="post" style="display:inline;" class="delete-form">
+                                    <button type="button" class="card-btn btn-danger" style="padding: 6px 12px; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.5);" onclick="showConfirmDialog(this.form, 'Delete Image', 'Are you sure you want to delete this image?')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(roomTypeImages)}">
+                        <p>No images for this room type yet.</p>
+                        <a th:href="@{/roomtypeimages/create/{id}(id=${roomType.roomTypeId}, returnUrl=@{/roomtypes/{rtid}/images(rtid=${roomType.roomTypeId})})}" class="card-btn">+ Add Your First Image</a>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/roomtypes/edit/{id}(id=${roomType.roomTypeId})}" class="btn-cancel">Back to Room Type Details</a>
                     </div>
                 </div>
             </section>
 
             <style>
-                .price-badge {
-                    display: inline-block;
-                    padding: 6px 12px;
-                    background-color: rgba(34, 197, 94, 0.1);
-                    color: #22c55e;
-                    border: 1px solid rgba(34, 197, 94, 0.3);
-                    border-radius: 20px;
-                    font-size: 13px;
-                    font-weight: 600;
+                .images-grid-view {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 20px;
                 }
 
-                .rooms-count {
-                    display: inline-block;
-                    padding: 6px 12px;
-                    background-color: rgba(59, 130, 246, 0.1);
-                    color: #3b82f6;
-                    border: 1px solid rgba(59, 130, 246, 0.3);
-                    border-radius: 20px;
-                    font-size: 13px;
-                    font-weight: 600;
+                .image-card {
+                    background: rgba(0, 0, 0, 0.2);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 12px;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
                 }
 
-                .text-muted {
+                .image-card:hover {
+                    transform: translateY(-4px);
+                    border-color: rgba(52, 211, 153, 0.5);
+                    box-shadow: 0 12px 24px rgba(52, 211, 153, 0.1);
+                }
+
+                .image-preview {
+                    width: 100%;
+                    height: 180px;
+                    object-fit: cover;
+                    display: block;
+                }
+
+                .image-info {
+                    padding: 12px;
+                    border-bottom: 1px solid var(--glass-border);
+                }
+
+                .image-desc {
+                    font-size: 13px;
                     color: var(--text-muted);
-                    font-size: 13px;
+                    margin: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
-                .action-buttons {
+                .image-actions {
+                    padding: 12px;
                     display: flex;
                     gap: 8px;
                 }
 
+                .btn-link {
+                    flex: 1;
+                    padding: 8px 12px;
+                    text-align: center;
+                    font-size: 12px;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+
+                .btn-edit {
+                    background: rgba(52, 211, 153, 0.1);
+                    color: #34d399;
+                    border: 1px solid rgba(52, 211, 153, 0.3);
+                }
+
+                .btn-edit:hover {
+                    background: rgba(52, 211, 153, 0.2);
+                    border-color: rgba(52, 211, 153, 0.6);
+                }
+
+                .btn-delete {
+                    background: rgba(239, 68, 68, 0.1);
+                    color: #ef4444;
+                    border: 1px solid rgba(239, 68, 68, 0.3);
+                }
+
+                .btn-delete:hover {
+                    background: rgba(239, 68, 68, 0.2);
+                    border-color: rgba(239, 68, 68, 0.7);
+                }
+
+                .btn-danger {
+                    background: rgba(239, 68, 68, 0.1);
+                    color: #ef4444;
+                    border: 1px solid rgba(239, 68, 68, 0.3);
+                }
+
                 .btn-danger:hover {
-                    background-color: rgba(239, 68, 68, 0.2) !important;
-                    border-color: rgba(239, 68, 68, 0.7) !important;
+                    background: rgba(239, 68, 68, 0.2);
+                    border-color: rgba(239, 68, 68, 0.7);
                 }
 
-                .data-table {
-                    width: 100%;
-                    border-collapse: collapse;
+                .empty-state {
+                    text-align: center;
+                    padding: 60px 20px;
+                    color: var(--text-muted);
                 }
 
-                .data-table thead th {
-                    padding: 16px;
-                    text-align: left;
-                    font-weight: 600;
-                    font-size: 13px;
-                    text-transform: uppercase;
+                .empty-state p {
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                }
+
+.form-actions {
+                    display: flex;
+                    gap: 12px;
+                    margin-top: 20px;
+                }
+
+                .btn-cancel {
+                    flex: 1;
+                    padding: 12px 24px;
+                    background: rgba(255, 255, 255, 0.05);
                     color: var(--text-secondary);
-                    border-bottom: 2px solid var(--glass-border);
-                }
-
-                .data-table tbody td {
-                    padding: 16px;
-                    border-bottom: 1px solid var(--glass-border);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    text-decoration: none;
+                    text-align: center;
                     font-size: 14px;
+                    font-weight: 600;
+                    transition: all 0.2s;
+                    cursor: pointer;
                 }
 
-                .data-table tbody tr:hover {
-                    background-color: rgba(255, 255, 255, 0.05);
-                }
-
-                .table-wrapper {
-                    overflow-x: auto;
+                .btn-cancel:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-color: var(--emerald-light);
                 }
 
                 /* Modal Styles */
@@ -235,7 +278,7 @@
                     justify-content: flex-end;
                 }
 
-                .btn-cancel, .btn-delete {
+                .btn-cancel-modal, .btn-delete-modal {
                     padding: 10px 20px;
                     border: none;
                     border-radius: 8px;
@@ -245,24 +288,24 @@
                     transition: all 0.3s ease;
                 }
 
-                .btn-cancel {
+                .btn-cancel-modal {
                     background: rgba(0, 0, 0, 0.2);
                     border: 1px solid rgba(255, 255, 255, 0.1);
                     color: #f5f5f4;
                 }
 
-                .btn-cancel:hover {
+                .btn-cancel-modal:hover {
                     background: rgba(0, 0, 0, 0.3);
                     border-color: rgba(255, 255, 255, 0.2);
                 }
 
-                .btn-delete {
+                .btn-delete-modal {
                     background: linear-gradient(135deg, rgba(220, 38, 38, 0.3) 0%, rgba(239, 68, 68, 0.2) 100%);
                     border: 1px solid rgba(220, 38, 38, 0.5);
                     color: #fca5a5;
                 }
 
-                .btn-delete:hover {
+                .btn-delete-modal:hover {
                     background: linear-gradient(135deg, rgba(220, 38, 38, 0.4) 0%, rgba(239, 68, 68, 0.3) 100%);
                     border-color: rgba(220, 38, 38, 0.7);
                     transform: translateY(-2px);
@@ -292,8 +335,8 @@
                         <p id="modalMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-                        <button class="btn-delete" onclick="confirmDelete()">Delete</button>
+                        <button class="btn-cancel-modal" onclick="closeModal()">Cancel</button>
+                        <button class="btn-delete-modal" onclick="confirmDelete()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -303,8 +346,8 @@
 
                 function showConfirmDialog(form, title, message) {
                     currentForm = form;
-                    document.getElementById('modalTitle').textContent = title;
-                    document.getElementById('modalMessage').textContent = message;
+                    document.getElementById('modalTitle').textContent = title || 'Confirm Delete';
+                    document.getElementById('modalMessage').textContent = message || 'Are you sure you want to delete this item? This action cannot be undone.';
                     document.getElementById('modalBackdrop').classList.add('active');
                     document.getElementById('modalDialog').classList.add('active');
                     document.body.style.overflow = 'hidden';

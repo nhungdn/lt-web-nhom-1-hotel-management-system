@@ -1,12 +1,15 @@
 package com.nhom1.hotelmanagement.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomTypeRequest {
     private Long roomTypeId;
     private String name;
     private BigDecimal price;
     private String description;
+    private List<RoomTypeImageRequest> images = new ArrayList<>();
 
     public Long getRoomTypeId() {
         return roomTypeId;
@@ -38,5 +41,13 @@ public class RoomTypeRequest {
     
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<RoomTypeImageRequest> getImages() {
+        return images;
+    }
+
+    public void setImages(List<RoomTypeImageRequest> images) {
+        this.images = images;
     }
 }

@@ -26,9 +26,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
-                    .requestMatchers("/users/**").hasRole("ADMIN") // Chi ADMIN moi duoc truy cap /users
-                        .anyRequest().authenticated()) // Bat buoc dang nhap voi moi request khac
+                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
+                        .requestMatchers("/roomtypes").permitAll() // Allow viewing list without auth
+                        .requestMatchers("/roomtypes/*/images").permitAll() // Allow viewing images without auth
+                        .requestMatchers("/roomtypeimages/api/**").permitAll() // Allow API access for images without auth
+                        .requestMatchers("/roomtypes/**").authenticated() // Require auth for create/edit/delete
+                        .requestMatchers("/roomtypeimages/**").authenticated() // Require auth for image operations
+                        .requestMatchers("/rooms/**").authenticated() // Require auth for room operations
+                        .requestMatchers("/services/**").authenticated() // Require auth for service operations
+                        .requestMatchers("/booking/**").authenticated() // Require auth for booking
+                        .requestMatchers("/users/**").hasRole("ADMIN") // Only ADMIN for staff management
+                        .anyRequest().authenticated())
                 .userDetailsService(userDetailsService)
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -43,9 +51,10 @@ public class SecurityConfig {
                                         user.getUsername(),
                                         user.getFullName(),
                                         user.getRole()));
+                                response.sendRedirect("/dashboard");
+                            } else {
+                                response.sendRedirect("/");
                             }
-
-                            response.sendRedirect("/");
                         })
                         .failureUrl("/login?error=true")
                         .permitAll())

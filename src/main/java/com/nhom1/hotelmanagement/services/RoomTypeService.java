@@ -2,9 +2,12 @@ package com.nhom1.hotelmanagement.services;
 
 import com.nhom1.hotelmanagement.dto.RoomTypeRequest;
 import com.nhom1.hotelmanagement.dto.RoomTypeResponse;
+import com.nhom1.hotelmanagement.dto.RoomTypeImageRequest;
 import com.nhom1.hotelmanagement.entities.RoomType;
+import com.nhom1.hotelmanagement.entities.RoomTypeImage;
 import com.nhom1.hotelmanagement.repositories.RoomRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
+import com.nhom1.hotelmanagement.repositories.RoomTypeImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ public class RoomTypeService {
 
     @Autowired
     private RoomTypeRepository roomTypeRepository;
+
+    @Autowired
+    private RoomTypeImageRepository roomTypeImageRepository;
 
     @Autowired
     private RoomRepository roomRepository;
@@ -34,7 +40,23 @@ public class RoomTypeService {
         roomType.setName(dto.getName());
         roomType.setPrice(dto.getPrice());
         roomType.setDescription(dto.getDescription());
-        return roomTypeRepository.save(roomType);
+        
+        RoomType savedRoomType = roomTypeRepository.save(roomType);
+        
+        // Save associated images if provided
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            for (RoomTypeImageRequest imageRequest : dto.getImages()) {
+                if (imageRequest.getImageUrl() != null && !imageRequest.getImageUrl().trim().isEmpty()) {
+                    RoomTypeImage roomTypeImage = new RoomTypeImage();
+                    roomTypeImage.setImageUrl(imageRequest.getImageUrl());
+                    roomTypeImage.setDescription(imageRequest.getDescription());
+                    roomTypeImage.setRoomType(savedRoomType);
+                    roomTypeImageRepository.save(roomTypeImage);
+                }
+            }
+        }
+        
+        return savedRoomType;
     }
 
     public RoomType update(Long roomTypeId, RoomTypeRequest dto) {
@@ -53,7 +75,22 @@ public class RoomTypeService {
         if (dto.getDescription() != null) {
             roomType.setDescription(dto.getDescription());
         }
-        return roomTypeRepository.save(roomType);
+        RoomType savedRoomType = roomTypeRepository.save(roomType);
+        
+        // Save new associated images if provided
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            for (RoomTypeImageRequest imageRequest : dto.getImages()) {
+                if (imageRequest.getImageUrl() != null && !imageRequest.getImageUrl().trim().isEmpty()) {
+                    RoomTypeImage roomTypeImage = new RoomTypeImage();
+                    roomTypeImage.setImageUrl(imageRequest.getImageUrl());
+                    roomTypeImage.setDescription(imageRequest.getDescription());
+                    roomTypeImage.setRoomType(savedRoomType);
+                    roomTypeImageRepository.save(roomTypeImage);
+                }
+            }
+        }
+        
+        return savedRoomType;
     }
 
     public void delete(Long roomTypeId) {

@@ -44,7 +44,7 @@
                                 <label for="roomTypeId" class="form-label">Room Type <span style="color: #ef4444;">*</span></label>
                                 <select id="roomTypeId" th:field="*{roomTypeId}" class="form-input glass">
                                     <option value="">-- Select Room Type --</option>
-                                    <option th:each="rt : ${roomTypes}" th:value="${rt.roomTypeId}" th:text="${#numbers.formatDecimal(rt.price, 0, 'COMMA', 0, 'POINT') + ' đ'+ '/day'}"></option>
+                                    <option th:each="rt : ${roomTypes}" th:value="${rt.roomTypeId}" th:text="${rt.name}"></option>
                                 </select>
                                 <span class="form-error" th:if="${#fields.hasErrors('roomTypeId')}" th:errors="*{roomTypeId}"></span>
                             </div>
@@ -559,6 +559,51 @@
 
                 // Image field management functions
                 let imageFieldCount = 1;
+
+                // Load room type images when user selects a room type
+                document.getElementById('roomTypeId').addEventListener('change', function() {
+                    const roomTypeId = this.value;
+                    if (!roomTypeId) return;
+
+                    fetch('/roomtypeimages/api/by-roomtype/' + roomTypeId)
+                        .then(response => response.json())
+                        .then(images => {
+                            if (images && images.length > 0) {
+                                // Clear existing "new room" images if exist
+                                const imagesContainer = document.getElementById('imagesContainer');
+                                if (imagesContainer) {
+                                    imagesContainer.innerHTML = '';
+                                    imageFieldCount = 0;
+
+                                    // Add room type images
+                                    images.forEach((img, index) => {
+                                        const fieldHtml = '<div class="image-input-group" id="imageGroup' + index + '" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">' +
+                                            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                                            '<label class="form-label" style="margin-bottom: 0;">Image ' + (index + 1) + ' (from room type)</label>' +
+                                            '<button type="button" class="btn-sm btn-danger" onclick="removeImageField(' + index + ')" style="padding: 4px 8px; font-size: 11px;">Remove</button>' +
+                                            '</div>' +
+                                            '<div class="form-group" style="margin-bottom: 8px;">' +
+                                            '<input type="url" class="form-input glass" name="images[' + index + '].imageUrl" value="' + escapeHtml(img.imageUrl) + '" placeholder="https://example.com/image.jpg"/>' +
+                                            '</div>' +
+                                            '<div class="form-group">' +
+                                            '<input type="text" class="form-input glass" name="images[' + index + '].description" value="' + escapeHtml(img.description || '') + '" placeholder="Image description (e.g., Bedroom view)"/>' +
+                                            '</div>' +
+                                            '</div>';
+                                        imagesContainer.insertAdjacentHTML('beforeend', fieldHtml);
+                                    });
+                                    imageFieldCount = images.length;
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error loading room type images:', error));
+                });
+
+                function escapeHtml(text) {
+                    if (!text) return '';
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
 
                 function addImageField() {
                     const container = document.getElementById('imagesContainer');
