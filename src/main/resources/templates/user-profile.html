@@ -1,0 +1,140 @@
+<!doctype html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}"
+>
+  <head>
+    <title>User Profile - Hotel Management</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <th:block th:fragment="head">
+      <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+      <link rel="stylesheet" th:href="@{/css/users-list.css}" />
+    </th:block>
+  </head>
+  <body>
+    <h1 th:fragment="title">My Profile</h1>
+
+    <div th:fragment="content">
+      <section class="content-grid users-content-grid">
+        <div class="glass-card user-edit-card">
+          <div class="alert success" th:if="${updated}">
+            Profile updated successfully.
+          </div>
+
+          <div class="alert success" th:if="${passwordUpdated}">
+            Password changed successfully.
+          </div>
+
+          <div
+            class="alert"
+            th:if="${error == 'password_mismatch'}"
+            style="
+              margin-bottom: 14px;
+              padding: 10px 12px;
+              border-radius: 10px;
+              background: rgba(239, 68, 68, 0.12);
+              border: 1px solid rgba(239, 68, 68, 0.35);
+              color: #fecaca;
+              font-size: 13px;
+            "
+          >
+            New password and confirm password do not match.
+          </div>
+
+          <div
+            class="alert"
+            th:if="${error == 'current_password_invalid'}"
+            style="
+              margin-bottom: 14px;
+              padding: 10px 12px;
+              border-radius: 10px;
+              background: rgba(239, 68, 68, 0.12);
+              border: 1px solid rgba(239, 68, 68, 0.35);
+              color: #fecaca;
+              font-size: 13px;
+            "
+          >
+            Current password is incorrect.
+          </div>
+
+          <form
+            class="user-edit-form"
+            th:action="@{/profile/update}"
+            method="post"
+          >
+            <input
+              type="hidden"
+              th:name="${_csrf.parameterName}"
+              th:value="${_csrf.token}"
+            />
+
+            <label for="profileUsername">Username</label>
+            <input
+              id="profileUsername"
+              type="text"
+              th:value="${currentUser.username}"
+              readonly
+            />
+
+            <label for="profileRole">Role</label>
+            <input
+              id="profileRole"
+              type="text"
+              th:value="${currentUser.role}"
+              readonly
+            />
+
+            <label for="profileFullName">Full name</label>
+            <input
+              id="profileFullName"
+              type="text"
+              name="fullName"
+              th:value="${currentUser.fullName}"
+              required
+            />
+
+            <label for="profilePhone">Phone number</label>
+            <input
+              id="profilePhone"
+              type="tel"
+              name="phoneNumber"
+              th:value="${currentUser.phoneNumber}"
+              required
+            />
+
+            <label for="currentPassword">Current password (required)</label>
+            <input
+              id="currentPassword"
+              type="password"
+              name="currentPassword"
+              placeholder="Enter current password"
+              required
+            />
+
+            <label for="newPassword">New password (optional)</label>
+            <input
+              id="newPassword"
+              type="password"
+              name="newPassword"
+              placeholder="Leave blank if not changing"
+            />
+
+            <label for="confirmPassword">Confirm new password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              placeholder="Re-enter new password"
+            />
+
+            <div class="user-form-actions">
+              <button type="submit" class="card-btn">Update profile</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

@@ -17,6 +17,7 @@ public class ServiceController {
 
     @GetMapping
     public String listServices(Model model) {
+        model.addAttribute("activePage", "services");
         model.addAttribute("services", serviceService.listAllDto());
         return "services";
     }

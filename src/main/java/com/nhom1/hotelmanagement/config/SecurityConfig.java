@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class SecurityConfig {
@@ -25,6 +26,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
                         .requestMatchers("/roomtypes").permitAll() // Allow viewing list without auth
@@ -34,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/roomtypeimages/**").authenticated() // Require auth for image operations
                         .requestMatchers("/rooms/**").authenticated() // Require auth for room operations
                         .requestMatchers("/services/**").authenticated() // Require auth for service operations
+                        .requestMatchers("/filter/**").permitAll()// 
                         .requestMatchers("/booking/**").authenticated() // Require auth for booking
                         .requestMatchers("/users/**").hasRole("ADMIN") // Only ADMIN for staff management
                         .anyRequest().authenticated())
@@ -63,7 +68,6 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"));
-
         return http.build();
     }
 
