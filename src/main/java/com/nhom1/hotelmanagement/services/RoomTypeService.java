@@ -8,10 +8,13 @@ import com.nhom1.hotelmanagement.entities.RoomTypeImage;
 import com.nhom1.hotelmanagement.repositories.RoomRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeImageRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -112,5 +115,26 @@ public class RoomTypeService {
         int totalRooms = roomRepository.findByRoomTypeRoomTypeId(roomType.getRoomTypeId()).size();
         dto.setTotalRooms(totalRooms);
         return dto;
+    }
+    
+    
+    public List<RoomTypeResponse> filterAvailableRooms(String start, String end) {
+        LocalDate startD = LocalDate.parse(start);
+        LocalDate endD = LocalDate.parse(end);
+        
+        LocalDateTime startTime = startD.atTime(12, 0);
+        LocalDateTime endTime = endD.atTime(8, 0);
+        // Lấy tất cả RoomTypes
+        List<RoomType> allTypes = roomTypeRepository.findAll();
+
+        return allTypes.stream().map(type -> {
+            RoomTypeResponse dto = toDto(type);
+
+            // Tính số phòng còn trống thực tế trong DB
+            int availRoom = roomRepository.countAvailableRooms(type.getRoomTypeId(), startTime, endTime);
+
+            dto.setAvailableRooms(Math.max(0, availRoom));
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

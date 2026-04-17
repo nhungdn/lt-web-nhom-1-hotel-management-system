@@ -1,16 +1,27 @@
 
 package com.nhom1.hotelmanagement.controllers;
 
+import com.nhom1.hotelmanagement.dto.BookingDTO;
 import com.nhom1.hotelmanagement.dto.LoginResponse;
+import com.nhom1.hotelmanagement.dto.RoomResponse;
+import com.nhom1.hotelmanagement.dto.RoomTypeResponse;
+import com.nhom1.hotelmanagement.entities.RoomType;
 import com.nhom1.hotelmanagement.services.RoomTypeService;
 import com.nhom1.hotelmanagement.services.RoomTypeImageService;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
@@ -43,6 +54,29 @@ public class HomeController {
         }
         
         return "index";
+    }
+    
+    @PostMapping("/filter")
+    @ResponseBody
+    public ResponseEntity<?> filterRoom(@RequestBody BookingDTO.FilterDate request){
+        try{
+            String start = request.getCheckIn();
+            String end = request.getCheckOut();
+            List<RoomTypeResponse> roomTypes = roomTypeService.filterAvailableRooms(start, end);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("roomTypes", roomTypes);
+
+            Map<Long, Object> roomTypeImages = new HashMap<>();
+            roomTypes.forEach(rt -> {
+                roomTypeImages.put(rt.getRoomTypeId(), roomTypeImageService.listByRoomTypeId(rt.getRoomTypeId()));
+            });
+            response.put("roomTypeImages", roomTypeImages);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body("Lỗi lọc phòng: " + e.getMessage());
+        }
     }
 }
 

@@ -22,4 +22,10 @@ public class BookingDTO {
         private String checkIn;
         private String checkOut;
     }
+    
+    @Data
+    public static class FilterDate{
+        private String checkIn;
+        private String checkOut;
+    }
 }

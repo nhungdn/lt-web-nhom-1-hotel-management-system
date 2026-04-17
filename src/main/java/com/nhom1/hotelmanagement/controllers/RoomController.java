@@ -34,6 +34,7 @@ public class RoomController {
 
     @GetMapping
     public String listRooms(Model model) {
+        model.addAttribute("activePage", "rooms");
         model.addAttribute("rooms", roomService.listAllDto());
         return "rooms";
     }

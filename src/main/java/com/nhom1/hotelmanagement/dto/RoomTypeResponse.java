@@ -13,4 +13,5 @@ public class RoomTypeResponse {
     private BigDecimal price;
     private String description;
     private Integer totalRooms;
+    private Integer availableRooms;
 }
