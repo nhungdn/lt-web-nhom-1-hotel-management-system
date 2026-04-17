@@ -366,6 +366,8 @@ iconify-icon {
   border-radius: 12px;
   cursor: pointer;
   transition: background var(--transition-fast);
+  text-decoration: none;
+  color: inherit;
 }
 
 .user-profile:hover {
