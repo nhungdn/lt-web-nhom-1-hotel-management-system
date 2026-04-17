@@ -14,6 +14,41 @@ INSERT IGNORE INTO `room_type` (`room_type_id`, `name`, `price`, `description`) 
 (9, 'Studio', 1100000, 'Phòng có bếp nhỏ'),
 (10, 'Penthouse', 5000000, 'Căn hộ tầng thượng');
 
+-- Insert ảnh cho room_type
+INSERT IGNORE INTO `room_type_image` (`room_type_image_id`,`image_url`, `room_type_id`) VALUES
+(1, 'https://images.mirai.com/INFOROOMS/100122961/mbAiyz0gki5HqZkk3yLt/mbAiyz0gki5HqZkk3yLt_original.jpg', 1),
+(2, 'https://images.mirai.com/INFOROOMS/100122961/wLMnezxgqL6pP0mJL4EW/wLMnezxgqL6pP0mJL4EW_original.jpg', 1),
+(3, 'https://images.mirai.com/INFOROOMS/100122961/Q7Krc5ZDgAbaLTMlDiHg/Q7Krc5ZDgAbaLTMlDiHg_original.jpg', 1),
+(4, 'https://images.mirai.com/INFOROOMS/100122961/iW3VHqH4L5V28zMXlG9H/iW3VHqH4L5V28zMXlG9H_original.jpg', 1),
+(5, 'https://media.hotel7dublin.com/image/upload/f_auto,g_auto,c_auto,w_3840,q_auto/v1708595213/Uploads/Hotel7/Cosy_Room_Hero_643fdf08b9.jpg', 2),
+(6, 'https://media.hotel7dublin.com/image/upload/f_auto,g_auto,c_auto,w_3840,q_auto/v1708603037/Uploads/Hotel7/Bathroom_Hero_06d91a095b.jpg', 2),
+(7, 'https://images.mirai.com/INFOROOMS/100122961/g75G0PAgK12A8xgM8uOI/g75G0PAgK12A8xgM8uOI_original.jpg', 3),
+(8, 'https://images.mirai.com/INFOROOMS/100122961/WXrfaoAXDzH9DwYrAMan/WXrfaoAXDzH9DwYrAMan_original.jpg', 3),
+(9, 'https://images.mirai.com/INFOROOMS/100122961/Uslqt6UR6CRa75McAMzy/Uslqt6UR6CRa75McAMzy_original.jpg', 3),
+(10, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_03.jpg', 4),
+(11, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_01.jpg', 4),
+(12, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_02.jpg', 4),
+(13, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Family-Suite_1901_02.jpg', 4),
+(14, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-4.jpg?v=6.06.24', 5),
+(15, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-3.jpg?v=6.06.24', 5),
+(16, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-2.jpg?v=6.06.24', 5),
+(17, 'https://image-tc.galaxy.tf/wijpeg-aqolumwjs8hakl6ryslaxcb3s/family-suite-3-2023_wide.jpg?width=1920&crop=0%2C104%2C2000%2C1125', 6),
+(18, 'https://image-tc.galaxy.tf/wijpeg-d8oizwk7a3tr022bfwiwufjk/family-suite-2-2023_wide.jpg?width=1200&crop=0%2C104%2C2000%2C1125', 6),
+(19, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Heritage-Suite-11-scaled.jpg', 7),
+(20, 'https://peachthailand.com/wp-content/uploads/2018/12/RC_Presidential-Platinum-Suite-07-1-scaled.jpg', 7),
+(21, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Platinum-Suite-11-scaled.jpg', 7),
+(22, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-6.jpg', 8),
+(23, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-3.jpg', 8),
+(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8);
+(25, 'https://image-tc.galaxy.tf/wijpeg-axuuyi2xpxnf838lqv4oq2c3o/studio-living-area-and-kitchenette_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(26, 'https://image-tc.galaxy.tf/wijpeg-brgfygirpy75xp9db172p9wmp/studio_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(27, 'https://image-tc.galaxy.tf/wijpeg-dlqcfqofqzqik4bti72vve376/studio-frontal_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9);
+(29, 'https://qtxasset.com/quartz/qcloud1/styles/full_body_width/s3/media/image/David%20Kempinski%20Penthouse%20Suite%20Living%20Room.jpg?VersionId=hgY9l2O0elroonD.braDZqASBaTRf.4T&itok=4e_HyIMb', 10),
+(30, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRIUlH9vKlK_ZU8eo_mE37orD-x2mzIjEG2h6FPAmuRKI6YIrln', 10),
+(31, 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/de/81/57/guest-suite.jpg?w=700&h=-1&s=1', 10),
+(32, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdIxuXU2IwspJAwnsgiWXIa7PaVa8MYWFmbcjXLuZf1O5mq_M1', 10);
+
 -- 2. Bảng `room`
 INSERT IGNORE INTO `room` (`room_id`, `room_type_id`, `room_number`, `status`) VALUES
 (1, 1, '101', 'AVAILABLE'),
@@ -26,6 +61,41 @@ INSERT IGNORE INTO `room` (`room_id`, `room_type_id`, `room_number`, `status`) V
 (8, 8, '601', 'OCCUPIED'),
 (9, 9, '701', 'AVAILABLE'),
 (10, 10, '103', 'CLEANING');
+
+-- Insert ảnh cho room
+INSERT IGNORE INTO `room_image` (`room_image_id`, `image_url`, `room_id`) VALUES
+(1, 'https://images.mirai.com/INFOROOMS/100122961/mbAiyz0gki5HqZkk3yLt/mbAiyz0gki5HqZkk3yLt_original.jpg', 1),
+(2, 'https://images.mirai.com/INFOROOMS/100122961/wLMnezxgqL6pP0mJL4EW/wLMnezxgqL6pP0mJL4EW_original.jpg', 1),
+(3, 'https://images.mirai.com/INFOROOMS/100122961/Q7Krc5ZDgAbaLTMlDiHg/Q7Krc5ZDgAbaLTMlDiHg_original.jpg', 1),
+(4, 'https://images.mirai.com/INFOROOMS/100122961/iW3VHqH4L5V28zMXlG9H/iW3VHqH4L5V28zMXlG9H_original.jpg', 1),
+(5, 'https://media.hotel7dublin.com/image/upload/f_auto,g_auto,c_auto,w_3840,q_auto/v1708595213/Uploads/Hotel7/Cosy_Room_Hero_643fdf08b9.jpg', 2),
+(6, 'https://media.hotel7dublin.com/image/upload/f_auto,g_auto,c_auto,w_3840,q_auto/v1708603037/Uploads/Hotel7/Bathroom_Hero_06d91a095b.jpg', 2),
+(7, 'https://images.mirai.com/INFOROOMS/100122961/g75G0PAgK12A8xgM8uOI/g75G0PAgK12A8xgM8uOI_original.jpg', 3),
+(8, 'https://images.mirai.com/INFOROOMS/100122961/WXrfaoAXDzH9DwYrAMan/WXrfaoAXDzH9DwYrAMan_original.jpg', 3),
+(9, 'https://images.mirai.com/INFOROOMS/100122961/Uslqt6UR6CRa75McAMzy/Uslqt6UR6CRa75McAMzy_original.jpg', 3),
+(10, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_03.jpg', 4),
+(11, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_01.jpg', 4),
+(12, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Luxury-Suite-room_2001_02.jpg', 4),
+(13, 'https://www.mercurenhatrangbeach.com/wp-content/uploads/sites/156/2025/07/Family-Suite_1901_02.jpg', 4),
+(14, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-4.jpg?v=6.06.24', 5),
+(15, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-3.jpg?v=6.06.24', 5),
+(16, 'http://www.alba-hotel.com/img/rooms/hotel-alba-roomtypes-deluxe-2.jpg?v=6.06.24', 5),
+(17, 'https://image-tc.galaxy.tf/wijpeg-aqolumwjs8hakl6ryslaxcb3s/family-suite-3-2023_wide.jpg?width=1920&crop=0%2C104%2C2000%2C1125', 6),
+(18, 'https://image-tc.galaxy.tf/wijpeg-d8oizwk7a3tr022bfwiwufjk/family-suite-2-2023_wide.jpg?width=1200&crop=0%2C104%2C2000%2C1125', 6),
+(19, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Heritage-Suite-11-scaled.jpg', 7),
+(20, 'https://peachthailand.com/wp-content/uploads/2018/12/RC_Presidential-Platinum-Suite-07-1-scaled.jpg', 7),
+(21, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Platinum-Suite-11-scaled.jpg', 7),
+(22, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-6.jpg', 8),
+(23, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-3.jpg', 8),
+(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8);
+(25, 'https://image-tc.galaxy.tf/wijpeg-axuuyi2xpxnf838lqv4oq2c3o/studio-living-area-and-kitchenette_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(26, 'https://image-tc.galaxy.tf/wijpeg-brgfygirpy75xp9db172p9wmp/studio_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(27, 'https://image-tc.galaxy.tf/wijpeg-dlqcfqofqzqik4bti72vve376/studio-frontal_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
+(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9);
+(29, 'https://qtxasset.com/quartz/qcloud1/styles/full_body_width/s3/media/image/David%20Kempinski%20Penthouse%20Suite%20Living%20Room.jpg?VersionId=hgY9l2O0elroonD.braDZqASBaTRf.4T&itok=4e_HyIMb', 10),
+(30, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRIUlH9vKlK_ZU8eo_mE37orD-x2mzIjEG2h6FPAmuRKI6YIrln', 10),
+(31, 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/de/81/57/guest-suite.jpg?w=700&h=-1&s=1', 10),
+(32, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRdIxuXU2IwspJAwnsgiWXIa7PaVa8MYWFmbcjXLuZf1O5mq_M1', 10);
 
 -- 3. Bảng `users`
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password`, `role`, `full_name`) VALUES
