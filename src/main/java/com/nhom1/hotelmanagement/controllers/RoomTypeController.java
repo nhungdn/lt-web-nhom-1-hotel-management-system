@@ -23,6 +23,7 @@ public class RoomTypeController {
 
     @GetMapping
     public String listRoomTypes(HttpSession session, Model model) {
+        model.addAttribute("activePage", "roomtypes");
         LoginResponse user = (LoginResponse) session.getAttribute("user");
         model.addAttribute("roomtypes", roomTypeService.listAllDto());
         if (user != null) {

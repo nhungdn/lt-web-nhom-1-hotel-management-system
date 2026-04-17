@@ -39,7 +39,8 @@
                 class="nav-item"
                 th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}"
               >
-                <a th:href="@{/dashboard}" class="nav-link">
+                <a th:href="@{/dashboard}" class="nav-link"
+                   th:classappend="${activePage == 'dashboard'} ? ' active' : ''">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="nav-icon"
@@ -57,15 +58,10 @@
                   <span class="nav-badge">ADMIN</span>
                 </a>
               </li>
-              <li
-                class="nav-item"
-                th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}"
-              >
-                <a
-                  th:href="@{/users}"
-                  class="nav-link"
-                  th:classappend="${activePage == 'users'} ? ' active' : ''"
-                >
+              <li class="nav-item"
+                th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}">
+                <a th:href="@{/users}" class="nav-link"
+                  th:classappend="${activePage == 'users'} ? ' active' : ''">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="nav-icon"
@@ -84,7 +80,8 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a th:href="@{/booking/status}" class="nav-link active">
+                <a th:href="@{/booking/status}" class="nav-link" 
+                   th:classappend="${activePage == 'bookstat'} ? ' active' : ''">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="nav-icon"
@@ -107,7 +104,8 @@
               </li>
 
               <li class="nav-item">
-                <a th:href="@{/rooms}" class="nav-link">
+                <a th:href="@{/rooms}" class="nav-link"
+                   th:classappend="${activePage == 'rooms'} ? ' active' : ''">
                   <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 7h18M3 12h18M3 17h18"/>
                   </svg>
@@ -116,7 +114,8 @@
               </li>
                         
               <li class="nav-item">
-                <a th:href="@{/roomtypes}" class="nav-link">
+                <a th:href="@{/roomtypes}" class="nav-link" 
+                   th:classappend="${activePage == 'roomtypes'} ? ' active' : ''">
                   <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 6h16M4 12h16M4 18h16"/>
                   </svg>
@@ -125,7 +124,8 @@
               </li>
                         
               <li class="nav-item">
-                <a th:href="@{/services}" class="nav-link">
+                <a th:href="@{/services}" class="nav-link"
+                   th:classappend="${activePage == 'services'} ? ' active' : ''">
                   <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M6 3h12v18H6z"/>
                     <path d="M9 8h6"/>
@@ -137,7 +137,8 @@
               </li>
 
               <li class="nav-item">
-                <a th:href="@{/custonmer}" class="nav-link">
+                <a th:href="@{/custonmer}" class="nav-link"
+                   th:classappend="${activePage == 'customers'} ? ' active' : ''">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="800px"

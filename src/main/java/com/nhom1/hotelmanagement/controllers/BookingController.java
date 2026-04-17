@@ -33,6 +33,7 @@ public class BookingController {
     
     @GetMapping("/status")
     public String showAllRoom(Model model){
+        model.addAttribute("activePage", "bookstat");
         List<RoomStatDTO> roomlist = roomService.getFullRoomList();
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -43,11 +44,6 @@ public class BookingController {
             model.addAttribute("roomList", "[]");
         }
         return "bookstat";
-    }
-    
-    @GetMapping("/status/{id}")
-    public void showBookHistory(){
-         
     }
     
     @PostMapping("/create")

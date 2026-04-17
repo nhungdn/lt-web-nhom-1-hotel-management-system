@@ -348,6 +348,7 @@ input[type="submit"] {
     justify-content: center;
     margin: 0 50px;
 }
+
 .filter-date-container > button:hover {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -469,7 +470,44 @@ input[type="submit"] {
     margin-bottom: 16px;
 }
 
-/* Details Modal Styles */
+/* -----------------------------------------------------------------------------
+
+# Booking Info Styles
+
+----------------------------------------------------------------------------- */
+
+.selected-room{
+    flex-direction: row;
+    transition: all 0.5s ease;
+}
+.selected-room .roomtypes-grid{
+    flex-basis: 70%;
+}
+.selected-room .select-info{
+    height: fit-content;
+    padding: 10px;
+    margin: 20px 20px 0;
+    flex-basis: 30%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    flex-basis: 30%;
+}
+
+/*khi đã chọn phòng*/
+.selected-room.active{
+    display: flex;
+}
+
+/* -----------------------------------------------------------------------------
+
+# Details Modal Styles
+
+----------------------------------------------------------------------------- */
+
 .details-modal-backdrop {
     display: none;
     position: fixed;
