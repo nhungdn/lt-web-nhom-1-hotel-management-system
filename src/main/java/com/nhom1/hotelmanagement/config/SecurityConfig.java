@@ -28,6 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers("/profile/update")
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
@@ -40,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/services/**").authenticated() // Require auth for service operations
                         .requestMatchers("/filter/**").permitAll()// 
                         .requestMatchers("/booking/**").authenticated() // Require auth for booking
+                        .requestMatchers("/profile/**").authenticated() // Allow any authenticated user to manage their profile
                         .requestMatchers("/users/**").hasRole("ADMIN") // Only ADMIN for staff management
                         .anyRequest().authenticated())
                 .userDetailsService(userDetailsService)

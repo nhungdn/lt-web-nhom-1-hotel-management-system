@@ -19,7 +19,7 @@
     <div th:fragment="content">
       <section
         class="content-grid users-content-grid"
-        th:classappend="${editingUser != null} ? ' is-editing' : ''"
+        th:classappend="${editingUser != null or addingUser} ? ' is-editing' : ''"
       >
         <!-- Data Table -->
         <div class="glass-card table-card users-table-card">
@@ -29,7 +29,7 @@
               <p class="summary-label">Total users in the system</p>
             </div>
             <div class="card-actions">
-              <a th:href="@{/signup}" class="card-btn"> Add new user </a>
+              <a th:href="@{/users(add=true)}" class="card-btn"> Add new user </a>
               <a th:href="@{/users}" class="card-btn">Refresh list</a>
             </div>
           </div>
@@ -177,6 +177,85 @@
 
             <div class="user-form-actions">
               <button type="submit" class="card-btn">Cap nhat</button>
+              <a th:href="@{/users}" class="card-btn">Cancel</a>
+            </div>
+          </form>
+        </div>
+
+        <div
+          id="add-panel"
+          class="glass-card user-edit-card"
+          th:if="${session.user?.role.toString() == 'ADMIN' and addingUser}"
+        >
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Add User</h3>
+              <p class="card-subtitle">Create a new account in the system</p>
+            </div>
+          </div>
+
+          <div class="alert success" th:if="${created}">
+            Created successfully.
+          </div>
+          <div class="alert error" th:if="${createError}" th:text="${createError}">
+            Error message
+          </div>
+
+          <form class="user-edit-form" th:action="@{/users/create}" method="post">
+            <input
+              type="hidden"
+              th:name="${_csrf.parameterName}"
+              th:value="${_csrf.token}"
+            />
+
+            <label for="addUsername">Username</label>
+            <input
+              id="addUsername"
+              type="text"
+              name="username"
+              th:value="${signupRequest.username}"
+              required
+            />
+
+            <label for="addPassword">Password</label>
+            <input id="addPassword" type="password" name="password" required />
+
+            <label for="addConfirmPassword">Confirm password</label>
+            <input
+              id="addConfirmPassword"
+              type="password"
+              name="confirmPassword"
+              required
+            />
+
+            <label for="addFullName">Full name</label>
+            <input
+              id="addFullName"
+              type="text"
+              name="fullname"
+              th:value="${signupRequest.fullname}"
+            />
+
+            <label for="addPhone">Phone number</label>
+            <input
+              id="addPhone"
+              type="tel"
+              name="phoneNumber"
+              th:value="${signupRequest.phoneNumber}"
+            />
+
+            <label for="addRole">Role</label>
+            <select id="addRole" name="role" required>
+              <option
+                th:each="itemRole : ${roles}"
+                th:value="${itemRole}"
+                th:text="${itemRole}"
+                th:selected="${signupRequest.role != null and signupRequest.role == itemRole.name()}"
+              ></option>
+            </select>
+
+            <div class="user-form-actions">
+              <button type="submit" class="card-btn">Create</button>
               <a th:href="@{/users}" class="card-btn">Cancel</a>
             </div>
           </form>
