@@ -8,31 +8,11 @@
 
 - Backend: Java Spring
 - Frontend:
-- Database: MySQL
+- Database: MySQL + Google Cloud
 - Build tool: Maven
 
 ## Getting started
 
-### Set up MySQL
+### Về Database
 
-- Step 1: Tạo Database
-
-  ```sql
-  CREATE DATABASE hotelms
-  ```
-
-- Step 2: Copy file `application.properties.example` trong foler `\src\main\resources` và đổi tên thành `application.properties`.
-- Step 3: Điền thông tin Database Connection trên máy của mình vào.
-- Step 4: Chạy lệnh `mvn spring-boot:run`
-  Khi chạy các bảng sẽ được tạo tự động.
-- Step 5: Tạo data mẫu, copy lệnh SQL trong file `\src\main\resources\data_mau.sql` để chạy trong mySQL.
-
-### Run
-
-```bash
-mvn spring-boot:run
-```
-
-### Cách tạo 1 tài khoản để đăng nhập tạm thời
-
-Truy cập `http://localhost:8080/signup` và đăng kí 1 tài khoản mới.
+- Đã có sẵn DB chung cho cả nhóm trên Google Cloud, chỉ cần chạy.
