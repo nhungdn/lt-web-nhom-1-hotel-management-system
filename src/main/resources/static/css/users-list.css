@@ -61,6 +61,30 @@
   gap: 10px;
 }
 
+.search-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 16px 0 20px;
+  flex-wrap: wrap;
+}
+
+.search-form input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font: inherit;
+  flex: 0 1 auto;
+  width: 300px;
+  min-width: 200px;
+}
+
+.search-form input::placeholder {
+  color: var(--text-muted);
+}
+
 .user-edit-form label {
   color: var(--text-muted);
   font-size: 12px;
@@ -208,6 +232,19 @@
   color: var(--coral);
 }
 
+.search-form .card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 15px;
+  line-height: 1;
+  font: inherit;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
 .row-actions {
   display: flex;
   align-items: stretch;
@@ -239,6 +276,10 @@
 @media (max-width: 768px) {
   .summary-number {
     font-size: 40px;
+  }
+
+  .search-form {
+    align-items: stretch;
   }
 
   .user-page-actions {

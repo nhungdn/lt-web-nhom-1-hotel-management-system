@@ -23,6 +23,14 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> searchUsersByUsername(String username) {
+        if (!StringUtils.hasText(username)) {
+            return getAllUsers();
+        }
+
+        return userRepository.findByUsernameContainingIgnoreCaseOrderByUsernameAsc(username.trim());
+    }
+
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }

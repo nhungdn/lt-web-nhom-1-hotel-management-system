@@ -5,7 +5,6 @@ import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.services.AuthService;
 import com.nhom1.hotelmanagement.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +25,16 @@ public class UserController {
     public String getAllUsers(
             Model model,
             @RequestParam(required = false) Long editId,
+            @RequestParam(required = false) String searchUsername,
             @RequestParam(required = false, defaultValue = "false") boolean updated,
             @RequestParam(required = false, defaultValue = "false") boolean passwordReset,
             @RequestParam(required = false, defaultValue = "false") boolean add,
             @RequestParam(required = false, defaultValue = "false") boolean created) {
 
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.searchUsersByUsername(searchUsername));
         model.addAttribute("roles", User.Role.values());
         model.addAttribute("activePage", "users");
+        model.addAttribute("searchUsername", searchUsername);
 
         // Trạng thái thông báo
         model.addAttribute("updated", updated);
@@ -57,41 +58,48 @@ public class UserController {
             @PathVariable Long id,
             @RequestParam String fullName,
             @RequestParam String phoneNumber,
-            @RequestParam User.Role role) {
+            @RequestParam User.Role role,
+            @RequestParam(required = false) String searchUsername) {
 
         userService.updateUser(id, fullName, phoneNumber, role);
 
-        return "redirect:/users?editId=" + id + "&updated=true";
+        return "redirect:/users?editId=" + id + "&updated=true" + (searchUsername != null && !searchUsername.isBlank() ? "&searchUsername=" + searchUsername : "");
     }
 
     // Reset mật khẩu về mặc định
     @PostMapping("/reset-password/{id}")
-    public String resetPassword(@PathVariable Long id) {
+    public String resetPassword(
+            @PathVariable Long id,
+            @RequestParam(required = false) String searchUsername) {
 
         userService.resetToDefaultPassword(id);
 
-        return "redirect:/users?editId=" + id + "&passwordReset=true";
+        return "redirect:/users?editId=" + id + "&passwordReset=true" + (searchUsername != null && !searchUsername.isBlank() ? "&searchUsername=" + searchUsername : "");
     }
 
     // Tạo tài khoản mới
     @PostMapping("/create")
-    public String createUser(SignUpRequest request, RedirectAttributes redirectAttributes) {
+    public String createUser(
+            SignUpRequest request,
+            @RequestParam(required = false) String searchUsername,
+            RedirectAttributes redirectAttributes) {
         try {
             authService.signup(request);
-            return "redirect:/users?add=true&created=true";
+            return "redirect:/users?add=true&created=true"
+                    + (searchUsername != null && !searchUsername.isBlank() ? "&searchUsername=" + searchUsername : "");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("signupRequest", request);
             redirectAttributes.addFlashAttribute("createError", ex.getMessage());
-            return "redirect:/users?add=true";
+            return "redirect:/users?add=true" + (searchUsername != null && !searchUsername.isBlank() ? "&searchUsername=" + searchUsername : "");
         }
     }
 
     // Xóa tài khoản
     @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id, @RequestParam(required = false) String searchUsername) {
 
         userService.deleteUser(id);
 
-        return "redirect:/users";
+        return "redirect:/users" + (searchUsername != null && !searchUsername.isBlank() ? "?searchUsername=" + searchUsername : "");
     }
 }

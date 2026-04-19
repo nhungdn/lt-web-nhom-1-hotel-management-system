@@ -25,10 +25,24 @@
               <p class="summary-label">nhân viên</p>
             </div>
             <div class="card-actions">
-              <a th:href="@{/users(add=true)}" class="card-btn">Thêm mới</a>
-              <a th:href="@{/users}" class="card-btn">Tải lại</a>
+              <a
+                th:href="@{/users(add=true, searchUsername=${searchUsername})}"
+                class="card-btn"
+                >Thêm mới</a
+              >
             </div>
           </div>
+
+          <form class="search-form" th:action="@{/users}" method="get">
+            <input
+              type="text"
+              name="searchUsername"
+              placeholder="Tìm theo tên đăng nhập"
+              th:value="${searchUsername}"
+            />
+            <button type="submit" class="card-btn">Tìm kiếm</button>
+            <a th:href="@{/users}" class="card-btn">Xóa lọc</a>
+          </form>
 
           <div class="table-wrapper">
             <table class="data-table">
@@ -73,7 +87,7 @@
                   <td th:if="${session.user?.role.name() == 'ADMIN'}">
                     <div class="row-actions">
                       <a
-                        th:href="@{/users(editId=${user.userId})}"
+                        th:href="@{/users(editId=${user.userId}, searchUsername=${searchUsername})}"
                         class="card-btn"
                         >Sửa</a
                       >
@@ -85,6 +99,11 @@
                           return confirm('Bạn có chắc muốn xóa tài khoản này?');
                         "
                       >
+                        <input
+                          type="hidden"
+                          name="searchUsername"
+                          th:value="${searchUsername}"
+                        />
                         <button type="submit" class="card-btn-delete">
                           Xóa
                         </button>
@@ -116,6 +135,11 @@
             th:action="@{/users/update/{id}(id=${editingUser.userId})}"
             method="post"
           >
+            <input
+              type="hidden"
+              name="searchUsername"
+              th:value="${searchUsername}"
+            />
             <label>Tên đăng nhập</label>
             <input
               type="text"
@@ -163,7 +187,11 @@
                 Reset mật khẩu
               </button>
 
-              <a th:href="@{/users}" class="card-btn">Đóng</a>
+              <a
+                th:href="@{/users(searchUsername=${searchUsername})}"
+                class="card-btn"
+                >Đóng</a
+              >
             </div>
           </form>
         </div>
@@ -187,6 +215,11 @@
             th:action="@{/users/create}"
             method="post"
           >
+            <input
+              type="hidden"
+              name="searchUsername"
+              th:value="${searchUsername}"
+            />
             <label>Tên đăng nhập</label>
             <input
               type="text"
@@ -223,7 +256,11 @@
 
             <div class="user-form-actions">
               <button type="submit" class="card-btn">Tạo</button>
-              <a th:href="@{/users}" class="card-btn">Hủy</a>
+              <a
+                th:href="@{/users(searchUsername=${searchUsername})}"
+                class="card-btn"
+                >Hủy</a
+              >
             </div>
           </form>
         </div>
