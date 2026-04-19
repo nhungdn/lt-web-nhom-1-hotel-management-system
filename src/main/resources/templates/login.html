@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dang nhap - Hotel Management</title>
+    <title>Đăng nhập - Hotel Management</title>
     <link rel="stylesheet" th:href="@{/css/login.css}" />
   </head>
   <body>
@@ -11,27 +11,18 @@
       <section class="login-card">
         <div class="brand-block">
           <p class="eyebrow">Hotel Management System</p>
-          <h1>Dang nhap he thong</h1>
+          <h1>Đăng nhập hệ thống</h1>
           <p class="subtitle">
-            Su dung tai khoan duoc cap de truy cap quan ly khach san.
+            Sử dụng tài khoản được cấp để truy cập quản lý khách sạn.
           </p>
         </div>
 
-        <div class="alert success" th:if="${logoutSuccess}">
-          Dang xuat thanh cong.
-        </div>
         <div class="alert error" th:if="${loginError}">
-          Sai ten dang nhap hoac mat khau.
+          Sai tên đăng nhập hoặc mật khẩu.
         </div>
 
         <form class="login-form" th:action="@{/login}" method="post">
-          <input
-            type="hidden"
-            th:name="${_csrf.parameterName}"
-            th:value="${_csrf.token}"
-          />
-
-          <label for="username">Ten dang nhap</label>
+          <label for="username">Tên đăng nhập</label>
           <input
             id="username"
             name="username"
@@ -41,7 +32,7 @@
             autofocus
           />
 
-          <label for="password">Mat khau</label>
+          <label for="password">Mật khẩu</label>
           <input
             id="password"
             name="password"
@@ -50,7 +41,7 @@
             required
           />
 
-          <button type="submit">Dang nhap</button>
+          <button type="submit">Đăng nhập</button>
         </form>
       </section>
     </main>

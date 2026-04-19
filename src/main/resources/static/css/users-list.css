@@ -1,31 +1,3 @@
-/* ============================================
-   USERS PAGE
-============================================ */
-/* .user-page-grid {
-  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr);
-  align-items: start;
-}
-
-.user-summary-card {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.summary-badge {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--emerald-light);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-} */
-
 .summary-number {
   font-size: 48px;
   font-weight: 700;
@@ -117,10 +89,6 @@
   margin-top: 10px;
 }
 
-.user-form-actions .card-btn {
-  text-decoration: none;
-}
-
 .alert.success {
   margin-bottom: 14px;
   padding: 10px 12px;
@@ -210,6 +178,11 @@
   justify-content: flex-end;
 }
 
+.user-edit-form select option {
+  background: #f8fafc;
+  color: #111827;
+}
+
 .card-btn-delete {
   padding: 8px 16px;
   background: var(--glass-bg);
@@ -220,13 +193,36 @@
   font-size: 13px;
   cursor: pointer;
   transition: all var(--transition-fast);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  line-height: 1.2;
+  height: auto;
 }
 
-.card-btn-delete:hover,
-.card-btn-delete.active {
+.card-btn-delete:hover {
   background: var(--glass-hover);
   border-color: var(--danger);
   color: var(--coral);
+}
+
+.row-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.row-actions form {
+  margin: 0;
+  display: flex;
+}
+
+.row-actions a.card-btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 @media (max-width: 1100px) {
@@ -247,9 +243,5 @@
 
   .user-page-actions {
     flex-direction: column;
-  }
-
-  .user-page-actions .card-btn {
-    width: 100%;
   }
 }

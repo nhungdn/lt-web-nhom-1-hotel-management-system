@@ -6,71 +6,78 @@ import com.nhom1.hotelmanagement.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
-    public SecurityConfig(UserRepository userRepository, UserDetailsService userDetailsService) {
-        this.userRepository = userRepository;
+    public SecurityConfig(UserDetailsService userDetailsService, UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
+        this.userRepository = userRepository;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers("/profile/update")
-                )
+                // .csrf(csrf -> csrf
+                // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .csrf(csrf -> {
+                })
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**", "/signup").permitAll()
-                        .requestMatchers("/roomtypes").permitAll() // Allow viewing list without auth
-                        .requestMatchers("/roomtypes/*/images").permitAll() // Allow viewing images without auth
-                        .requestMatchers("/roomtypeimages/api/**").permitAll() // Allow API access for images without auth
-                        .requestMatchers("/roomtypes/**").authenticated() // Require auth for create/edit/delete
-                        .requestMatchers("/roomtypeimages/**").authenticated() // Require auth for image operations
-                        .requestMatchers("/rooms/**").authenticated() // Require auth for room operations
-                        .requestMatchers("/services/**").authenticated() // Require auth for service operations
-                        .requestMatchers("/filter/**").permitAll()// 
-                        .requestMatchers("/booking/**").authenticated() // Require auth for booking
-                        .requestMatchers("/profile/**").authenticated() // Allow any authenticated user to manage their profile
-                        .requestMatchers("/users/**").hasRole("ADMIN") // Only ADMIN for staff management
+                        // Static resources & Public pages
+                        .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/roomtypes", "/roomtypes/*/images", "/roomtypeimages/api/**", "/filter/**")
+                        .permitAll()
+
+                        // Role-based access
+                        .requestMatchers("/users/**").hasRole("ADMIN")
+
+                        // Authenticated users
+                        .requestMatchers("/roomtypes/**", "/rooms/**", "/booking/**", "/profile/**").authenticated()
+
                         .anyRequest().authenticated())
-                .userDetailsService(userDetailsService)
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login") // POST /login de thuc hien dang nhap
-                        .successHandler((request, response, authentication) -> {
-                            String username = authentication.getName();
-                            User user = userRepository.findByUsername(username);
-
-                            if (user != null) {
-                                request.getSession().setAttribute("user", new LoginResponse(
-                                        user.getUserId(),
-                                        user.getUsername(),
-                                        user.getFullName(),
-                                        user.getRole()));
-                                response.sendRedirect("/dashboard");
-                            } else {
-                                response.sendRedirect("/");
-                            }
-                        })
+                        .loginProcessingUrl("/login")
+                        .successHandler(successHandler())
                         .failureUrl("/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"));
+                        .deleteCookies("JSESSIONID"))
+                .userDetailsService(userDetailsService);
+
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return (request, response, authentication) -> {
+            System.out.println("Dang nhap thanh cong cho user: " + authentication.getName());
+            String username = authentication.getName();
+            User user = userRepository.findByUsername(username);
+            if (user != null) {
+                request.getSession().setAttribute("user", new LoginResponse(
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getFullName(),
+                        user.getRole()));
+                response.sendRedirect("/dashboard");
+            } else {
+                response.sendRedirect("/login?error=user_not_found");
+            }
+        };
     }
 
     @Bean

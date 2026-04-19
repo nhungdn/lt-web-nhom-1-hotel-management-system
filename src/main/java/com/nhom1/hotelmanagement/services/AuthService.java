@@ -38,17 +38,12 @@ public class AuthService {
     }
 
     public void signup(SignUpRequest request) {
-        if (request == null || request.getUsername() == null || request.getPassword() == null) {
+        if (request == null || request.getUsername() == null) {
             throw new IllegalArgumentException("Thong tin dang ky khong hop le");
         }
 
-        if (request.getUsername().isBlank() || request.getPassword().isBlank() || request.getConfirmPassword() == null
-                || request.getConfirmPassword().isBlank()) {
+        if (request.getUsername().isBlank()) {
             throw new IllegalArgumentException("Vui long nhap day du thong tin bat buoc");
-        }
-
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Mat khau xac nhan khong khop");
         }
 
         if (userRepository.findByUsername(request.getUsername()) != null) {
@@ -57,7 +52,6 @@ public class AuthService {
 
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullname());
         user.setPhoneNumber(request.getPhoneNumber());
 
