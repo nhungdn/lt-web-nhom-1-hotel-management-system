@@ -29,4 +29,13 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             Long typeId, @Param(value = "start")
     LocalDateTime start, @Param(value = "end")
     LocalDateTime end);
+
+    @Query("SELECT r FROM Room r WHERE r.roomType.roomTypeId = :typeId " +
+       "AND r.roomId NOT IN (" +
+       "  SELECT bd.room.roomId FROM BookingDetail bd JOIN bd.booking b " +
+       "  WHERE bd.status != 'CANCELLED' AND r.status = 'AVAILABLE' " +
+       "  AND bd.checkInDate < :end AND bd.checkOutDate > :start" +
+       " ORDER BY r.roomNumber ASC "+
+       ")")
+    public List<Room> findAvailableRoomByType(Long roomTypeId, LocalDateTime start, LocalDateTime end);
 }

@@ -12,7 +12,11 @@
 }(jQuery));
 
 // Modal functions
-function viewRoomTypeDetails(roomTypeId, roomTypeName, description) {
+function viewRoomTypeDetails(btn) {
+    const roomTypeId = btn.getAttribute('data-id');
+    const roomTypeName = btn.getAttribute('data-name');
+    const description = btn.getAttribute('data-description');
+
     const modal = document.getElementById('detailsModal');
     const backdrop = document.getElementById('detailsBackdrop'); // Lấy thêm Backdrop
     const title = document.getElementById('detailsTitle');
@@ -106,71 +110,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-//Phần lọc phòng theo ngày để booking
-const filterContainer = document.querySelector(".filter-date-container");
-const filterBtn = document.querySelector("#filterdateBtn");
-const customerFormBtn = document.querySelector("#custInfo");
+const openCustomerFormBtn = document.querySelector('#custInfo');
+const customerForm = document.querySelector('.filter-date-container .dropdown-form');
+openCustomerFormBtn.addEventListener("click", () => {
+    customerForm.classList.toggle('hidden');
+})
 
-// Cập nhật hàm lấy ngày chuẩn xác
-function getDate() {
-    const startDate = document.querySelector('#start').value;
-    const endDate = document.querySelector('#end').value;
-    return { startDate, endDate };
-}
-
-async function filter() {
-    const { startDate, endDate } = getDate();
-    if (!startDate || !endDate) {
-        alert("Vui lòng chọn đầy đủ ngày!");
-        return;
-    }
-
-    try {
-        const response = await fetch('/filter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ checkIn: startDate, checkOut: endDate })
-        });
-        const data = await response.json();
-        
-        if (response.ok) {
-            updateRoomGrid(data.roomTypes, data.roomTypeImages);
-        } else {
-            console.error(data);
-        }
-    } catch (err) {
-        console.error("Lỗi kết nối:", err);
-    }
-}
-
-// Hàm vẽ lại danh sách phòng khi có dữ liệu mới
-function updateRoomGrid(roomTypes, roomTypeImages) {
-    const grid = document.querySelector('.roomtypes-grid');
-    grid.innerHTML = ''; // Xóa sạch danh sách cũ
-
-    roomTypes.forEach(rt => {
-        const images = roomTypeImages[rt.roomTypeId] || [];
-        const imgSrc = images.length > 0 ? images[0].imageUrl : 'data:image/svg+xml...';
-        
-        const html = `
-            <div class="roomtype-card">
-                <img src="${imgSrc}" class="roomtype-image" alt="Room">
-                <div class="roomtype-body">
-                    <h3 class="roomtype-name">${rt.name}</h3>
-                    <p class="roomtype-description">${rt.description}</p>
-                    <div class="roomtype-price">${rt.price.toLocaleString()} VNĐ/night</div>
-                    <div class="available-info">Còn trống: ${rt.availableRooms} phòng</div>
-                    <div class="roomtype-actions">
-                         <button class="btn-book" ${rt.availableRooms === 0 ? 'disabled' : ''} onclick="handleBooking(${rt.roomTypeId})">📅 Book Now</button>
-                    </div>
-                </div>
-            </div>`;
-        grid.insertAdjacentHTML('beforeend', html);
-    });
-}
-
-filterBtn.addEventListener('click', filter);
-
-function handleBooking(roomTypeId) {
-
-}
+const closeCustomerFormBtn = customerForm.querySelector('.close-btn');
+closeCustomerFormBtn.addEventListener("click", () => {
+    customerForm.classList.add('hidden');
+})

@@ -11,6 +11,7 @@ import com.nhom1.hotelmanagement.entities.BookingHotelService;
 import com.nhom1.hotelmanagement.entities.Customer;
 import com.nhom1.hotelmanagement.entities.HotelService;
 import com.nhom1.hotelmanagement.entities.Room;
+import com.nhom1.hotelmanagement.entities.RoomType;
 import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import com.nhom1.hotelmanagement.repositories.BookingRepository;
@@ -26,128 +27,140 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.nhom1.hotelmanagement.repositories.BookingHotelServiceRepository;
 import com.nhom1.hotelmanagement.repositories.HotelServiceRepository;
+import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
+import java.time.LocalDate;
 
 @Service
 public class BookingService {
     @Autowired private BookingRepository bookingRepo;
     @Autowired private BookingDetailRepository detailRepo;
     @Autowired private RoomRepository roomRepo;
+    @Autowired private RoomTypeRepository roomTypeRepo;
     @Autowired private CustomerRepository customerRepo;
     @Autowired private UserRepository userRepo;
     
+    public int checkCustomer(String phone, String idCard, String email) {
+        if (customerRepo.existsByPhone(phone)) return 1;
+        if (customerRepo.existsByEmail(email)) return 2;
+        if (customerRepo.existsByIdCard(idCard)) return 3;
+        return 0;
+    }
+    
     @Transactional
-    public CustomerDTO.InfoForBooking checkCustomer(String phone){
-        Customer c = customerRepo.findByPhone(phone);
-    
-        if (c != null) {
-            return new CustomerDTO.InfoForBooking(
-                    c.getName(), 
-                    c.getPhone(), 
-                    c.getIdCard()
-            );
-        }
-        return null;
-    }
-    
-    public boolean checkRoomOpen(String roomNum, String checkin, String checkout) {
-        long count = detailRepo.countOverlappingBookings(roomNum, checkin, checkout);
-        return count == 0; 
-    }
-    
-    public List<String> checkRooms(BookingDTO.MultiSubmitRequest request) {
-        List<String> errorRooms = new ArrayList<>();
-        for (BookingDTO.BookingItem item : request.getBookingItems()) {
-            boolean isOpen = checkRoomOpen(item.getRoomNum(), item.getCheckIn(), item.getCheckOut());
-            if (!isOpen) {
-                errorRooms.add(item.getRoomNum());
-            }
-        }
-        return errorRooms;
-    }
-    
-    public boolean createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session){
+    public List<String> createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session){
         
         LoginResponse ussertemp = (LoginResponse) session.getAttribute("user");
         User user = userRepo.findByUserId(ussertemp.getUserId());
+        
         // Handling customer
         Customer customer = customerRepo.findByPhone(request.getCustomerPhone());
+        if (customer == null) customer = new Customer();
         
-        if(customer == null){
-            customer = new Customer();
-            customer.setName(request.getCustomerName());
-            customer.setPhone(request.getCustomerPhone());
-            customer.setIdCard(request.getCustomerIdCard());
-            customer = customerRepo.save(customer);
-        } else {
-            customer.setName(request.getCustomerName());
-            customer.setPhone(request.getCustomerPhone());
-            customer.setIdCard(request.getCustomerIdCard());
-            customerRepo.save(customer);
+        customer.setName(request.getCustomerName());
+        customer.setPhone(request.getCustomerPhone());
+        customer.setIdCard(request.getCustomerIdCard());
+        customer.setEmail(request.getCustomerEmail());
+        customer = customerRepo.save(customer);
+        
+        List<String> error = new ArrayList<>();
+        
+        // 2. Kiểm tra tính khả dụng của TOÀN BỘ phòng trước khi tạo Booking
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
+            
+            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+            if (availRoom.size() < item.getQuantity()) {
+                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
+                error.add("Loại phòng " + (rt != null ? rt.getName() : "không xác định") + " không đủ phòng trống.");
+            }
         }
-        
-        // Check room status
-        ArrayList<String> response = new ArrayList<>();
-        for(BookingDTO.BookingItem item: request.getBookingItems()){
-            boolean isOpen = checkRoomOpen(item.getRoomNum(), item.getCheckIn(), item.getCheckOut());
-            if(!isOpen)
-                response.add("Phòng " + item.getRoomNum() + " đã có người đặt!");   
-        }
-        if(!response.isEmpty())
-            return false;
-        
-        //Create booking
+
+        // Nếu có bất kỳ lỗi thiếu phòng nào, trả về luôn và không lưu vào DB (nhờ @Transactional)
+        if (!error.isEmpty()) return error;
+
+        // 3. Tiến hành lưu Booking và Details
         Booking book = new Booking();
         book.setCustomer(customer);
         book.setUser(user);
         bookingRepo.save(book);
-        for(BookingDTO.BookingItem item: request.getBookingItems()){
-           BookingDetail detail = new BookingDetail();
-           Room room = roomRepo.findByRoomNumber(item.getRoomNum());
-           detail.setRoom(room);
-           detail.setBooking(book);
-           detail.setCheckInDate(LocalDateTime.parse(item.getCheckIn()));
-           detail.setCheckOutDate(LocalDateTime.parse(item.getCheckOut()));
-           detail.setStatus("BOOKED");
-           detailRepo.save(detail);
+
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
+            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+
+            for (int i = 0; i < item.getQuantity(); i++) {
+                Room room = availRoom.get(i);
+                
+                BookingDetail detail = new BookingDetail();
+                detail.setRoom(room);
+                detail.setBooking(book);
+                detail.setCheckInDate(startTime);
+                detail.setCheckOutDate(endTime);
+                detail.setStatus("BOOKED");
+                detail = detailRepo.save(detail);
+
+                final BookingDetail savedDetail = detailRepo.save(detail);
+                // 4. Lưu Dịch vụ đi kèm
+                if (item.getServiceItems() != null) {
+                    for (BookingDTO.ServiceItem sDto : item.getServiceItems()) {
+                        hotelServiceRepo.findById(sDto.getServiceId()).ifPresent(hs -> {
+                            BookingHotelService bhs = new BookingHotelService();
+                            bhs.setBookingDetail(savedDetail);
+                            bhs.setService(hs);
+                            bhs.setQuantity(sDto.getQuantity());
+                            bookingHotelServiceRepo.save(bhs);
+                        });
+                    }
+                }
+            }
         }
-        //
-        return true;
+        return error; // Lúc này error sẽ rỗng
     }
+    
     
     @Autowired private BookingHotelServiceRepository bookingHotelServiceRepo;
     @Autowired private HotelServiceRepository hotelServiceRepo;
-    public List<String> editBooking(BookingDetailDTO request){
+    public List<String> editBooking(BookingDetailDTO request) {
         List<String> error = new ArrayList<>();
-        for(BookingDetailDTO.DetailDTO detail: request.getDetails() ){
-            if(LocalDateTime.parse(detail.getCheckOut()).isBefore(LocalDateTime.now())){
-                error.add("Room " + detail.getRoomNumber() + ": check-out date has to be before today!");
-                continue;
-            }
-            if(detail.getCheckIn().compareTo(detail.getCheckOut()) < 0){
-                error.add("Room " + detail.getRoomNumber() + ": check-out date has to be after check-in date!");
-                continue;
-            }
-            if(!checkRoomOpen(detail.getRoomNumber(), detail.getCheckIn(), detail.getCheckOut())){
-                error.add("Room " + detail.getRoomNumber() + ": this room is not available.");
-                continue;
-            }
-            BookingDetail bd = detailRepo.findById(detail.getBookingDetailId()).orElse(null);
-            
-            bd.setRoom(roomRepo.findById(detail.getRoomId()).orElse(null));
+        for (BookingDetailDTO.DetailDTO detail : request.getDetails()) {
+            LocalDateTime start = LocalDateTime.parse(detail.getCheckIn());
+            LocalDateTime end = LocalDateTime.parse(detail.getCheckOut());
 
-            bd.setCheckInDate(LocalDateTime.parse(detail.getCheckIn()));
-            bd.setCheckOutDate(LocalDateTime.parse(detail.getCheckOut()));
-            
+            // Validate ngày tháng
+            if (end.isBefore(start)) {
+                error.add("Phòng " + detail.getRoomNumber() + ": Ngày trả phải sau ngày nhận!");
+                continue;
+            }
+
+            // Kiểm tra phòng trống (Loại trừ ID của chính BookingDetail này)
+            boolean isAvailable = detailRepo.checkAvailabilityExcludeCurrent(
+                    detail.getRoomId(), start, end, detail.getBookingDetailId());
+
+            if (!isAvailable) {
+                error.add("Phòng " + detail.getRoomNumber() + ": Không còn phòng trống trong thời gian này.");
+                continue;
+            }
+
+            // Update thông tin
+            BookingDetail bd = detailRepo.findById(detail.getBookingDetailId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy detail"));
+
+            bd.setRoom(roomRepo.findById(detail.getRoomId()).orElse(null));
+            bd.setCheckInDate(start);
+            bd.setCheckOutDate(end);
             bd.setStatus(detail.getStatus());
+
             detailRepo.save(bd);
-            
+
+            // Update Service đi kèm (Xóa cũ thêm mới)
             bookingHotelServiceRepo.deleteByBookingDetail(bd);
-            for(BookingDetailDTO.ServiceDTO service: detail.getServices()){
+            for (BookingDetailDTO.ServiceDTO service : detail.getServices()) {
                 BookingHotelService bhs = new BookingHotelService();
-                HotelService hs = hotelServiceRepo.findById(service.getHotelServiceId()).orElse(null);
+                bhs.setBookingDetail(bd);
+                bhs.setService(hotelServiceRepo.findById(service.getHotelServiceId()).get());
                 bhs.setQuantity(service.getQuantity());
-                bhs.setService(hs);
-                
                 bookingHotelServiceRepo.save(bhs);
             }
         }
@@ -158,17 +171,19 @@ public class BookingService {
     public void cancelBooking(Long id, boolean isDetail){
         if (isDetail) {
             BookingDetail bd = detailRepo.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng để hủy"));
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
             bd.setStatus("CANCELLED");
+            detailRepo.save(bd);
         } else {
             // Tìm và update toàn bộ phòng thuộc 1 đơn đặt (Booking)
             Booking b = bookingRepo.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn đặt để hủy"));
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn đặt!"));
 
             List<BookingDetail> details = detailRepo.findAllByBooking(b);
             for (BookingDetail item : details) {
                 item.setStatus("CANCELLED");
             }
+            detailRepo.saveAll(details);
         }
     }
     

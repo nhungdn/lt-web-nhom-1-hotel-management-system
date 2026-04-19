@@ -5,8 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhom1.hotelmanagement.dto.BookingDTO;
 import com.nhom1.hotelmanagement.dto.BookingDetailDTO;
+import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.dto.RoomStatDTO;
-import com.nhom1.hotelmanagement.entities.Room;
+import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.services.BookingService;
 import com.nhom1.hotelmanagement.services.RoomService;
 import jakarta.servlet.http.HttpSession;
@@ -45,16 +46,6 @@ public class BookingController {
         }
         return "bookstat";
     }
-    
-    @PostMapping("/create")
-    @ResponseBody
-    public ResponseEntity<?> createBook(@RequestBody BookingDTO.MultiSubmitRequest request, HttpSession session){
-        List<String> errorRooms = bookingService.checkRooms(request);
-        if(!errorRooms.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(errorRooms);
-        
-       bookingService.createBooking(request, session);
-        return ResponseEntity.ok("Đặt phòng thành công!");
-    }
             
     @PostMapping("/edit")
     @ResponseBody
@@ -65,13 +56,11 @@ public class BookingController {
     }
     
     @PostMapping("/cancel")
-    public String cancelBook(){
-        return "roomstat";
+    public String cancelBook(BookingDTO.CancelBook request, HttpSession session){
+        bookingService.cancelBooking(request.getId(), request.isDetail());
+        LoginResponse user = (LoginResponse) session.getAttribute("user");
+        if(user.getRole() == User.Role.ADMIN) return "roomstat";
+        return "redirect:/";
     }
-    
-    @PostMapping("/delete")
-    public String deleteBook(){
-        return "roomstat";
-    }
-    
+
 }
