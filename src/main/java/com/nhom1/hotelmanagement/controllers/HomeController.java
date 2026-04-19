@@ -6,6 +6,7 @@ import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.dto.RoomResponse;
 import com.nhom1.hotelmanagement.dto.RoomTypeResponse;
 import com.nhom1.hotelmanagement.entities.RoomType;
+import com.nhom1.hotelmanagement.services.BookingService;
 import com.nhom1.hotelmanagement.services.RoomTypeService;
 import com.nhom1.hotelmanagement.services.RoomTypeImageService;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,11 +28,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HomeController {
     
-    @Autowired
-    private RoomTypeService roomTypeService;
-    
-    @Autowired
-    private RoomTypeImageService roomTypeImageService;
+    @Autowired private RoomTypeService roomTypeService; 
+    @Autowired private RoomTypeImageService roomTypeImageService;
+    @Autowired private BookingService bookingService;
     
     @GetMapping("/")
     public String showHome(HttpSession session, Model model) {
@@ -77,6 +77,15 @@ public class HomeController {
         } catch (Exception e){
             return ResponseEntity.status(500).body("Lỗi lọc phòng: " + e.getMessage());
         }
+    }
+    
+    @PostMapping("/book")
+    @ResponseBody
+    public ResponseEntity<?> createBook(@RequestBody BookingDTO.MultiSubmitRequest request, HttpSession session){
+        List<String> errorRooms = bookingService.createBooking(request, session);
+        if(!errorRooms.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(errorRooms);
+        
+        return ResponseEntity.ok("Đặt phòng thành công!");
     }
 }
 

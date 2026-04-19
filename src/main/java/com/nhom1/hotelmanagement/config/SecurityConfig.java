@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -28,16 +30,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // .csrf(csrf -> csrf
-                // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .csrf(csrf -> {
-                })
+                .csrf(csrf -> csrf
+                    // 1. Lưu Token vào Cookie và cho phép JS đọc (HttpOnly = false)
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    // 2. Ép Spring gửi Token về ngay từ request GET đầu tiên
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                 )
+//                .csrf(csrf -> {
+//                })
                 .authorizeHttpRequests(auth -> auth
                         // Static resources & Public pages
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/roomtypes", "/roomtypes/*/images", "/roomtypeimages/api/**", "/filter/**")
+                        .requestMatchers("/roomtypes", "/roomtypes/*/images", "/roomtypeimages/api/**")
                         .permitAll()
-
+                        .requestMatchers("/services/api/all", "/filter/**").permitAll()
                         // Role-based access
                         .requestMatchers("/users/**").hasRole("ADMIN")
 

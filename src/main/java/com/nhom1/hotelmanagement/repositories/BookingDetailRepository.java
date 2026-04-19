@@ -3,6 +3,7 @@ package com.nhom1.hotelmanagement.repositories;
 
 import com.nhom1.hotelmanagement.entities.Booking;
 import com.nhom1.hotelmanagement.entities.BookingDetail;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,12 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, Lo
        "AND bd.checkOutDate > CURRENT_TIMESTAMP " +
        "ORDER BY bd.checkInDate ASC")
     List<BookingDetail> findCurrentOrUpcoming(String roomNum, Pageable pageable);
+    
+    @Query("SELECT (COUNT(bd) = 0) FROM BookingDetail bd WHERE bd.room.roomId = :roomId " +
+       "AND bd.bookingDetailId <> :currentDetailId " +
+       "AND bd.status <> 'CANCELLED' " +
+       "AND ((bd.checkInDate < :end AND bd.checkOutDate > :start))")
+    boolean checkAvailabilityExcludeCurrent(Long roomId, LocalDateTime start, LocalDateTime end, Long currentDetailId);
 
     public List<BookingDetail> findAllByBooking(Booking b);
 

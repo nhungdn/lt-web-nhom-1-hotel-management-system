@@ -1,9 +1,12 @@
 package com.nhom1.hotelmanagement.controllers;
 
 import com.nhom1.hotelmanagement.dto.ServiceRequest;
+import com.nhom1.hotelmanagement.dto.ServiceResponse;
 import com.nhom1.hotelmanagement.entities.HotelService;
 import com.nhom1.hotelmanagement.services.HotelServiceService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,11 @@ public class ServiceController {
         model.addAttribute("activePage", "services");
         model.addAttribute("services", serviceService.listAllDto());
         return "services";
+    }
+    
+    @GetMapping("/api/all")
+    public ResponseEntity<List<ServiceResponse>> getAllServices() {
+        return ResponseEntity.ok(serviceService.listAllDto());
     }
 
     @GetMapping("/create")

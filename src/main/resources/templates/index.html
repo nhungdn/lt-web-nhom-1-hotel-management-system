@@ -3,6 +3,9 @@
       xmlns:th="http://www.thymeleaf.org" >
       
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <title>Hotel Management - Welcome</title>
     <link rel="icon" type="image/x-icon" th:href="@{/images/review.png}" />
     
@@ -14,6 +17,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/room-card.css}"/>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/main2.css}" />
 </head>
 <body>
 
@@ -90,16 +94,29 @@
     <!-- start filter info-->
     <div class="filter-date-container">
         <div>
-            <input type="date" id="start" required=""/>
-            <input type="date" id="end" required=""/>
+            <div class="filter-item">
+                <input type="date" id="start" required=""/>
+                <div class="filter-error hidden">Ngày nhận phòng không được để trống</div>
+            </div>
+            <div class="filter-item">
+                <input type="date" id="end" required=""/>
+                <div class="filter-error hidden">Ngày nhận phòng không được để trống</div>
+            </div>
             <button id="filterdateBtn">Lọc</button>
-            
+
             <div class="error" th:text="${error}"></div>
+            <div class="warning hidden">Lưu ý: bạn đã đặt phòng tại thời điểm khác,
+                vui lòng kiểm tra kĩ số lượng phòng trước khi đặt.</div>
         </div>
-        <button id="custInfo">
-            <iconify-icon icon="material-symbols:person-add-outline-rounded"></iconify-icon>
-            <div class="hidden">form cho khách</div>
-        </button>
+        <div class="filter-item">
+            <button id="custInfo">
+                <iconify-icon icon="material-symbols:person-add-outline-rounded"></iconify-icon>
+            </button>
+            <div class="dropdown-form hidden">
+                <div th:replace="~{fragments/bookingform}"></div>
+            </div>
+            <div class="filter-error hidden"> Lỗi gì đó bị trống js chỉnh </div>
+        </div>
     </div>
     <!-- end filter info-->
     
@@ -110,7 +127,7 @@
     
     <!-- start room and selected room info-->
     <div class="selected-room">
-        <div class="roomtypes-grid step1" th:unless="${#lists.isEmpty(roomTypes)}">
+        <div class="roomtypes-grid" th:unless="${#lists.isEmpty(roomTypes)}">
             <div class="roomtype-card" th:each="roomType : ${roomTypes}">
                 <img th:if="${roomTypeImages.get(roomType.roomTypeId) != null and !#lists.isEmpty(roomTypeImages.get(roomType.roomTypeId))}" 
                      th:src="${roomTypeImages.get(roomType.roomTypeId).get(0).imageUrl}" 
@@ -125,56 +142,64 @@
                     <div class="roomtype-price" th:text="${#numbers.formatDecimal(roomType.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ/night'}">Price</div>
 
                     <div class="roomtype-actions">
-                        <button class="btn-book" th:disabled="${!isLoggedIn}" th:if="${!isLoggedIn}" title="Please log in to book">📅 Book Now</button>
-                        <a th:href="@{/login}" class="btn-book" th:if="${isLoggedIn}" style="text-decoration: none;">📅 Book Now</a>
-                        <button 
-                            type="button"
-                            class="btn-view-more"
-                            th:attr="data-id=${roomType.roomTypeId},
-                            data-name=${roomType.name},
-                            data-description=${roomType.description}"
-                            onclick="viewRoomTypeDetails(this.dataset.id, this.dataset.name, this.dataset.description)">
+                        <button class="btn-book" disabled>📅 Book Now</button>
+                        <button type="button" class="btn-view-more"
+                                th:data-id="${roomType.roomTypeId}"
+                                th:data-name="${roomType.name}"
+                                th:data-description="${roomType.description}"
+                                onclick="viewRoomTypeDetails(this)">
                             View More
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="service-grid step2">
-            <div class="hs-card" th:each="hotelService : ${hotelServices}">
-                <div class="hs-name" th:text="${hotelService.name}">Hotel Service Name</div>
-                <div class="hs-quantity-div">
-                    <div th:if="${hotelService.quantity} == 0">
-                        <iconify-icon icon="material-symbols:arrow-right-alt-rounded"></iconify-icon>
-                    </div>
-                    <div th:if="${hotelService.quantity} != 0">
-                        <button th:if="{hotelService.quantity} != 0" id="decrease-hs-${hotelService.id}"></button>
-                        <div class="hs-quantity" th:text="${hotelService.quantity}">Quantity</div>
-                        <button th:if="{hotelService.quantity} == 0" id="imcrease-hs-${hotelService.id}"></button>
-                    </div>
+        <div class="service-grid hidden">
+            <div class="hs-card">
+                <div class="hs-name">Hotel Service Name</div>
+                <div class="hs-price">Price</div>
+                <div class="quantity-control">
+                    <button class="decrease"> - </button>
+                    <span class="quantity">0</span>
+                    <button class= "increase"> + </button>
                 </div>
             </div>
         </div>
         
-        <div class="select-info">
-            <template>
-                <h6 class="day">---Day Start | Day End---</h6>
-                <ul>
-                    <li>
-                        <div class="first-row">
-                            <div class="roomtype">Room Type</div>
-                            <div class="amount"> Amount</div>
-                            <div class="price">Price</div>
-                        </div>
+        <div class="select-sidebar">
+            <h2>Thông tin đặt phòng</h2>
 
-                    </li>
-                </ul>
+            <template id="item">
+                <div class="booking-item-row">
+                    <h6 class="day">---Day Start | Day End---</h6>
+                    <ul><!--room item li sẽ nằm trong đây--></ul>
+                </div>
             </template>
-            <div>
-                <h6 class="full-total"> total </h6>
-                <button id="back">Quay lại</button>
-                <button id="forward">
+
+            <template id="room-item">
+                <li>
+                    <div class="roomname">Room Name</div>
+                    <div class="price">Price</div>
+                    <ul><!--service item li sẽ nằm trong đây--></ul>
+                </li>
+            </template>
+            <template id="service-item">
+                <li>
+                    <div class="name">Service name</div>
+                    <div class="amount">Amount</div>
+                    <div class="price">Price</div>
+                </li>
+            </template>
+
+            <div class="total-and-toggle">
+                <h6> total </h6>
+                <button class="back">Quay lại</button>
+                <button class="forward" onclick="validateInput1()">
                     Tiếp tục 
+                    <iconify-icon icon="material-symbols:arrow-right-alt-rounded"></iconify-icon>
+                </button>
+                <button class="finish hidden" type="submit">
+                    Thanh toán
                     <iconify-icon icon="material-symbols:arrow-right-alt-rounded"></iconify-icon>
                 </button>
             </div>
@@ -220,6 +245,10 @@
     <script th:src="@{/js/owl.carousel.min.js}"></script>
     <script th:src="@{/js/sticker.js}"></script>
     <script th:src="@{/js/main.js}"></script>
+    <!--  filter phòng -> đổi tab 2 -> gửi list book  -->
+    <script th:src="@{/js/main-filter.js}"></script>
+    <script th:src="@{/js/main-tab.js}"></script>
+    <script th:src="@{/js/main-booking.js}"></script>
 
 </body>
 </html>

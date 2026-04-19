@@ -39,11 +39,11 @@ INSERT IGNORE INTO `room_type_image` (`room_type_image_id`,`image_url`, `room_ty
 (21, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Platinum-Suite-11-scaled.jpg', 7),
 (22, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-6.jpg', 8),
 (23, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-3.jpg', 8),
-(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8);
+(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8),
 (25, 'https://image-tc.galaxy.tf/wijpeg-axuuyi2xpxnf838lqv4oq2c3o/studio-living-area-and-kitchenette_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
 (26, 'https://image-tc.galaxy.tf/wijpeg-brgfygirpy75xp9db172p9wmp/studio_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
 (27, 'https://image-tc.galaxy.tf/wijpeg-dlqcfqofqzqik4bti72vve376/studio-frontal_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
-(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9);
+(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9),
 (29, 'https://qtxasset.com/quartz/qcloud1/styles/full_body_width/s3/media/image/David%20Kempinski%20Penthouse%20Suite%20Living%20Room.jpg?VersionId=hgY9l2O0elroonD.braDZqASBaTRf.4T&itok=4e_HyIMb', 10),
 (30, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRIUlH9vKlK_ZU8eo_mE37orD-x2mzIjEG2h6FPAmuRKI6YIrln', 10),
 (31, 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/de/81/57/guest-suite.jpg?w=700&h=-1&s=1', 10),
@@ -87,11 +87,11 @@ INSERT IGNORE INTO `room_image` (`room_image_id`, `image_url`, `room_id`) VALUES
 (21, 'https://peachthailand.com/wp-content/uploads/2025/08/RC_Presidential-Platinum-Suite-11-scaled.jpg', 7),
 (22, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-6.jpg', 8),
 (23, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-3.jpg', 8),
-(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8);
+(24, 'https://thesimhotel.vn/wp-content/uploads/2025/07/standard-room-no-door-7.jpg', 8),
 (25, 'https://image-tc.galaxy.tf/wijpeg-axuuyi2xpxnf838lqv4oq2c3o/studio-living-area-and-kitchenette_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
 (26, 'https://image-tc.galaxy.tf/wijpeg-brgfygirpy75xp9db172p9wmp/studio_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
 (27, 'https://image-tc.galaxy.tf/wijpeg-dlqcfqofqzqik4bti72vve376/studio-frontal_wide.jpg?width=1200&crop=0%2C100%2C1920%2C1080', 9),
-(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9);
+(28, 'https://image-tc.galaxy.tf/wijpeg-10l4aki8wxia6zxylrb1asuht/studio-toilet_wide.jpg?width=1200&crop=0%2C272%2C1920%2C1080', 9),
 (29, 'https://qtxasset.com/quartz/qcloud1/styles/full_body_width/s3/media/image/David%20Kempinski%20Penthouse%20Suite%20Living%20Room.jpg?VersionId=hgY9l2O0elroonD.braDZqASBaTRf.4T&itok=4e_HyIMb', 10),
 (30, 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRIUlH9vKlK_ZU8eo_mE37orD-x2mzIjEG2h6FPAmuRKI6YIrln', 10),
 (31, 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/de/81/57/guest-suite.jpg?w=700&h=-1&s=1', 10),

@@ -1,5 +1,8 @@
 package com.nhom1.hotelmanagement.dto;
 
+import lombok.Data;
+
+@Data
 public class RoomTypeImageRequest {
     private Long roomTypeImageId;
     private String imageUrl;
