@@ -5,7 +5,7 @@
   th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}"
 >
   <head>
-    <title>User Profile - Hotel Management</title>
+    <title>Profile - Hotel Management</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <th:block th:fragment="head">
@@ -14,49 +14,32 @@
     </th:block>
   </head>
   <body>
-    <h1 th:fragment="title">My Profile</h1>
+    <h1 th:fragment="title">Thông tin cá nhân</h1>
 
     <div th:fragment="content">
       <section class="content-grid users-content-grid">
         <div class="glass-card user-edit-card">
-          <div class="alert success" th:if="${updated}">
-            Profile updated successfully.
-          </div>
-
-          <div class="alert success" th:if="${passwordUpdated}">
-            Password changed successfully.
-          </div>
-
           <div
-            class="alert"
-            th:if="${error == 'password_mismatch'}"
-            style="
-              margin-bottom: 14px;
-              padding: 10px 12px;
-              border-radius: 10px;
-              background: rgba(239, 68, 68, 0.12);
-              border: 1px solid rgba(239, 68, 68, 0.35);
-              color: #fecaca;
-              font-size: 13px;
-            "
-          >
-            New password and confirm password do not match.
-          </div>
-
+            class="alert success"
+            th:if="${successMessage}"
+            th:text="${successMessage}"
+          ></div>
           <div
-            class="alert"
-            th:if="${error == 'current_password_invalid'}"
-            style="
-              margin-bottom: 14px;
-              padding: 10px 12px;
-              border-radius: 10px;
-              background: rgba(239, 68, 68, 0.12);
-              border: 1px solid rgba(239, 68, 68, 0.35);
-              color: #fecaca;
-              font-size: 13px;
-            "
-          >
-            Current password is incorrect.
+            class="alert success"
+            th:if="${passwordMessage}"
+            th:text="${passwordMessage}"
+          ></div>
+
+          <div class="alert error" th:if="${errorMessage}">
+            <span th:if="${errorMessage == 'current_password_invalid'}"
+              >Mật khẩu hiện tại không chính xác.</span
+            >
+            <span th:if="${errorMessage == 'password_mismatch'}"
+              >Mật khẩu mới không khớp nhau.</span
+            >
+            <span th:if="${errorMessage == 'user_not_found'}"
+              >Người dùng không tồn tại.</span
+            >
           </div>
 
           <form
@@ -64,7 +47,7 @@
             th:action="@{/profile/update}"
             method="post"
           >
-            <label for="profileUsername">Username</label>
+            <label for="profileUsername">Tên đăng nhập</label>
             <input
               id="profileUsername"
               type="text"
@@ -72,7 +55,7 @@
               readonly
             />
 
-            <label for="profileRole">Role</label>
+            <label for="profileRole">Vai trò</label>
             <input
               id="profileRole"
               type="text"
@@ -80,51 +63,51 @@
               readonly
             />
 
-            <label for="profileFullName">Full name</label>
+            <label for="profileFullName">Họ và tên</label>
             <input
               id="profileFullName"
               type="text"
               name="fullName"
-              th:value="${currentUser.fullName}"
+              th:value="${oldData != null ? oldData.fullName : currentUser.fullName}"
               required
             />
 
-            <label for="profilePhone">Phone number</label>
+            <label for="profilePhone">Số điện thoại</label>
             <input
               id="profilePhone"
               type="tel"
               name="phoneNumber"
-              th:value="${currentUser.phoneNumber}"
+              th:value="${oldData != null ? oldData.phoneNumber : currentUser.phoneNumber}"
               required
             />
 
-            <label for="currentPassword">Current password (required)</label>
+            <label for="currentPassword">Mật khẩu hiện tại (bắt buộc)</label>
             <input
               id="currentPassword"
               type="password"
               name="currentPassword"
-              placeholder="Enter current password"
+              placeholder="Nhập mật khẩu hiện tại để xác nhận"
               required
             />
 
-            <label for="newPassword">New password (optional)</label>
+            <label for="newPassword">Mật khẩu mới (tùy chọn)</label>
             <input
               id="newPassword"
               type="password"
               name="newPassword"
-              placeholder="Leave blank if not changing"
+              placeholder="Nhập mật khẩu mới (nếu có)"
             />
 
-            <label for="confirmPassword">Confirm new password</label>
+            <label for="confirmPassword">Xác nhận mật khẩu mới</label>
             <input
               id="confirmPassword"
               type="password"
               name="confirmPassword"
-              placeholder="Re-enter new password"
+              placeholder="Xác nhận mật khẩu mới"
             />
 
             <div class="user-form-actions">
-              <button type="submit" class="card-btn">Update profile</button>
+              <button type="submit" class="card-btn">Cập nhật thông tin</button>
             </div>
           </form>
         </div>

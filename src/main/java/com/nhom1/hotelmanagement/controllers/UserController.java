@@ -14,16 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private static final String DEFAULT_RESET_PASSWORD = "123456";
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private AuthService authService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     // Hiển thị danh sách users
     @GetMapping
@@ -63,24 +59,17 @@ public class UserController {
             @RequestParam String phoneNumber,
             @RequestParam User.Role role) {
 
-        User user = userService.getUserById(id);
-        if (user != null) {
-            user.setFullName(fullName);
-            user.setPhoneNumber(phoneNumber);
-            user.setRole(role);
-            userService.updateUser(user);
-        }
+        userService.updateUser(id, fullName, phoneNumber, role);
+
         return "redirect:/users?editId=" + id + "&updated=true";
     }
 
     // Reset mật khẩu về mặc định
     @PostMapping("/reset-password/{id}")
     public String resetPassword(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            user.setPassword(passwordEncoder.encode(DEFAULT_RESET_PASSWORD));
-            userService.updateUser(user);
-        }
+
+        userService.resetToDefaultPassword(id);
+
         return "redirect:/users?editId=" + id + "&passwordReset=true";
     }
 
@@ -100,10 +89,9 @@ public class UserController {
     // Xóa tài khoản
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            userService.deleteUser(user);
-        }
+
+        userService.deleteUser(id);
+
         return "redirect:/users";
     }
 }

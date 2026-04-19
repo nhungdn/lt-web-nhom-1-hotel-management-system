@@ -54,6 +54,7 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setFullName(request.getFullname());
         user.setPhoneNumber(request.getPhoneNumber());
+        user.setPassword(passwordEncoder.encode("123456"));
 
         User.Role role = User.Role.STAFF;
         if (request.getRole() != null && !request.getRole().isBlank()) {

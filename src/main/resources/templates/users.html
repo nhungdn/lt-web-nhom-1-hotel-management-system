@@ -153,15 +153,15 @@
             <div class="user-form-actions">
               <button type="submit" class="card-btn">Lưu</button>
 
-              <form
-                th:action="@{/users/reset-password/{id}(id=${editingUser.userId})}"
-                method="post"
-                onsubmit="return confirm('Đặt lại mật khẩu về mặc định?');"
+              <button
+                type="submit"
+                class="card-btn reset-btn"
+                th:formaction="@{/users/reset-password/{id}(id=${editingUser.userId})}"
+                formmethod="post"
+                onclick="return confirm('Đặt lại mật khẩu về mặc định?');"
               >
-                <button type="submit" class="card-btn reset-btn">
-                  Reset mật khẩu
-                </button>
-              </form>
+                Reset mật khẩu
+              </button>
 
               <a th:href="@{/users}" class="card-btn">Đóng</a>
             </div>
