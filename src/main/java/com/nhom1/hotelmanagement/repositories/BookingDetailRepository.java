@@ -32,4 +32,15 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, Lo
 
     public List<BookingDetail> findAllByBooking(Booking b);
 
+    // ── MỚI - dùng cho dashboard ──────────────────────────────────────────────
+    long countByStatus(String status);
+
+    @Query("SELECT bd FROM BookingDetail bd " +
+            "JOIN FETCH bd.booking bk " +
+            "JOIN FETCH bk.customer c " +
+            "JOIN FETCH bd.room r " +
+            "JOIN FETCH r.roomType rt " +
+            "ORDER BY bd.bookingDetailId DESC")
+    List<BookingDetail> findRecentBookings(Pageable pageable);
+
 }
