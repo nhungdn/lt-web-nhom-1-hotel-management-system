@@ -29,4 +29,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             Long typeId, @Param(value = "start")
     LocalDateTime start, @Param(value = "end")
     LocalDateTime end);
+
+    // ── MỚI - dùng cho dashboard ──────────────────────────────────────────────
+    long countByStatus(Room.Status status);
+
 }

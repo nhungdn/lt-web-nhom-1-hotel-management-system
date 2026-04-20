@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
+    <head>
+        <title>Service Form</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <th:block th:fragment="head">
+            <link rel="stylesheet" th:href="@{/css/room-card.css}"/>
+            <link rel="stylesheet" th:href="@{/css/form.css}"/>
+        </th:block>
+    </head>
+    
+    <body>
+        <h1 th:fragment="title" th:text="${service.serviceId} != null ? 'Edit Service' : 'Create Service'">Service Form</h1>
+        <div th:fragment="content">
+            <section class="content-grid" style="grid-template-columns: 1fr;">
+                <div class="glass-card table-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title" th:text="${service.serviceId} != null ? 'Edit Service' : 'Create New Service'">Service Form</h2>
+                            <p class="card-subtitle" th:text="${service.serviceId} != null ? 'Update service details' : 'Add a new service to the system'">Form</p>
+                        </div>
+                    </div>
+
+                    <form th:action="${service.serviceId} != null ? '/services/update/' + ${service.serviceId} : '/services/create'" 
+                          th:object="${service}" method="post" class="form-container">
+                        
+                        <input type="hidden" th:if="${service.serviceId} != null" th:field="*{serviceId}"/>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Service Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Service Name <span style="color: #ef4444;">*</span></label>
+                                <input type="text" id="name" th:field="*{name}" class="form-input glass" required placeholder="e.g., Room Service, Laundry, Airport Transfer"/>
+                                <span class="form-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="price" class="form-label">Price (VND) <span style="color: #ef4444;">*</span></label>
+                                <input type="number" id="price" th:field="*{price}" class="form-input glass" required placeholder="0" min="0" step="1000"/>
+                                <span class="form-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Save Service</button>
+                            <a th:href="@{/services}" class="btn-cancel">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <style>
+                .form-container {
+                    max-width: 800px;
+                }
+
+                .form-section {
+                    margin-bottom: 32px;
+                    padding-bottom: 32px;
+                    border-bottom: 1px solid var(--glass-border);
+                }
+
+                .form-section:last-of-type {
+                    border-bottom: none;
+                }
+
+                .form-section-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: var(--text-primary);
+                }
+
+                .form-section-subtitle {
+                    font-size: 13px;
+                    color: var(--text-muted);
+                    margin-bottom: 16px;
+                }
+
+                .form-group {
+                    margin-bottom: 20px;
+                }
+
+                .form-label {
+                    display: block;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: var(--text-primary);
+                    margin-bottom: 8px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .form-input {
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    background: rgba(0, 0, 0, 0.2);
+                    color: var(--text-primary);
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                }
+
+                .form-input:focus {
+                    outline: none;
+                    border-color: rgba(59, 130, 246, 0.5);
+                    background: rgba(0, 0, 0, 0.25);
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                .form-actions {
+                    display: flex;
+                    gap: 12px;
+                    margin-top: 32px;
+                }
+
+                .btn-submit {
+                    padding: 12px 24px;
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(34, 197, 94, 0.2) 100%);
+                    border: 1px solid rgba(59, 130, 246, 0.5);
+                    border-radius: 8px;
+                    color: #fff;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-submit:hover {
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4) 0%, rgba(34, 197, 94, 0.3) 100%);
+                    border-color: rgba(59, 130, 246, 0.7);
+                    transform: translateY(-2px);
+                }
+
+                .btn-cancel {
+                    padding: 12px 24px;
+                    background: rgba(0, 0, 0, 0.2);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    color: var(--text-primary);
+                    font-weight: 600;
+                    cursor: pointer;
+                    text-decoration: none;
+                    display: inline-block;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-cancel:hover {
+                    background: rgba(0, 0, 0, 0.3);
+                    border-color: rgba(255, 255, 255, 0.3);
+                }
+
+                .form-error {
+                    color: #ef4444;
+                    font-size: 12px;
+                    margin-top: 6px;
+                }
+            </style>
+        </div>
+    </body>
+</html>
