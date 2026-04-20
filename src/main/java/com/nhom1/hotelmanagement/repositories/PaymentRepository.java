@@ -1,3 +1,5 @@
+package com.nhom1.hotelmanagement.repositories;
+
 import com.nhom1.hotelmanagement.entities.Payment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,9 +18,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Payment p WHERE p.status = :status")
     BigDecimal sumByStatus(@Param("status") String status);
 
-    @Query("SELECT p FROM Payment p " +
-            "JOIN FETCH p.booking bk " +
-            "JOIN FETCH bk.customer " +
-            "ORDER BY p.paymentId DESC")
+    @Query("SELECT p FROM Payment p ORDER BY p.paymentId DESC")
     List<Payment> findRecentPayments(Pageable pageable);
 }

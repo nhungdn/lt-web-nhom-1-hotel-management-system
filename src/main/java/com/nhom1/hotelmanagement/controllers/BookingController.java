@@ -51,9 +51,7 @@ public class BookingController {
         }
         return "bookstat";
     }
-<<<<<<< HEAD
-            
-=======
+
 
     @PostMapping("/create")
     @ResponseBody
@@ -74,23 +72,11 @@ public class BookingController {
     }
 
     @PostMapping("/cancel")
-
-    public String cancelBook(BookingDTO.CancelBook request, HttpSession session){
+    @ResponseBody
+    public String cancelBook(@RequestBody BookingDTO.CancelBook request, HttpSession session){
         bookingService.cancelBooking(request.getId(), request.isDetail());
         LoginResponse user = (LoginResponse) session.getAttribute("user");
         if(user.getRole() == User.Role.ADMIN) return "roomstat";
         return "redirect:/";
     }
-
 }
-
-    public String cancelBook() {
-        return "roomstat";
-    }
-
-    @PostMapping("/delete")
-    public String deleteBook() {
-        return "roomstat";
-    }
-}
->>>>>>> main

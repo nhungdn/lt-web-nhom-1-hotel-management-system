@@ -137,7 +137,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a th:href="@{/custonmer}" class="nav-link"
+                        <a th:href="@{/customers}" class="nav-link"
                            th:classappend="${activePage == 'customers'} ? ' active' : ''">
                             <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -166,6 +166,17 @@
                                 />
                             </svg>
                             Customer
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a th:href="@{/payments}" class="nav-link"
+                           th:classappend="${activePage == 'payments'} ? ' active' : ''">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            Payments
                         </a>
                     </li>
                 </ul>

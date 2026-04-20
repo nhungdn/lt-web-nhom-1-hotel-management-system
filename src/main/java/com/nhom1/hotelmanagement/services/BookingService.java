@@ -1,20 +1,3 @@
-    /**
-     * Kiểm tra tính khả dụng của các phòng theo yêu cầu đặt phòng
-     */
-    public List<String> checkRooms(BookingDTO.MultiSubmitRequest request) {
-        List<String> error = new ArrayList<>();
-        for (BookingDTO.BookingItem item : request.getBookingItems()) {
-            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
-            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
-            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
-            if (availRoom.size() < item.getQuantity()) {
-                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
-                error.add("Loại phòng " + (rt != null ? rt.getName() : "không xác định") + " không đủ phòng trống.");
-            }
-        }
-        return error;
-    }
-
 package com.nhom1.hotelmanagement.services;
 
 import com.nhom1.hotelmanagement.dto.BookingDTO;
@@ -54,12 +37,31 @@ public class BookingService {
     @Autowired private RoomTypeRepository roomTypeRepo;
     @Autowired private CustomerRepository customerRepo;
     @Autowired private UserRepository userRepo;
+    @Autowired private BookingHotelServiceRepository bookingHotelServiceRepo;
+    @Autowired private HotelServiceRepository hotelServiceRepo;
     
     public int checkCustomer(String phone, String idCard, String email) {
         if (customerRepo.existsByPhone(phone)) return 1;
         if (customerRepo.existsByEmail(email)) return 2;
         if (customerRepo.existsByIdCard(idCard)) return 3;
         return 0;
+    }
+
+    /**
+     * Kiểm tra tính khả dụng của các phòng theo yêu cầu đặt phòng
+     */
+    public List<String> checkRooms(BookingDTO.MultiSubmitRequest request) {
+        List<String> error = new ArrayList<>();
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
+            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+            if (availRoom.size() < item.getQuantity()) {
+                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
+                error.add("Loại phòng " + (rt != null ? rt.getName() : "không xác định") + " không đủ phòng trống.");
+            }
+        }
+        return error;
     }
     
     @Transactional
@@ -78,23 +80,6 @@ public class BookingService {
         customer.setEmail(request.getCustomerEmail());
         customer = customerRepo.save(customer);
         
-        List<String> error = new ArrayList<>();
-        
-        // 2. Kiểm tra tính khả dụng của TOÀN BỘ phòng trước khi tạo Booking
-        for (BookingDTO.BookingItem item : request.getBookingItems()) {
-            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
-            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
-            
-            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
-            if (availRoom.size() < item.getQuantity()) {
-                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
-                error.add("Loại phòng " + (rt != null ? rt.getName() : "không xác định") + " không đủ phòng trống.");
-            }
-        }
-
-        // Nếu có bất kỳ lỗi thiếu phòng nào, trả về luôn và không lưu vào DB (nhờ @Transactional)
-        if (!error.isEmpty()) return error;
-
         // 3. Tiến hành lưu Booking và Details
         Booking book = new Booking();
         book.setCustomer(customer);
@@ -106,6 +91,10 @@ public class BookingService {
             LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
             List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
 
+            if (availRoom.size() < item.getQuantity()) {
+                throw new RuntimeException("Phòng không đủ");
+            }
+
             for (int i = 0; i < item.getQuantity(); i++) {
                 Room room = availRoom.get(i);
                 
@@ -115,7 +104,6 @@ public class BookingService {
                 detail.setCheckInDate(startTime);
                 detail.setCheckOutDate(endTime);
                 detail.setStatus("BOOKED");
-                detail = detailRepo.save(detail);
 
                 final BookingDetail savedDetail = detailRepo.save(detail);
                 // 4. Lưu Dịch vụ đi kèm
@@ -132,12 +120,9 @@ public class BookingService {
                 }
             }
         }
-        return error; // Lúc này error sẽ rỗng
+        return new ArrayList<>(); // Không có lỗi
     }
-    
-    
-    @Autowired private BookingHotelServiceRepository bookingHotelServiceRepo;
-    @Autowired private HotelServiceRepository hotelServiceRepo;
+
     public List<String> editBooking(BookingDetailDTO request) {
         List<String> error = new ArrayList<>();
         for (BookingDetailDTO.DetailDTO detail : request.getDetails()) {

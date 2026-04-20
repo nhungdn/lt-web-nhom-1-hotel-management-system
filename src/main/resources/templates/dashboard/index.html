@@ -265,10 +265,10 @@
                         </div>
                     </div>
                     <div class="pay-list">
-                        <div th:each="p : ${payments}" class="pay-item">
+                        <div th:each="p : ${payments}" class="pay-item" th:if="${p.booking != null}">
                             <div>
                                 <div class="pay-name"
-                                     th:text="'Booking #' + ${p.booking.bookingId} + ' – ' + ${p.booking.customer.name}">---</div>
+                                     th:text="'Booking #' + ${p.booking.bookingId} + ' – ' + ${(p.booking.customer != null) ? p.booking.customer.name : 'N/A'}">---</div>
                                 <div class="pay-date"
                                      th:text="${#temporals.format(p.paymentDate,'dd/MM/yyyy HH:mm')}">--/--</div>
                             </div>
@@ -279,7 +279,7 @@
                                 <span class="pay-status" th:classappend="'ps-' + ${p.status}" th:text="${p.status}">STATUS</span>
                             </div>
                         </div>
-                        <div th:if="${#lists.isEmpty(payments)}"
+                        <div th:if="${#lists.isEmpty(payments) || payments == null}"
                              style="text-align:center;color:var(--muted);padding:20px;">
                             Chưa có thanh toán
                         </div>

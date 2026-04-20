@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,12 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public List<Payment> getRecentPayments(int limit) {
-        return paymentRepository.findRecentPayments(PageRequest.of(0, limit));
+        try {
+            List<Payment> payments = paymentRepository.findRecentPayments(PageRequest.of(0, limit));
+            return payments != null ? payments : new ArrayList<>();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 
     private BookingDetailDashboardDTO toDto(BookingDetail bd) {

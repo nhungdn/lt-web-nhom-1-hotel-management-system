@@ -18,6 +18,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findByRoomTypeRoomTypeId(Long roomTypeId);
     List<Room> findByStatus(Room.Status status);
     Room findByRoomNumber(String roomNumber);
+    long countByStatus(Room.Status status);
     
     @Query("SELECT COUNT(r) FROM Room r WHERE r.roomType.roomTypeId = :typeId " +
        "AND r.roomId NOT IN (" +
@@ -30,18 +31,14 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     LocalDateTime start, @Param(value = "end")
     LocalDateTime end);
 
-<<<<<<< HEAD
     @Query("SELECT r FROM Room r WHERE r.roomType.roomTypeId = :typeId " +
        "AND r.roomId NOT IN (" +
-       "  SELECT bd.room.roomId FROM BookingDetail bd JOIN bd.booking b " +
-       "  WHERE bd.status != 'CANCELLED' AND r.status = 'AVAILABLE' " +
+       "  SELECT bd.room.roomId FROM BookingDetail bd " +
+       "  WHERE bd.status != 'CANCELLED' " +
        "  AND bd.checkInDate < :end AND bd.checkOutDate > :start" +
-       " ORDER BY r.roomNumber ASC "+
-       ")")
-    public List<Room> findAvailableRoomByType(Long roomTypeId, LocalDateTime start, LocalDateTime end);
-=======
-    // ── MỚI - dùng cho dashboard ──────────────────────────────────────────────
-    long countByStatus(Room.Status status);
+       ") AND r.status = 'AVAILABLE'")
+    List<Room> findAvailableRoomByType(@Param(value = "typeId") Long typeId, 
+                                       @Param(value = "start") LocalDateTime start, 
+                                       @Param(value = "end") LocalDateTime end);
 
->>>>>>> main
 }

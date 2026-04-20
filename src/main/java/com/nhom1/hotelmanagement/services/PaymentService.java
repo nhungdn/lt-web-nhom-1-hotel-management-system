@@ -47,7 +47,9 @@ public class PaymentService {
     }
 
     private void updateFromRequest(Payment payment, PaymentRequest request) {
-        payment.setTotalAmount(request.getTotalAmount());
+        if (request.getTotalAmount() != null) {
+            payment.setTotalAmount(request.getTotalAmount());
+        }
         payment.setStatus(request.getStatus() == null || request.getStatus().isBlank() ? "PENDING" : request.getStatus());
         payment.setPaymentDate(parsePaymentDate(request.getPaymentDate()));
 

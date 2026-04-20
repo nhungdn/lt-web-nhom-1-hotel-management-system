@@ -1,8 +1,10 @@
 package com.nhom1.hotelmanagement.dto;
 
+import java.math.BigDecimal;
+
 public class PaymentRequest {
     private Long paymentId;
-    private Double totalAmount;
+    private BigDecimal totalAmount;
     private String paymentDate;
     private String status;
     private Long bookingId;
@@ -15,11 +17,11 @@ public class PaymentRequest {
         this.paymentId = paymentId;
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
