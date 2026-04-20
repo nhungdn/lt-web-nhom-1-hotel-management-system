@@ -1,3 +1,19 @@
+    /**
+     * Kiểm tra tính khả dụng của các phòng theo yêu cầu đặt phòng
+     */
+    public List<String> checkRooms(BookingDTO.MultiSubmitRequest request) {
+        List<String> error = new ArrayList<>();
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
+            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+            if (availRoom.size() < item.getQuantity()) {
+                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
+                error.add("Loại phòng " + (rt != null ? rt.getName() : "không xác định") + " không đủ phòng trống.");
+            }
+        }
+        return error;
+    }
 
 package com.nhom1.hotelmanagement.services;
 
