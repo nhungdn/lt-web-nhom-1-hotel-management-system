@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
+<head>
+    <title>Payment Form</title>
+    <th:block th:fragment="head">
+        <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+        <link rel="stylesheet" th:href="@{/css/form.css}" />
+    </th:block>
+</head>
+<body>
+    <h1 th:fragment="title" th:text="${payment.paymentId} != null ? 'Edit Payment' : 'Create Payment'">Payment Form</h1>
+    <div th:fragment="content">
+        <section class="content-grid" style="grid-template-columns: 1fr;">
+            <div class="glass-card table-card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title" th:text="${payment.paymentId} != null ? 'Edit Payment' : 'Create New Payment'">Payment Form</h2>
+                        <p class="card-subtitle" th:text="${payment.paymentId} != null ? 'Update payment details' : 'Add a new payment record'">Payment record</p>
+                    </div>
+                </div>
+                <form th:action="${payment.paymentId} != null ? '/payments/update/' + ${payment.paymentId} : '/payments/create'"
+                      th:object="${payment}" method="post" class="form-container">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="form-group">
+                        <label for="bookingId" class="form-label">Booking</label>
+                        <select id="bookingId" th:field="*{bookingId}" class="form-input glass" required>
+                            <option th:each="booking : ${bookings}" th:value="${booking.bookingId}" th:text="'Booking #' + ${booking.bookingId}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="totalAmount" class="form-label">Total Amount</label>
+                        <input id="totalAmount" type="number" th:field="*{totalAmount}" class="form-input glass" placeholder="Amount" step="0.01" min="0" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentDate" class="form-label">Payment Date</label>
+                        <input id="paymentDate" type="datetime-local" th:field="*{paymentDate}" class="form-input glass" />
+                    </div>
+                    <div class="form-group">
+                        <label for="status" class="form-label">Status</label>
+                        <input id="status" type="text" th:field="*{status}" class="form-input glass" placeholder="e.g., PAID, PENDING" />
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Save Payment</button>
+                        <a th:href="@{/payments}" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
