@@ -46,5 +46,4 @@ public class HotelmsApplication implements ApplicationListener<ApplicationReadyE
             }
         }
     }
-
 }

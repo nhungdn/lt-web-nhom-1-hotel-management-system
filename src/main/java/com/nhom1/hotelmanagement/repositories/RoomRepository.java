@@ -30,6 +30,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     LocalDateTime start, @Param(value = "end")
     LocalDateTime end);
 
+<<<<<<< HEAD
     @Query("SELECT r FROM Room r WHERE r.roomType.roomTypeId = :typeId " +
        "AND r.roomId NOT IN (" +
        "  SELECT bd.room.roomId FROM BookingDetail bd JOIN bd.booking b " +
@@ -38,4 +39,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
        " ORDER BY r.roomNumber ASC "+
        ")")
     public List<Room> findAvailableRoomByType(Long roomTypeId, LocalDateTime start, LocalDateTime end);
+=======
+    // ── MỚI - dùng cho dashboard ──────────────────────────────────────────────
+    long countByStatus(Room.Status status);
+
+>>>>>>> main
 }

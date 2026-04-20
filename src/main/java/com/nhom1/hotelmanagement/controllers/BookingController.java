@@ -1,4 +1,3 @@
-
 package com.nhom1.hotelmanagement.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,39 +22,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 @Controller
 @RequestMapping("/booking")
 public class BookingController {
-    @Autowired 
+
+    @Autowired
     private BookingService bookingService;
-    @Autowired 
+    @Autowired
     private RoomService roomService;
-    
+
+    // ✅ THÊM: xử lý route /booking (trang danh sách booking)
+    @GetMapping
+    public String showBookingList(Model model) {
+        model.addAttribute("activePage", "bookings");
+        return "booking/index"; // templates/booking/index.html
+    }
+
     @GetMapping("/status")
-    public String showAllRoom(Model model){
+    public String showAllRoom(Model model) {
         model.addAttribute("activePage", "bookstat");
         List<RoomStatDTO> roomlist = roomService.getFullRoomList();
         try {
             ObjectMapper mapper = new ObjectMapper();
             String roomListJson = mapper.writeValueAsString(roomlist);
             model.addAttribute("roomList", roomListJson);
-
         } catch (JsonProcessingException e) {
             model.addAttribute("roomList", "[]");
         }
         return "bookstat";
     }
+<<<<<<< HEAD
             
+=======
+
+    @PostMapping("/create")
+    @ResponseBody
+    public ResponseEntity<?> createBook(@RequestBody BookingDTO.MultiSubmitRequest request, HttpSession session) {
+        List<String> errorRooms = bookingService.checkRooms(request);
+        if (!errorRooms.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(errorRooms);
+        bookingService.createBooking(request, session);
+        return ResponseEntity.ok("Đặt phòng thành công!");
+    }
+
+
     @PostMapping("/edit")
     @ResponseBody
-    public ResponseEntity<?> editBook(@RequestBody BookingDetailDTO request){
-        List<String> error= bookingService.editBooking(request);
-        if(!error.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    public ResponseEntity<?> editBook(@RequestBody BookingDetailDTO request) {
+        List<String> error = bookingService.editBooking(request);
+        if (!error.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         return ResponseEntity.ok("Sửa đơn thành công!");
     }
-    
+
     @PostMapping("/cancel")
+
     public String cancelBook(BookingDTO.CancelBook request, HttpSession session){
         bookingService.cancelBooking(request.getId(), request.isDetail());
         LoginResponse user = (LoginResponse) session.getAttribute("user");
@@ -64,3 +83,14 @@ public class BookingController {
     }
 
 }
+
+    public String cancelBook() {
+        return "roomstat";
+    }
+
+    @PostMapping("/delete")
+    public String deleteBook() {
+        return "roomstat";
+    }
+}
+>>>>>>> main
