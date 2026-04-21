@@ -11,7 +11,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import java.time.LocalDate;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +49,11 @@ public class DashboardController {
         if (user == null) {
             return "redirect:/login";
         }
+
+        // Thêm vào showDashboard() — danh sách năm cho dropdown
+        int currentYear = java.time.LocalDate.now().getYear();
+        model.addAttribute("years",
+                java.util.List.of(currentYear, currentYear - 1, currentYear - 2));
 
         model.addAttribute("user", user);
         model.addAttribute("activePage", "dashboard");
@@ -86,5 +99,30 @@ public class DashboardController {
                 .contentType(MediaType.parseMediaType(
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(data);
+    }
+
+    // API trả doanh thu theo ngày + tháng (gọi bằng JS fetch)
+    @GetMapping("/revenue")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getRevenue(
+            @RequestParam(defaultValue = "0") int year,
+            @RequestParam(defaultValue = "0") int month,
+            HttpSession session) {
+
+        if (session.getAttribute("user") == null)
+            return ResponseEntity.status(401).build();
+
+        int currentYear  = java.time.LocalDate.now().getYear();
+        int currentMonth = java.time.LocalDate.now().getMonthValue();
+        if (year  == 0) year  = currentYear;
+        if (month == 0) month = currentMonth;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("revenueByDay",   dashboardService.getRevenueByDay(year, month));
+        data.put("revenueByMonth", dashboardService.getRevenueByMonth(year));
+        data.put("selectedYear",   year);
+        data.put("selectedMonth",  month);
+
+        return ResponseEntity.ok(data);
     }
 }
