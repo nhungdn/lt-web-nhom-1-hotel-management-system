@@ -38,7 +38,7 @@
                                     <th>Customer Name</th>
                                     <th>Contact Info</th>
                                     <th>Payment Status</th>
-                                    <th th:if="${session.user?.role.toString() == 'ADMIN'}" class="roomtab">Action</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,8 +59,8 @@
                                         </td>
                                         <td><span class="status-badge"></span></td>
                                         
-                                        <td th:if="${session.user?.role.toString() == 'ADMIN'}" class="roomtab">
-                                            <button class="card-btn" style="padding: 6px 12px;">Edit</button>
+                                        <td>
+                                            <button class="card-btn" style="padding: 6px 12px;">Details</button>
                                         </td>
                                     </tr>
                                 </template>
