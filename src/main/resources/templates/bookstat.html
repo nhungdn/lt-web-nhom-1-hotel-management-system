@@ -9,8 +9,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <th:block th:fragment="head">
             <link rel="stylesheet" th:href="@{/css/room-card.css}" />
-            <link rel="stylesheet" th:href="@{/css/calendar.css}"/>
             <link rel="stylesheet" th:href="@{/css/form.css}"/>
+            <link rel="stylesheet" th:href="@{/css/detail-popup.css}"/>
         </th:block>
     </head>
     
@@ -26,12 +26,12 @@
                             <p class="card-subtitle">Latest booking and cleaning status</p>
                         </div>
                         <div class="card-actions">
-                            <button class="card-btn">Refresh All</button>
+                            <button class="card-btn" onclick="window.location.reload()">Refresh All</button>
                         </div>
                     </div>
 
-                    <div class="table-wrapper" th:booking-list='${bookingList}'>
-                        <table class="data-table" id="roomTable" th:rooms-list="${roomList}">
+                    <div class="table-wrapper">
+                        <table class="data-table" id="roomTable">
                             <thead>
                                 <tr>
                                     <th>Booking ID</th>
@@ -88,6 +88,41 @@
                         </template>
                             
                     </div>
+                    <!-- start popup -->
+                    <div class="popup-overlay" id="popupOverlay">
+                        <div class="glass popup">
+                            <form id="edit-form">
+                                <div class="roomNumber"></div>
+                                <div class="checkIn"></div>
+                                <div class="checkOut"></div>
+                                <div class="customer">
+                                    <span class="name"></span>
+                                    <span class="id-card"></span>
+                                    <span class="phone"></span>
+                                    <span class="email"></span>
+                                </div>
+                                <div class="service-container">
+                                    <button>Edit Service</button>
+                                    <div class="service">Add</div>
+                                    <template>
+                                        <div class="service">
+                                            <label>
+                                                <div class="name"></div> :
+                                                <input name='service-quantity' class="quantity"></input>
+                                            </label>
+                                            <div class="price"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                                <button class="cancel">Cancel Booking This Room</button>
+                                <div class="form-actions">
+                                    <button type="submit">Save</button>
+                                    <button type="reset">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- end popup-->
                 </div>
             </section>
             <script th:inline="javascript">
@@ -96,9 +131,24 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     console.log(bookingData);
                     renderBookingList(bookingData);
+                    loadAllServices();
                 });
+                let allServices = [];
+
+                async function loadAllServices() {
+                    try {
+                        const response = await fetch('/services/api/all', {
+                            method: 'GET',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        allServices = await response.json();
+                    } catch (error) {
+                        console.error("Không thể load danh sách dịch vụ:", error);
+                    }
+                }
             </script>
             <script th:src="@{/js/roomlist.js}"></script>
+            <script th:src="@{/js/booking.js}"></script>
         </div>
     </body>
 </html>

@@ -60,12 +60,14 @@ function toggleDetailRow(clickedRow, booking) {
         booking.details.forEach(d => {
             const rowHtml = `
                 <tr>
-                    <td>${d.bookingDetailId}</td>
+                    <td class="bdid">${d.bookingDetailId}</td>
                     <td><span class="status-badge">${d.status}</span></td>
                     <td><strong>${d.roomNumber || 'N/A'}</strong></td>
                     <td>${formatDateTime(d.checkIn)}</td>
                     <td>${formatDateTime(d.checkOut)}</td>
-                    <td><button class="action">Edit</button></td>
+                    <td>
+                        <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}" 
+                            onclick=renderEditForm(this) class="action">Edit</button></td>
                 </tr>
             `;
             detailBody.insertAdjacentHTML('beforeend', rowHtml);

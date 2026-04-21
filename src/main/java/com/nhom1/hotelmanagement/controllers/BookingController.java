@@ -28,8 +28,6 @@ public class BookingController {
 
     @Autowired
     private BookingService bookingService;
-    @Autowired
-    private RoomService roomService;
 
     // ✅ THÊM: xử lý route /booking (trang danh sách booking)
     @GetMapping
@@ -45,17 +43,6 @@ public class BookingController {
         model.addAttribute("bookingList", bookingList);
         return "bookstat";
     }
-
-
-//    @PostMapping("/create")
-//    @ResponseBody
-//    public ResponseEntity<?> createBook(@RequestBody BookingDTO.MultiSubmitRequest request, HttpSession session) {
-//        List<String> errorRooms = bookingService.checkRooms(request);
-//        if (!errorRooms.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(errorRooms);
-//        bookingService.createBooking(request, session);
-//        return ResponseEntity.ok("Đặt phòng thành công!");
-//    }
-
 
     @PostMapping("/edit")
     @ResponseBody
