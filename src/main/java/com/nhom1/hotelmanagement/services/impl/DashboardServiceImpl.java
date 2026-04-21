@@ -80,9 +80,8 @@ public class DashboardServiceImpl implements DashboardService {
         dto.setCheckInDate(bd.getCheckInDate());
         dto.setCheckOutDate(bd.getCheckOutDate());
 
-        // ✅ FIX: BookingDetail.priceAtBooking là Double, DTO nhận BigDecimal → phải convert
         if (bd.getPriceAtBooking() != null) {
-            dto.setPriceAtBooking(BigDecimal.valueOf(bd.getPriceAtBooking()));
+            dto.setPriceAtBooking(bd.getPriceAtBooking());
         }
 
         if (bd.getBooking() != null && bd.getBooking().getCustomer() != null) {

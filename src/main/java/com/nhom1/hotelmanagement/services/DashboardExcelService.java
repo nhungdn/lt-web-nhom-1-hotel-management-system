@@ -160,7 +160,7 @@ public class DashboardExcelService {
             setCellStr(row, 6, bd.getCheckOutDate() != null ? bd.getCheckOutDate().format(DATE) : "", normalFont(wb, C_WHITE, 10), rowBg);
 
             // Status badge
-            String st = nvl(bd.getStatus());
+            String st = nvl(bd.getStatus().toString());
             String stVi = st, stColor = C_WHITE, stBg = rowBg;
             for (int k = 0; k < statusLabels.length; k++) {
                 if (statusLabels[k].equals(st)) { stVi = statusVi[k]; break; }

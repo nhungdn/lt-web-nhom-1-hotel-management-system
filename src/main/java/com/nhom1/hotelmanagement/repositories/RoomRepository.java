@@ -33,20 +33,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("SELECT r FROM Room r WHERE r.roomType.roomTypeId = :roomTypeId " +
        "AND r.roomId NOT IN (" +
        "  SELECT bd.room.roomId FROM BookingDetail bd " +
-<<<<<<< Updated upstream
-       "  WHERE bd.status != 'CANCELLED' " +
-       "  AND bd.checkInDate < :end AND bd.checkOutDate > :start" +
-       ") AND r.status = 'AVAILABLE'")
-    List<Room> findAvailableRoomByType(@Param(value = "typeId") Long typeId, 
-                                       @Param(value = "start") LocalDateTime start, 
-                                       @Param(value = "end") LocalDateTime end);
-=======
        "  WHERE bd.status NOT IN ('CANCELED', 'COMPLETED') " +
        "  AND bd.checkInDate < :end AND bd.checkOutDate > :start" +
        ") ORDER BY r.roomNumber ASC") // Order by nằm ở ngoài cùng
     List<Room> findAvailableRoomByType(@Param("roomTypeId") Long roomTypeId, 
                                         @Param("start") LocalDateTime start, 
                                         @Param("end") LocalDateTime end);
->>>>>>> Stashed changes
-
 }
