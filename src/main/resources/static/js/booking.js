@@ -1,130 +1,184 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const enterBookingBtn = document.querySelector(".booking-btn");
-    const booktab = document.querySelectorAll(".booktab");
-    const roomtab = document.querySelectorAll(".roomtab");
-    
-    console.log("Booking script has run.");
-    
-    enterBookingBtn.addEventListener("click", () => {
-        console.log("Toggle!"); 
-        booktab.forEach((e) => e.classList.toggle("hidden"));
-        roomtab.forEach((e) => e.classList.toggle("hidden"));
-    });
-    
-    const bookForm = document.querySelector(".form-overlay");
-    document.querySelector("#custInfo").addEventListener("click", () =>{
-        bookForm.classList.toggle("active");
-    });
-    
-    const roomRow = document.querySelectorAll("tbody tr");
-    const detailPopup = document.querySelector(".detail-overlay");
-    const closeBtn = document.querySelectorAll(".close-btn");
-    roomRow.forEach((row)=>{
-        row.addEventListener('click', (e) => {
-            if (e.target.type === 'checkbox' || e.target.tagName === 'BUTTON') {
-                return;
-            }
-            console.log('Row clicked! Show popup');
-            detailPopup.style.display = "block";
-        });
-    });
-    
-    closeBtn.forEach(btn => {
-        btn.addEventListener("click", () => {
-            detailPopup.style.display = "none"; // Hoặc .classList.add("hidden")
-        });
-    });
-    
-    function doBook(id, checkin, checkout, price) {
-        const mainForm = document.querySelector('.booking-form form'); // Form có sẵn trong fragment
+async function renderEditForm(btn) {
+    const popup = document.querySelector(".popup");
+    const form = document.querySelector("#edit-form");
 
-        // Tạo một div chứa thông tin phòng này để dễ quản lý
-        const itemContainer = document.createElement('div');
-        itemContainer.classList.add('booking-item-data');
+    const overlay = document.getElementById("popupOverlay");
+    overlay.classList.add("active");
 
-        itemContainer.innerHTML = `
-        <input type='hidden' name='roomNumbers' value='${id}'>
-        <input type='hidden' name='checkIns' value='${checkin}'> 
-        <input type='hidden' name='checkOuts' value='${checkout}'> 
-        <input type='hidden' name='price' value='${price}'>
-        `;
-        mainForm.appendChild(itemContainer);
+    const bookingId = Number(btn.dataset.bookingId);
+    const detailId = Number(btn.dataset.detailId);
+    form.dataset.detailId = detailId;
+
+    const booking = bookingData.find(b => b.bookingId === bookingId);
+    const detail = booking.details.find(bd => bd.bookingDetailId === detailId);
+
+    form.dataset.detailId = detailId;
+    form.dataset.roomId = detail.roomId;
+    form.dataset.rawCheckIn = detail.checkIn;
+    form.dataset.rawCheckOut = detail.checkOut;
+    // Đổ dữ liệu text vào đúng các div/span
+    form.querySelector('.roomNumber').textContent = `Phòng: ${detail.roomNumber}`;
+    form.querySelector('.checkIn').textContent = formatDateTime(detail.checkIn);
+    form.querySelector('.checkOut').textContent = formatDateTime(detail.checkOut);
+    form.querySelector('.customer .name').textContent = booking.customerName;
+    form.querySelector('.customer .id-card').textContent = "ID Card: " + booking.customerIDCard;
+    form.querySelector('.customer .phone').textContent = "SĐT: " + booking.customerPhone;
+    form.querySelector('.customer .email').textContent = "Email: " + booking.customerEmail;
+
+    const container = form.querySelector(".service-container");
+    const template = container.querySelector("template");
+
+    // Xóa các hàng dịch vụ cũ nhưng giữ lại nút "Edit Service", "Add" và "Template"
+    // Ta xóa tất cả div.service mà KHÔNG chứa chữ "Add"
+    const oldItems = container.querySelectorAll(".service");
+    oldItems.forEach(item => {
+        if (item.textContent.trim() !== "Add" && !item.classList.contains('new-service-item')) {
+            item.remove();
+        }
+    });
+
+    // Render dịch vụ hiện có
+    if (detail.services) {
+        detail.services.forEach(s => {
+            const clone = template.content.cloneNode(true);
+            const div = clone.querySelector(".service");
+
+            div.dataset.serviceId = s.hotelServiceId;
+            div.querySelector(".name").textContent = s.serviceName;
+            div.querySelector(".quantity").value = s.quantity;
+            div.querySelector(".price").textContent = new Intl.NumberFormat('vi-VN').format(s.price) + "đ";
+
+            // Chèn vào TRƯỚC nút Add
+            const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
+            container.insertBefore(clone, addBtn);
+        });
     }
-    
-});
 
-document.querySelector('.booking-form form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const bookingData = {
-        customerName: document.querySelector("#custName").value, // Lấy từ form fragment
-        customerPhone: document.querySelector("#custPhone").value,
-        bookingItems: []
+    // Xử lý nút Add
+    const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
+    addBtn.onclick = () => {
+        renderNewServiceRow(container, template); // Truyền container vào đây
     };
 
-    // Quét các phòng đã chọn
-    document.querySelectorAll("#roomTable tbody tr").forEach(row => {
-        const checkbox = row.querySelector("input[type='checkbox']");
-        if (checkbox && checkbox.checked) {
-            bookingData.bookingItems.push({
-                roomNum: row.querySelector(".room-id").textContent,
-                checkIn: document.querySelector("#start").value + "T00:00:00", // Format LocalDateTime
-                checkOut: document.querySelector("#end").value + "T00:00:00"
-            });
+    // Nút reset
+    form.querySelector('button[type="reset"]').onclick = (e) => {
+        e.preventDefault();
+        overlay.classList.remove("active");
+    };
+
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            overlay.classList.remove("active");
         }
-    });
+    };
 
-    // Gửi bằng Fetch API lên Controller
-    fetch('/api/bookings/create', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(bookingData)
-    }).then(res => {
-        if (res.ok) {
-            // Hiện message thành công
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(46, 204, 113, 0.9);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 10px;
-            backdrop-filter: blur(20px);
-            z-index: 10000;
-            animation: fadeIn 0.3s ease;
-            `;
-            successMsg.textContent = 'ĐÃ LƯU FORM THÀNH CÔNG!';
-
-            document.body.appendChild(successMsg);
-
-            // Remove message after 3 seconds
-            setTimeout(() => {
-                successMsg.remove();
-            }, 3000);
-            
-            window.location.reload();
+    form.querySelector('.cancel').onclick = (e) => {
+        e.preventDefault(); // Chống reload trang
+        if (confirm("Xác nhận hủy phòng này?")) {
+            sendCancelForm(detailId);
         }
-    });
-    
-    if(document.querySelector('.bookstat') === 'success'){
-        // Create success message
-        
+    };
+}
 
-        // Refresh trang
-        this.reset();
-        window.location.reload();
-    }
-});
+function renderNewServiceRow(container, template) {
+    const row = document.createElement('div');
+    row.className = 'service new-service-item';
 
-// Add fade in animation
-const fadeStyle = document.createElement('style');
-fadeStyle.textContent = `
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    let options = allServices.map(s =>
+        `<option value="${s.serviceId}">${s.name} (${new Intl.NumberFormat('vi-VN').format(s.price)}đ)</option>`
+    ).join('');
+
+    row.innerHTML = `
+        <label>
+            <select class="new-service-id" style="margin-right: 5px;">
+                <option value="">-- Chọn dịch vụ --</option>
+                ${options}
+            </select>
+            <input type="number" class="quantity" value="1" min="1" style="width: 50px;"></input>
+        </label>
+        <button type="button" class="remove-service" style="color:red; background:none; border:none; cursor:pointer;">&times;</button>
+    `;
+
+    row.querySelector('.remove-service').onclick = () => row.remove();
+
+    // Chèn vào TRƯỚC nút Add
+    const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
+    container.insertBefore(row, addBtn);
+}
+
+async function sendEditForm(e) {
+    e.preventDefault();
+    const form = e.target;
+    const container = form.querySelector(".service-container");
+
+    // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
+    const existingServices = Array.from(container.querySelectorAll(".service"))
+        .filter(el => el.dataset.serviceId) // Chỉ lấy hàng có ID dịch vụ
+        .map(el => ({
+            hotelServiceId: Number(el.dataset.serviceId),
+            quantity: Number(el.querySelector(".quantity").value)
+        }));
+
+    // 2. Thu thập dịch vụ mới (những div được add thêm có select)
+    const newServices = Array.from(container.querySelectorAll(".new-service-item")).map(el => ({
+        hotelServiceId: Number(el.querySelector(".new-service-id").value),
+        quantity: Number(el.querySelector(".quantity").value)
+    })).filter(s => s.hotelServiceId > 0);
+
+    // 3. Chuẩn bị payload khớp với BookingDetailDTO.java
+    const payload = {
+        // Mặc dù popup sửa 1 phòng, nhưng Service đang lặp qua List<DetailDTO>
+        details: [{
+            bookingDetailId: Number(form.dataset.detailId),
+            roomId: Number(form.dataset.roomId), // Bạn nhớ gán roomId vào dataset ở hàm render
+            checkIn: form.dataset.rawCheckIn,    // Dùng định dạng ISO gốc từ DB (LocalDateTime.parse cần cái này)
+            checkOut: form.dataset.rawCheckOut,  // Không dùng chuỗi đã format tiếng Việt "T3, 21/04..."
+            status: "PENDING", // Hoặc lấy từ 1 select status nếu có
+            services: [...existingServices, ...newServices]
+        }]
+    };
+
+    const token = document.querySelector('meta[name="_csrf"]')?.content;
+    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+    try {
+        const response = await fetch('/booking/edit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [header]: token },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Cập nhật thành công!");
+            location.reload();
+        } else {
+            const errors = await response.json();
+            alert("Lỗi: " + errors.join("\n"));
+        }
+    } catch (err) {
+        console.error("Gửi form thất bại:", err);
     }
-`;
-document.head.appendChild(fadeStyle);
+}
+
+document.querySelector("#edit-form").onsubmit = sendEditForm;
+
+async function sendCancelForm(id) {
+    const token = document.querySelector('meta[name="_csrf"]')?.content;
+    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+    try {
+        const response = await fetch('/booking/cancel', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', [header]: token},
+            body: JSON.stringify({id: id, isDetail: true})
+        });
+
+        if (response.ok) {
+            alert("Cập nhật thành công!");
+            location.reload();
+        } else {
+            const errors = await response.json();
+            alert("Lỗi: " + errors.join("\n"));
+        }
+    } catch (err) {
+        console.error("Gửi form thất bại:", err);
+    }
+}

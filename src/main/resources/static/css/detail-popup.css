@@ -1,0 +1,222 @@
+/* Lớp nền mờ bao phủ toàn màn hình */
+.popup-overlay {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Làm tối nền */
+    backdrop-filter: blur(5px); /* Làm mờ trang web bên dưới */
+    z-index: 9999; /* Luôn nằm trên cùng */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hiển thị khi có class active */
+.popup-overlay.active {
+    display: flex;
+}
+
+/* Định vị lại thẻ popup */
+.popup {
+    position: relative; /* Bỏ cái translate cũ đi vì dùng flex ở cha rồi */
+    width: 550px;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto; /* Nếu form dài quá thì có thanh cuộn riêng */
+
+    border-radius: 0;
+    padding: 30px;
+    animation: popupPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popupPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.popup::-webkit-scrollbar {
+    width: 2px;
+}
+
+.popup::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.popup::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, var(--emerald), var(--gold));
+    border-radius: 4px;
+}
+
+.popup::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, var(--emerald-light), var(--gold-light));
+}
+
+/* ============================================
+   POPUP FORM (.glass .popup)
+============================================ */
+
+#edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Thông tin phòng & Thời gian */
+#edit-form .roomNumber {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--emerald-light);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+#edit-form .checkIn, #edit-form .checkOut {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#edit-form .checkIn::before { content: "Check-in:"; font-weight: 600; }
+#edit-form .checkOut::before { content: "Check-out:"; font-weight: 600; }
+
+/* Thông tin khách hàng */
+#edit-form .customer {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#edit-form .customer .name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+}
+
+#edit-form .customer .id-card, #edit-form .customer .phone {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   SERVICE CONTAINER
+============================================ */
+#edit-form .service-container {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#edit-form .service-container button {
+    background: var(--emerald-light);
+    color: black;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+#edit-form .service-container .service {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+/* Nút Add Service */
+#edit-form .service-container .service:last-of-type {
+    color: var(--emerald-light);
+    cursor: pointer;
+    font-weight: 600;
+    border: 1px dashed var(--emerald-light);
+    justify-content: center;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#edit-form .service-container .service:last-of-type:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+#edit-form .service label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#edit-form .service .quantity {
+    width: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#edit-form .service .price {
+    font-weight: 600;
+    color: #ffd700; /* Màu vàng Gold cho giá tiền */
+}
+
+/* ============================================
+   BUTTONS
+============================================ */
+#edit-form .cancel {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border: 1px solid #ef4444 !important;
+    color: #ff9999 !important;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+#edit-form .cancel:hover {
+    background: rgba(239, 68, 68, 0.4) !important;
+}
+
+#edit-form .form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+#edit-form .form-actions button[type="submit"] {
+    background: var(--emerald-light);
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#edit-form .form-actions button[type="reset"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#edit-form .form-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
