@@ -41,14 +41,8 @@ public class BookingController {
     @GetMapping("/status")
     public String showAllRoom(Model model) {
         model.addAttribute("activePage", "bookstat");
-        List<RoomStatDTO> roomlist = roomService.getFullRoomList();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String roomListJson = mapper.writeValueAsString(roomlist);
-            model.addAttribute("roomList", roomListJson);
-        } catch (JsonProcessingException e) {
-            model.addAttribute("roomList", "[]");
-        }
+        List<BookingDetailDTO> bookingList = bookingService.getAllBooking();
+        model.addAttribute("bookingList", bookingList);
         return "bookstat";
     }
 

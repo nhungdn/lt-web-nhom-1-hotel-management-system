@@ -2,6 +2,7 @@
 package com.nhom1.hotelmanagement.dto;
 
 import com.nhom1.hotelmanagement.entities.BookingDetail.Status;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class BookingDetailDTO {
     private String customerPhone;
     private String customerEmail;
     private String customerIDCard;
-    private String totalAmount;
+    private BigDecimal totalAmount;
     private List<DetailDTO> details;
     @Data
     public static class DetailDTO {
@@ -22,6 +23,7 @@ public class BookingDetailDTO {
         private String checkIn;
         private String checkOut;
         private Status status;
+        private BigDecimal price;
         private List<ServiceDTO> services;
     }
     
@@ -30,6 +32,6 @@ public class BookingDetailDTO {
         private Long hotelServiceId; // Cho BE
         private String serviceName;
         private Integer quantity;
-        private Double price;
+        private BigDecimal price;
     }
 }

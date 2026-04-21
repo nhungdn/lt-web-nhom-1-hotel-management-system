@@ -1,46 +1,83 @@
-document.addEventListener("DOMContentLoaded", () => {
-    function getRoomList(){
-        console.log("RL function has run.");
-        const roomTable = document.getElementById("roomTable");
-        const roomTbody = roomTable.querySelector("tbody");
-        const rooms = JSON.parse(roomTable.getAttribute("rooms-list"));
-        console.log(rooms);
-        for(const room of rooms){
-            const temp = document.querySelector("#tr-template");
-            const clone = temp.content.cloneNode(true);
-            
-            clone.querySelector(".table-room-name").textContent = room.roomTypeName;
-            clone.querySelector(".table-room-desc").textContent = room.roomDesc;
-            clone.querySelector(".room-id").textContent = room.roomNumber;
-            const stat = clone.querySelector(".status-badge");
-            stat.textContent = room.status.trim();
-            switch(room.status){
-                case "AVAILABLE":
-                    stat.classList.add("green");
-                    break;
-                case "BOOKED":
-                    stat.classList.add("yellow");
-                    break;
-                case "OCCUPIED":
-                    stat.classList.add("red");
-                    break;
-                case "CLEANING":
-                    stat.classList.add("blue");
-                    break;
-            }
-            clone.querySelector(".checkin").innerHTML = formatDateTime(room.checkIn) || "-";
-            clone.querySelector(".checkout").innerHTML = formatDateTime(room.checkOut) || "-";
-            clone.querySelector(".price").textContent = room.price;
-            clone.querySelector("input").setAttribute('id', room.roomNumber+"Check");
-            clone.querySelector(".roomtab button").setAttribute('id', room.roomNumber+"EditRoomBtn");
-            clone.querySelector(".booktab button").setAttribute('id', room.roomNumber+"EditBookBtn");
-            roomTbody.appendChild(clone);
-        }
-    }
-    console.log("Roomlist script has run.");
-    getRoomList();
 
-});
+
+function renderBookingList(data) {
+    const tbody = document.querySelector('#roomTable tbody');
+    const template = document.getElementById('booking-template');
+
+    tbody.innerHTML = ''; // Xóa trắng bảng trước khi render
+
+    data.forEach(booking => {
+        const clone = template.content.cloneNode(true);
+        const tr = clone.querySelector('tr');
+
+        // Đổ dữ liệu vào hàng chính
+        tr.querySelector('.bid').textContent = `#${booking.bookingId}`;
+        tr.querySelector('.name').textContent = booking.customerName;
+        tr.querySelector('.id-card').textContent = `ID: ${booking.customerIDCard}`;
+        tr.querySelector('.phone').textContent = booking.customerPhone;
+        tr.querySelector('.email').textContent = booking.customerEmail;
+        
+        const statusBadge = tr.querySelector('.status-badge');
+        statusBadge.textContent = "Paid"; // Hoặc logic status của bạn
+
+        // Gán sự kiện click để hiện detail
+        tr.addEventListener('click', function() {
+            toggleDetailRow(this, booking);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+
+function toggleDetailRow(clickedRow, booking) {
+    const nextRow = clickedRow.nextElementSibling;
+
+    // 1. Nếu hàng tiếp theo chính là hàng detail của nó -> Đóng lại
+    if (nextRow && nextRow.classList.contains('detail-row')) {
+        nextRow.remove();
+        clickedRow.classList.remove('active-row');
+        return;
+    }
+
+    // 2. Đóng TẤT CẢ các hàng detail khác đang mở và xóa class active
+    document.querySelectorAll('.detail-row').forEach(row => row.remove());
+    document.querySelectorAll('.active-row').forEach(row => row.classList.remove('active-row'));
+
+    // 3. Tạo hàng detail mới
+    const template = document.getElementById('detail-template');
+    const clone = template.content.cloneNode(true);
+    
+    // Tạo một hàng tr mới để chứa nội dung từ template
+    const detailRow = document.createElement('tr');
+    detailRow.classList.add('detail-row');
+    
+    // Lấy nội dung bên trong template (là các thẻ td) bỏ vào tr mới
+    detailRow.innerHTML = clone.querySelector('td').outerHTML;
+
+    // 4. Đổ dữ liệu vào bảng con
+    const detailBody = detailRow.querySelector('.detail-body');
+    if (booking.details && booking.details.length > 0) {
+        booking.details.forEach(d => {
+            const rowHtml = `
+                <tr>
+                    <td>${d.bookingDetailId}</td>
+                    <td><span class="status-badge">${d.status}</span></td>
+                    <td><strong>${d.roomNumber || 'N/A'}</strong></td>
+                    <td>${formatDateTime(d.checkIn)}</td>
+                    <td>${formatDateTime(d.checkOut)}</td>
+                    <td><button class="action">Edit</button></td>
+                </tr>
+            `;
+            detailBody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+    } else {
+        detailBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Không có chi tiết phòng</td></tr>';
+    }
+
+    // 5. Hiển thị
+    clickedRow.classList.add('active-row');
+    clickedRow.after(detailRow);
+}
 
 function formatDateTime(isoString) {
     if (!isoString || isoString === "-") return "-";
@@ -56,9 +93,5 @@ function formatDateTime(isoString) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
 
-    // Format giờ:phút
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-
-    return `${dayName}, ${day}/${month}/${year} <br/> ${hours}:${minutes}`;
+    return `${dayName}, ${day}/${month}/${year}`;
 }

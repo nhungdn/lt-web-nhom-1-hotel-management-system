@@ -47,7 +47,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public long countBookingByStatus(String status) {
-        return bookingDetailRepository.countByStatus(status);
+        return bookingDetailRepository.countByStatus(BookingDetail.Status.valueOf(status));
     }
 
     @Override

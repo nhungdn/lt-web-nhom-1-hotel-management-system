@@ -3,15 +3,11 @@ package com.nhom1.hotelmanagement.controllers;
 
 import com.nhom1.hotelmanagement.dto.BookingDTO;
 import com.nhom1.hotelmanagement.dto.LoginResponse;
-import com.nhom1.hotelmanagement.dto.RoomResponse;
 import com.nhom1.hotelmanagement.dto.RoomTypeResponse;
-import com.nhom1.hotelmanagement.entities.RoomType;
 import com.nhom1.hotelmanagement.services.BookingService;
 import com.nhom1.hotelmanagement.services.RoomTypeService;
 import com.nhom1.hotelmanagement.services.RoomTypeImageService;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

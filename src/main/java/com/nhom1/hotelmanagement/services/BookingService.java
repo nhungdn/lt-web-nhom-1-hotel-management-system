@@ -27,9 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nhom1.hotelmanagement.repositories.BookingHotelServiceRepository;
 import com.nhom1.hotelmanagement.repositories.HotelServiceRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -48,6 +52,73 @@ public class BookingService {
 //        if (customerRepo.existsByIdCard(idCard)) return 3;
 //        return 0;
 //    }
+    
+    public List<BookingDetailDTO> getAllBooking() {
+        return bookingRepo.findAll().stream()
+                .sorted(Comparator.comparing(Booking::getBookingId).reversed())
+                .map(this::convertToDto) // Tách logic convert ra một hàm riêng
+                .collect(Collectors.toList());
+    }
+
+    private BookingDetailDTO convertToDto(Booking b) {
+        BookingDetailDTO dto = new BookingDetailDTO();
+        dto.setBookingId(b.getBookingId());
+
+        Optional.ofNullable(b.getCustomer()).ifPresent(c -> {
+            dto.setCustomerName(c.getName());
+            dto.setCustomerEmail(c.getEmail());
+            dto.setCustomerIDCard(c.getIdCard());
+        });
+
+        // 1. Map danh sách Details
+        List<BookingDetailDTO.DetailDTO> details = b.getBookingDetails().stream()
+                .map(bd -> {
+                    BookingDetailDTO.DetailDTO dDto = new BookingDetailDTO.DetailDTO();
+                    dDto.setBookingDetailId(bd.getBookingDetailId());
+                    dDto.setRoomNumber(bd.getRoom() != null ? bd.getRoom().getRoomNumber() : "N/A");
+                    dDto.setStatus(bd.getStatus());
+                    dDto.setCheckIn(bd.getCheckInDate().toString());
+                    dDto.setCheckOut(bd.getCheckOutDate().toString());
+
+                    // Lưu giá phòng tại thời điểm đặt
+                    BigDecimal roomPrice = bd.getPriceAtBooking() != null ? bd.getPriceAtBooking() : BigDecimal.ZERO;
+                    // dDto.setPrice(roomPrice); // Nếu DTO của bạn có trường này
+
+                    if (bd.getBookingHotelServices() != null) {
+                        List<BookingDetailDTO.ServiceDTO> sDtos = bd.getBookingHotelServices().stream()
+                                .map(bhs -> {
+                                    BookingDetailDTO.ServiceDTO sDto = new BookingDetailDTO.ServiceDTO();
+                                    sDto.setHotelServiceId(bhs.getService().getServiceId());
+                                    sDto.setServiceName(bhs.getService().getName());
+                                    sDto.setQuantity(bhs.getQuantity());
+                                    sDto.setPrice(bhs.getService().getPrice());
+                                    return sDto;
+                                }).collect(Collectors.toList());
+                        dDto.setServices(sDtos);
+                    }
+                    return dDto;
+                }).collect(Collectors.toList());
+
+        dto.setDetails(details);
+
+        // Tính tổng tiền
+        BigDecimal total = b.getBookingDetails().stream()
+                .map(bd -> {
+                    // Tiền phòng
+                    BigDecimal rPrice = bd.getPriceAtBooking() != null ? bd.getPriceAtBooking() : BigDecimal.ZERO;
+
+                    // Tiền dịch vụ = Sum(price * quantity)
+                    BigDecimal sPrice = bd.getBookingHotelServices().stream()
+                            .map(s -> s.getService().getPrice().multiply(new BigDecimal(s.getQuantity())))
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    return rPrice.add(sPrice);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        dto.setTotalAmount(total);
+        return dto;
+    }
 
     @Transactional
     public List<String> createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session) {

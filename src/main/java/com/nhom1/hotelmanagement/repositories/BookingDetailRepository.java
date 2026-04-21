@@ -33,7 +33,7 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, Lo
     public List<BookingDetail> findAllByBooking(Booking b);
 
     // ── MỚI - dùng cho dashboard ──────────────────────────────────────────────
-    long countByStatus(String status);
+    long countByStatus(BookingDetail.Status status);
 
     @Query("SELECT bd FROM BookingDetail bd " +
             "JOIN FETCH bd.booking bk " +
