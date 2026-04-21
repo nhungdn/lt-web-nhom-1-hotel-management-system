@@ -31,13 +31,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                    // 1. Lưu Token vào Cookie và cho phép JS đọc (HttpOnly = false)
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    // 2. Ép Spring gửi Token về ngay từ request GET đầu tiên
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                 )
-//                .csrf(csrf -> {
-//                })
+                        // 1. Lưu Token vào Cookie và cho phép JS đọc (HttpOnly = false)
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        // 2. Ép Spring gửi Token về ngay từ request GET đầu tiên
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                // .csrf(csrf -> {
+                // })
                 .authorizeHttpRequests(auth -> auth
                         // Static resources & Public pages
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
@@ -81,7 +80,7 @@ public class SecurityConfig {
                         user.getRole()));
                 response.sendRedirect("/dashboard");
             } else {
-                response.sendRedirect("/login?error=user_not_found");
+                response.sendRedirect("/login?error=true");
             }
         };
     }
