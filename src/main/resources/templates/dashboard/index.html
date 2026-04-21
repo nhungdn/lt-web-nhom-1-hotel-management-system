@@ -1,22 +1,33 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/slidebar :: main_layout(~{::content}, ~{::title}, ~{::head})}">
+<!doctype html>
+<html
+    lang="vi"
+    xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}"
+>
 
 <head>
     <title>HotelDash – Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-          --bg:#141f18; --card:#1a2b1f; --border:rgba(255,255,255,0.07);
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <th:block th:fragment="head">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+                .dashboard-view {
+                    --card: var(--glass-bg);
+                    --border: var(--glass-border);
           --green:#4ade80; --green-dim:rgba(74,222,128,0.12);
           --gold:#f0b429;  --gold-dim:rgba(240,180,41,0.12);
           --blue:#60a5fa;  --blue-dim:rgba(96,165,250,0.12);
           --orange:#fb923c;--orange-dim:rgba(251,146,60,0.12);
           --red:#f87171;   --red-dim:rgba(248,113,113,0.12);
-          --text:#e8f0eb;  --muted:rgba(232,240,235,0.45);
+                    --text: var(--text-primary);
+                    --muted: var(--text-muted);
           --radius:12px;
         }
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+
+                .dashboard-view {
+                    color: var(--text);
+                }
 
         /* ✅ XÓA .main{margin-left:230px} — layout/base đã xử lý rồi */
 
@@ -122,13 +133,16 @@
         .av-8{background:linear-gradient(135deg,#72243e,#d4537e);}
         .av-9{background:linear-gradient(135deg,#444441,#888780);}
     </style>
+    </th:block>
 </head>
 <body>
+
+<h1 th:fragment="title">Dashboard</h1>
 
 <th:block th:fragment="content">
 
     <!-- ✅ XÓA <main class="main"> — dùng <div> thay thế, layout đã có <main class="main-content"> -->
-    <div style="padding:24px;">
+    <div class="dashboard-view" style="padding:24px;">
 
         <!-- TOP BAR -->
         <div class="top-bar">
