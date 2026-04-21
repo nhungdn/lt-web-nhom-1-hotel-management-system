@@ -1,5 +1,6 @@
 package com.nhom1.hotelmanagement.dto;
 
+import com.nhom1.hotelmanagement.entities.BookingDetail.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class BookingDetailDashboardDTO {
     private String roomTypeName;
     private LocalDateTime checkInDate;
     private LocalDateTime checkOutDate;
-    private String status;
+    private Status status;
     private BigDecimal priceAtBooking;
     private BigDecimal    roomTypePrice;
 }
