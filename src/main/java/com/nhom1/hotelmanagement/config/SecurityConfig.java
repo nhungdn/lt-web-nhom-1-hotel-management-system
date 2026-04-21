@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .userDetailsService(userDetailsService);
@@ -78,7 +78,11 @@ public class SecurityConfig {
                         user.getUsername(),
                         user.getFullName(),
                         user.getRole()));
-                response.sendRedirect("/dashboard");
+                if (user.getRole().toString().equals("ADMIN")) {
+                    response.sendRedirect("/dashboard");
+                } else {
+                    response.sendRedirect("/booking/status");
+                }
             } else {
                 response.sendRedirect("/login?error=true");
             }
