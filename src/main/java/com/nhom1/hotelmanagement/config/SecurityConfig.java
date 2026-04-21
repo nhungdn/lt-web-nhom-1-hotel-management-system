@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/roomtypes", "/roomtypes/*/images", "/roomtypeimages/api/**")
                         .permitAll()
-                        .requestMatchers("/services/api/all", "/filter/**").permitAll()
+                        .requestMatchers("/services/api/all", "/filter/**", "/book").permitAll()
                         // Role-based access
                         .requestMatchers("/users/**").hasRole("ADMIN")
 

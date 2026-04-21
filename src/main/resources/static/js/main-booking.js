@@ -1,79 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const finishBtn = document.querySelector(".finish");
     if (finishBtn) {
-        finishBtn.addEventListener('click', (e) => {
+        finishBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            handleFinish();
+            console.log("selectedRooms hiện tại:", selectedRooms);
+            await handleFinish();
         });
     }
 });
-
-async function handleFinish() {
-    // Kiểm tra mảng selectedRooms
-    if (selectedRooms.length === 0) return alert("Giỏ hàng trống!");
-
-    // Thu thập thông tin từ fragments/bookingform
-    // Trong hàm handleFinish()
-    const customerName = document.querySelector('input[name="customerName"]')?.value;
-    const customerPhone = document.querySelector('input[name="customerPhone"]')?.value;
-    const customerEmail = document.querySelector('input[name="customerEmail"]')?.value;
-    const customerIdCard = document.querySelector('input[name="customerIdCard"]')?.value;
-
-    const bookingItems = [];
-    selectedRooms.forEach(group => {
-        group.rooms.forEach(room => {
-            bookingItems.push({
-                roomTypeId: room.roomTypeId,
-                quantity: 1,
-                checkIn: group.start,
-                checkOut: group.end,
-                serviceItems: room.services.map(s => ({
-                    serviceId: s.serviceId,
-                    quantity: s.quantity
-                }))
-            });
-        });
-    });
-
-    const requestBody = {
-        customerName: customerName,
-        customerPhone: customerPhone,
-        customerEmail: customerEmail,
-        customerIdCard: customerIdCard,
-        bookingItems: bookingItems
-    };
-
-    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-
-    try {
-        const response = await fetch('/book', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (response.ok) {
-            alert("ĐẶT PHÒNG THÀNH CÔNG!");
-            window.location.reload();
-        } else {
-            const errorText = await response.text();
-            alert("Lỗi: " + errorText);
-        }
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-for(const item of selectedRooms) {
-    // SAI: let itemNode = item.cloneNode(true);
-    // ĐÚNG:
-    let itemNode = itemTemplate.content.cloneNode(true);
-    // ... sau đó mới find h6 để nhét ngày vào
-}
-
 
 async function handleFinish() {
     // 1. Thu thập thông tin khách hàng từ Form
@@ -109,15 +43,13 @@ async function handleFinish() {
     };
 
     // 3. Gửi API POST
-    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-
+    const token = document.querySelector('meta[name="_csrf"]')?.content;
+    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+    console.log("bây h gửi thử form");
     try {
         const response = await fetch('/book', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', [header]: token },
             body: JSON.stringify(requestBody)
         });
 
@@ -146,7 +78,7 @@ async function handleFinish() {
                 successMsg.remove();
             }, 3000);
 
-            window.location.reload();
+            // window.location.reload();
         } else {
             const errors = await response.json();
             alert("Đặt phòng thất bại: " + (Array.isArray(errors) ? errors.join(", ") : errors));
@@ -155,6 +87,7 @@ async function handleFinish() {
         console.error("Lỗi kết nối:", err);
         alert("Có lỗi xảy ra khi kết nối tới máy chủ.");
     }
+    console.log("đã thử form và nhận phản hồi?");
 }
 
 // Add fade in animation
@@ -166,7 +99,3 @@ fadeStyle.textContent = `
     }
 `;
 document.head.appendChild(fadeStyle);
-
-document.querySelector(".select-sidebar .total-and-toggle .finish").addEventListener('click', () => {
-    handleFinish();
-})

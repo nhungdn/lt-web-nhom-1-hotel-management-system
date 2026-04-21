@@ -1,6 +1,7 @@
 
 package com.nhom1.hotelmanagement.dto;
 
+import com.nhom1.hotelmanagement.entities.BookingDetail.Status;
 import java.util.List;
 import lombok.Data;
 
@@ -20,7 +21,7 @@ public class BookingDetailDTO {
         private Long roomId;          // cho BE
         private String checkIn;
         private String checkOut;
-        private String status;
+        private Status status;
         private List<ServiceDTO> services;
     }
     

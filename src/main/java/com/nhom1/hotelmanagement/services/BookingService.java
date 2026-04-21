@@ -28,6 +28,8 @@ import com.nhom1.hotelmanagement.repositories.BookingHotelServiceRepository;
 import com.nhom1.hotelmanagement.repositories.HotelServiceRepository;
 import com.nhom1.hotelmanagement.repositories.RoomTypeRepository;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BookingService {
@@ -40,6 +42,7 @@ public class BookingService {
     @Autowired private BookingHotelServiceRepository bookingHotelServiceRepo;
     @Autowired private HotelServiceRepository hotelServiceRepo;
     
+<<<<<<< Updated upstream
     public int checkCustomer(String phone, String idCard, String email) {
         if (customerRepo.existsByPhone(phone)) return 1;
         if (customerRepo.existsByEmail(email)) return 2;
@@ -63,50 +66,97 @@ public class BookingService {
         }
         return error;
     }
+=======
+//    public int checkCustomer(String phone, String idCard, String email) {
+//        if (customerRepo.existsByPhone(phone)) return 1;
+//        if (customerRepo.existsByEmail(email)) return 2;
+//        if (customerRepo.existsByIdCard(idCard)) return 3;
+//        return 0;
+//    }
+>>>>>>> Stashed changes
     
     @Transactional
-    public List<String> createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session){
-        
-        LoginResponse ussertemp = (LoginResponse) session.getAttribute("user");
-        User user = userRepo.findByUserId(ussertemp.getUserId());
-        
-        // Handling customer
-        Customer customer = customerRepo.findByPhone(request.getCustomerPhone());
-        if (customer == null) customer = new Customer();
-        
+    public List<String> createBooking(BookingDTO.MultiSubmitRequest request, HttpSession session) {
+        System.out.println("service: " + request);
+
+        // Xử lý Customer
+        Customer customer = customerRepo.findByIdCard(request.getCustomerIdCard());
+        if (customer == null) {
+            customer = new Customer();
+        }
         customer.setName(request.getCustomerName());
         customer.setPhone(request.getCustomerPhone());
         customer.setIdCard(request.getCustomerIdCard());
         customer.setEmail(request.getCustomerEmail());
         customer = customerRepo.save(customer);
+<<<<<<< Updated upstream
         
         // 3. Tiến hành lưu Booking và Details
+=======
+
+        List<String> errors = new ArrayList<>();
+        // Dùng Map để lưu lại danh sách phòng trống đã tìm thấy ở bước kiểm tra
+        // Key là roomTypeId, Value là danh sách các phòng trống (Room)
+        Map<Long, List<Room>> availRoomsMap = new HashMap<>();
+
+        // KIỂM TRA & CACHE PHÒNG
+        for (BookingDTO.BookingItem item : request.getBookingItems()) {
+            // Đồng nhất khung giờ check-in/out
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(14, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(12, 0);
+
+            List<Room> availRooms = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+
+            if (availRooms.size() < item.getQuantity()) {
+                RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
+                errors.add("Loại phòng " + (rt != null ? rt.getName() : "ID: " + item.getRoomTypeId()) + " không đủ chỗ.");
+            } else {
+                // Nếu đủ, cho vào Map
+                availRoomsMap.put(item.getRoomTypeId(), availRooms);
+            }
+        }
+
+        // Nếu có bất kỳ lỗi nào, Transaction sẽ Rollback (không lưu Customer/Booking)
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+
+        // LƯU BOOKING
+>>>>>>> Stashed changes
         Booking book = new Booking();
         book.setCustomer(customer);
-        book.setUser(user);
         bookingRepo.save(book);
 
+        // LƯU DETAILS & SERVICES
         for (BookingDTO.BookingItem item : request.getBookingItems()) {
-            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(12, 0);
-            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(8, 0);
-            List<Room> availRoom = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
+            // Lấy danh sách phòng
+            List<Room> roomsForThisType = availRoomsMap.get(item.getRoomTypeId());
+
+            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(14, 0);
+            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(12, 0);
 
             if (availRoom.size() < item.getQuantity()) {
                 throw new RuntimeException("Phòng không đủ");
             }
 
             for (int i = 0; i < item.getQuantity(); i++) {
-                Room room = availRoom.get(i);
-                
+                Room room = roomsForThisType.get(i); // Lấy phòng thứ i trong danh sách trống
+
                 BookingDetail detail = new BookingDetail();
                 detail.setRoom(room);
                 detail.setBooking(book);
                 detail.setCheckInDate(startTime);
                 detail.setCheckOutDate(endTime);
+<<<<<<< Updated upstream
                 detail.setStatus("BOOKED");
+=======
+                detail.setStatus(BookingDetail.Status.PENDING);
+                detail.setPriceAtBooking(room.getRoomType().getPrice());
+>>>>>>> Stashed changes
 
-                final BookingDetail savedDetail = detailRepo.save(detail);
-                // 4. Lưu Dịch vụ đi kèm
+                BookingDetail savedDetail = detailRepo.save(detail);
+
+                // Lưu Dịch vụ
                 if (item.getServiceItems() != null) {
                     for (BookingDTO.ServiceItem sDto : item.getServiceItems()) {
                         hotelServiceRepo.findById(sDto.getServiceId()).ifPresent(hs -> {
@@ -120,7 +170,12 @@ public class BookingService {
                 }
             }
         }
+<<<<<<< Updated upstream
         return new ArrayList<>(); // Không có lỗi
+=======
+
+        return errors;
+>>>>>>> Stashed changes
     }
 
     public List<String> editBooking(BookingDetailDTO request) {
@@ -173,7 +228,7 @@ public class BookingService {
         if (isDetail) {
             BookingDetail bd = detailRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
-            bd.setStatus("CANCELLED");
+            bd.setStatus(BookingDetail.Status.CANCELED);
             detailRepo.save(bd);
         } else {
             // Tìm và update toàn bộ phòng thuộc 1 đơn đặt (Booking)
@@ -182,7 +237,7 @@ public class BookingService {
 
             List<BookingDetail> details = detailRepo.findAllByBooking(b);
             for (BookingDetail item : details) {
-                item.setStatus("CANCELLED");
+                item.setStatus(BookingDetail.Status.CANCELED);
             }
             detailRepo.saveAll(details);
         }

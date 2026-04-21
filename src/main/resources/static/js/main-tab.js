@@ -1,3 +1,7 @@
+let currentFocusTempId = null;
+let currentDaygroup = null;
+let currentTabIndex = 0;
+
 // Hàm vẽ lại danh sách dịch vụ khi có dữ liệu mới
 async function renderServiceGrid() {
     const response = await fetch('/services/api/all', {
@@ -11,12 +15,14 @@ async function renderServiceGrid() {
     data.forEach(s => {
         const html = `
             <div class="hs-card">
-                <div class="hs-name">${s.name}</div>
-                <div class="hs-price">${s.price}</div>
+                <div data-name="${s.name}" class="hs-name">${s.name}</div>
+                <div data-price="${s.price}" class="hs-price">${s.price.toLocaleString()} VNĐ</div>
                 <div class="quantity-control">
-                    <button class="decrease" onclick="changeQuantityService(this)"> - </button>
-                    <div class="quantity" > 0 </div>
-                    <button class="increase" onclick="changeQuantityService(this)"></button>
+                    <button class="decrease" data-service-id="${s.serviceId}" 
+                    data-name="${s.name}" onclick="changeQuantityService(this)"> - </button>
+                    <span class="quantity"> 0 </span>
+                    <button class="increase" data-service-id="${s.serviceId}"
+                     data-name="${s.name}" onclick="changeQuantityService(this)"> + </button>
                 </div>
             </div>`;
         grid.insertAdjacentHTML('beforeend', html);
@@ -25,8 +31,10 @@ async function renderServiceGrid() {
 }
 
 function changeQuantityService(btn) {
-    const sid = btn.getAttribute('data-id');
+    const sid = Number(btn.getAttribute('data-service-id'));
     const sname = btn.getAttribute('data-name');
+    const sprice = parseInt(btn.closest('.hs-card').querySelector('.hs-price').textContent.replace(/[^0-9]/g, ''));
+
     const selectedRoomEl = document.querySelector('.select-sidebar .active'); // Tìm dòng phòng đang được chọn
 
     if (!selectedRoomEl) {
@@ -43,15 +51,19 @@ function changeQuantityService(btn) {
         if (found) theRoom = found;
     });
 
+    let count = 0;
     if (theRoom) {
         let sIndex = theRoom.services.findIndex(s => s.serviceId === sid);
 
         if (btn.classList.contains('increase')) {
             if (sIndex === -1) {
-                theRoom.services.push({ serviceId: sid, serviceName: sname, quantity: 1 });
-            } else {
-                theRoom.services[sIndex].quantity++;
-            }
+                theRoom.services.push({
+                    serviceId: parseInt(sid),
+                    serviceName: sname,
+                    quantity: 1,
+                    price: sprice
+                });
+            } else theRoom.services[sIndex].quantity++;
         } else {
             if (sIndex !== -1) {
                 theRoom.services[sIndex].quantity = Math.max(theRoom.services[sIndex].quantity - 1, 0);
@@ -62,10 +74,8 @@ function changeQuantityService(btn) {
         }
 
         const card = btn.closest('.hs-card');
-
-        // 2. Tìm đúng các thành phần trong Card đó
-        const qtyControl = card.querySelector('.quantity-control');
-        const qtySpan = card.querySelector('.quantity');
+        const count = theRoom.services.find(s => s.serviceId === Number(sid))?.quantity ?? 0;
+        updateCardUI(card, count);
         renderSelectedSidebar();
     }
 }
@@ -94,6 +104,18 @@ function renderSelectedSidebar() {
         rowDiv.querySelector('.day').textContent = `${item.start} | ${item.end}`;
         const roomListUl = rowDiv.querySelector('ul');
 
+        if(currentDaygroup && item.start === currentDaygroup[0] && item.end === currentDaygroup[1])
+            rowDiv.classList.add('active');
+        rowDiv.querySelector('.day').onclick = () => {
+            if (currentTabIndex === 0) {
+                currentFocusTempId = null;
+                currentDaygroup = [item.start, item.end];
+                setDate(item.start, item.end);
+                renderRoomQuantity();
+            }
+            renderSelectedSidebar();
+        };
+
         // Lặp qua từng phòng
         item.rooms.forEach(r => {
             let rnode = riTemplate.content.cloneNode(true);
@@ -109,23 +131,30 @@ function renderSelectedSidebar() {
 
             // Sự kiện click để chọn phòng này làm "Focus" để thêm dịch vụ
             rLi.onclick = () => {
-                currentFocusTempId = r.tempId;
-                renderSelectedSidebar(); // Vẽ lại để cập nhật class active
+                if (currentTabIndex === 1) {
+                    currentDaygroup = null;
+                    currentFocusTempId = r.tempId;
+                    setDate(item.start, item.end);
+                    renderServiceQuantity(rLi);
+                }
+                renderSelectedSidebar();
             };
 
             const serviceListUl = rLi.querySelector('ul');
             // Dịch vụ của từng phòng
             (r.services || []).forEach(s => {
                 let snode = siTemplate.content.cloneNode(true);
-                snode.querySelector('.name').textContent = s.serviceName;
-                snode.querySelector('.amount').textContent = 'x' + s.quantity;
+                let sLi = snode.querySelector('li');
+                sLi.querySelector('.name').textContent = s.serviceName;
+                sLi.querySelector('.amount').textContent = 'x' + s.quantity;
+                sLi.querySelector('.price').textContent = Number(s.price);
                 totalPrice += s.quantity * s.price;
-                serviceListUl.appendChild(snode);
+                sLi.dataset.serviceId = s.serviceId;
+                serviceListUl.appendChild(sLi);
             });
-
-            roomListUl.appendChild(rnode);
+            roomListUl.appendChild(rLi);
         });
-        container.insertBefore(itemNode, container.querySelector('.total-and-toggle'));
+        container.insertBefore(rowDiv, container.querySelector('.total-and-toggle'));
     });
 
     //Tính tổng giá
@@ -191,11 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabControl = document.querySelector(".select-sidebar .total-and-toggle");
     const forwardBtn = tabControl.querySelector(".forward");
     const backBtn = tabControl.querySelector(".back");
-    const finishBtn = tabControl.querySelector(".finish");
 
     filterBtn.addEventListener('click', filter);
 
-    
     forwardBtn.addEventListener('click', () => {
         if (validateInput1()) {
             if (selectedRooms.length === 0) {
@@ -209,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.addEventListener('click', () => {
         switchTab(0);
     });
-    
+
 });
 
 function switchTab(tabIndex) {
@@ -241,4 +268,26 @@ function switchTab(tabIndex) {
         endInput.readOnly = true;
         renderServiceGrid();
     }
+    currentTabIndex = tabIndex;
 }
+
+/*========================================
+
+ Script re-filter lại phòng, dịch vụ onclick sidebar
+
+=========================================*/
+// <div selected-sidebar>
+//      #trên đây là 1 hàng booking, h6 có startdate enddate
+//     <div .booking-item-row>
+//         <h6></h6>
+//         <ul> #ul này là list phòng đặt trg khoảng h6, lưu tempId
+//             <li data-temp-id room>
+//                 <div .roomname .price></div>
+//                 <ul> #ul có service đã chọn
+//                      <li data-service-id></li>
+//                 </ul>
+//             </li>
+//         </ul>
+//     </div>
+// </div>
+

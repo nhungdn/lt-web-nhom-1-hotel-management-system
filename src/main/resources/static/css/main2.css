@@ -327,6 +327,7 @@
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;
     margin-bottom: 40px;
+    flex-basis: 70%;
 }
 .hs-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
@@ -338,6 +339,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 20px;
 }
 .hs-card:hover {
     transform: translateY(-8px);

@@ -1,9 +1,8 @@
 /*========================================
 
- Script lọc phòng trống theo ngày, chuyển tab
+ Script lọc phòng trống theo ngày
 
 =========================================*/
-let currentFocusTempId = null;
 let selectedRooms = [];
 // Cấu trúc mong muốn:
 // selectedRooms = [
@@ -27,6 +26,10 @@ function getDate() {
     const startDate = document.querySelector('#start').value;
     const endDate = document.querySelector('#end').value;
     return { startDate, endDate };
+}
+function setDate(startDate, endDate) {
+    document.querySelector('#start').value = startDate;
+    document.querySelector('#end').value = endDate;
 }
 
 //lấy cookie để ko bị chặn fetch
@@ -54,6 +57,7 @@ async function filter() {
 
         if (response.ok) {
             updateRoomGrid(data.roomTypes, data.roomTypeImages);
+            renderRoomQuantity();
         } else {
             console.error(data);
         }
@@ -105,7 +109,7 @@ function updateRoomGrid(roomTypes, roomTypeImages) {
                         <button class="btn-book increase" data-id="${rt.roomTypeId}"
                             data-name="${rt.name}" data-price="${rt.price}" 
                             ${rt.availableRooms === 0 ? 'disabled' : ''} 
-                            onclick="changeQuantityRoom(this)">📅 Book Now</button>
+                            onclick="changeQuantityRoom(this)">Book Now</button>
                         <button class="btn-view-more" 
                             data-id="${rt.roomTypeId}"
                             data-name="${rt.name}"
@@ -171,18 +175,75 @@ function changeQuantityRoom(btn){
         count = currentGroup.rooms.filter(r => r.roomTypeId === id).length;
     }
 
-    // Cập nhật giao diện
-    if (qtySpan) qtySpan.textContent = Math.min(count, maxAvail);
-
-    if (count > 0) {
-        qtyControl.classList.remove('hidden');
-        bookBtn.classList.add('hidden'); // Ẩn nút Book Now đi cho đẹp
-    } else {
-        qtyControl.classList.add('hidden');
-        bookBtn.classList.remove('hidden'); // Hiện lại nút Book Now
-    }
-    qtyControl.querySelector('.increase').disabled = count === maxAvail;
-    qtyControl.querySelector('.decrease').disabled = count === 0;
+    updateCardUI(card, count);
     // Vẽ lại Sidebar
     renderSelectedSidebar();
+}
+
+function renderRoomQuantity(){
+    const {startDate, endDate} = getDate();
+    const dayGroup = selectedRooms.find(gr => gr.start === startDate && gr.end === endDate);
+    const cards = document.querySelectorAll('.roomtype-card');
+
+    cards.forEach(card => {
+        const id = card.querySelector('.decrease').getAttribute('data-id');
+        const qtySpan = card.querySelector('.quantity');
+        const qtyControl = card.querySelector('.quantity-control');
+        const bookBtn = card.querySelector('.btn-book');
+        let maxAvail = card.querySelector('.available-info span').textContent;
+        maxAvail = parseInt(maxAvail) || 0;
+        let count = 0;
+        if (dayGroup) {
+            // Đếm xem trong ngày này, loại phòng này đã đặt bao nhiêu suất
+            count = dayGroup.rooms.filter(r => r.roomTypeId === Number(id)).length;
+        }
+
+        updateCardUI(card, count);
+    });
+}
+
+function renderServiceQuantity(row){
+    const {startDate, endDate} = getDate();
+    const dayGroup = selectedRooms.find(gr => gr.start === startDate && gr.end === endDate);
+
+    const tempId = row.getAttribute('data-temp-id');
+    const theRoom = dayGroup.rooms.find(r=> r.tempId=== tempId);
+    const cards = document.querySelectorAll('.hs-card');
+    cards.forEach(card => {
+        const serviceId = card.querySelector('.decrease').getAttribute('data-service-id');
+        const qtySpan = card.querySelector('.quantity');
+
+        let count;
+        if (theRoom) {
+            // Đếm xem phòng này, dịch vụ này đã đặt bnhieu
+            const foundSvc = theRoom.services.find(s => s.serviceId === Number(serviceId));
+            count = foundSvc ? foundSvc.quantity : 0;
+        }
+        updateCardUI(card, count);
+    });
+}
+
+function updateCardUI(card, count) {
+    const qtyControl = card.querySelector('.quantity-control');
+    const qtySpan = card.querySelector('.quantity');
+    const bookBtn = card.querySelector('.btn-book');
+    const maxAvail = parseInt(card.querySelector('.available-info span')?.textContent) || 1000;
+
+    // 1. Cập nhật con số
+    if (qtySpan) qtySpan.textContent = Math.min(count, maxAvail);
+
+    // 2. Ẩn/Hiện điều khiển
+    if (count > 0) {
+        qtyControl.classList.remove('hidden');
+        if (bookBtn) bookBtn.classList.add('hidden');
+    } else {
+        if (card.classList.contains('.roomtype-card')) qtyControl.classList.add('hidden');
+        if (bookBtn) bookBtn.classList.remove('hidden');
+    }
+
+    // 3. Khóa nút nếu đạt giới hạn
+    const incBtn = qtyControl.querySelector('.increase');
+    const decBtn = qtyControl.querySelector('.decrease');
+    if (incBtn) incBtn.disabled = (count >= maxAvail);
+    if (decBtn) decBtn.disabled = (count === 0);
 }

@@ -82,6 +82,7 @@ public class HomeController {
     @PostMapping("/book")
     @ResponseBody
     public ResponseEntity<?> createBook(@RequestBody BookingDTO.MultiSubmitRequest request, HttpSession session){
+        System.out.println("controllers: "+ request);
         List<String> errorRooms = bookingService.createBooking(request, session);
         if(!errorRooms.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(errorRooms);
         

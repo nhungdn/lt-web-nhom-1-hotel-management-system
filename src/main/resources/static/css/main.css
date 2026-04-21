@@ -406,3 +406,20 @@ input[type="submit"] {
 .selected-room.active{
     display: flex;
 }
+.selected-sidebar:hover{
+    background-color: rgba(0,0,0,0.5);
+}
+
+.booking-item-row.active{background-color: green;}
+.booking-item-row>ul>li.active{background-color: red;}
+
+.select-sidebar .booking-item-row{
+    cursor: pointer;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+}
+.select-sidebar .booking-item-row.active{
+    background-color: white;
+}
