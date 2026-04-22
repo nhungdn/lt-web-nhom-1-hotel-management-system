@@ -173,7 +173,7 @@ async function sendEditForm(e) {
         roomId: Number(form.dataset.roomId), // Bạn nhớ gán roomId vào dataset ở hàm render
         checkIn: form.dataset.rawCheckIn, // Dùng định dạng ISO gốc từ DB (LocalDateTime.parse cần cái này)
         checkOut: form.dataset.rawCheckOut, // Không dùng chuỗi đã format tiếng Việt "T3, 21/04..."
-        status: "PENDING", // Hoặc lấy từ 1 select status nếu có
+        status: "CHECKED_IN", // Hoặc lấy từ 1 select status nếu có
         services: [...existingServices, ...newServices],
       },
     ],
