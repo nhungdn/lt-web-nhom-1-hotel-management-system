@@ -79,7 +79,24 @@
     justify-content: space-between;
     color: rgba(255, 255, 255, 0.8);
 }
+.status-group {
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa chữ Status và cái Select */
+}
 
+.status-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+}
+.status-badge{
+    font-weight: bold;
+}
+.status-badge option{
+    font-weight: bold;
+}
 #edit-form .checkIn::before { content: "Check-in:"; font-weight: 600; }
 #edit-form .checkOut::before { content: "Check-out:"; font-weight: 600; }
 
@@ -99,7 +116,7 @@
     color: white;
 }
 
-#edit-form .customer .id-card, #edit-form .customer .phone {
+#edit-form .customer .id-card, #edit-form .customer .phone, #edit-form .customer .email {
     font-size: 13px;
     color: var(--text-secondary);
 }

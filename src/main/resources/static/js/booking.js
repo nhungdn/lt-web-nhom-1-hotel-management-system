@@ -21,23 +21,13 @@ async function renderEditForm(btn) {
   //select để checkin checkout
   const statusSelect = form.querySelector("#status-select");
 
-// 1. Set giá trị hiện tại từ DB
+  // Set giá trị hiện tại từ DB
   statusSelect.value = detail.status;
-
-// 2. Hàm cập nhật màu sắc dựa trên giá trị đang chọn
-  const updateColor = (el) => {
-    const val = el.value;
-    el.classList.remove('yellow', 'blue', 'green', 'red'); // Dọn class cũ
-
-    if (val === 'PENDING') el.classList.add('yellow');
-    else if (val === 'CHECKED_IN') el.classList.add('blue');
-    else if (val === 'COMPLETED') el.classList.add('green');
-    else if (val === 'CANCELED') el.classList.add('red');
-  };
-
-  updateColor(statusSelect);
+  statusSelect.classList.add(getStatusClass(statusSelect.value))
+  // Cập nhật màu sắc dựa trên giá trị đang chọn
   statusSelect.onchange = function() {
-    updateColor(this);
+    statusSelect.classList.remove('yellow', 'blue', 'green', 'red');
+    statusSelect.classList.add(getStatusClass(statusSelect.value))
     sendChangeStatus(detailId, this.value);
   };
 
