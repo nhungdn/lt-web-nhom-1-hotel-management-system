@@ -55,6 +55,7 @@
     max-width: 100%;
     display: flex; 
     flex-direction: column;
+    border-radius: 0;
 }
 .booking-form h2 {
     color: white;
@@ -78,6 +79,11 @@
 .booking-form form::-webkit-scrollbar-thumb {
     background: var(--glass-border);
     border-radius: 2px;
+}
+.booking-form button.save{
+    margin: 20px 0 0;
+    width: 80px;
+    align-self: flex-end;
 }
 
 /* ============================================
@@ -153,17 +159,14 @@
 
 .form-grid{
     display: grid;
-    gap: 50px;
     align-items: flex-end;
+    grid-template-columns: 1fr 1fr; /* Thay 3fr 1fr thành 1fr 1fr để cân đối */
+    gap: 20px 30px;
 }
-.grid1{
-    grid-template-columns: 3fr 1fr; 
-}
-.grid2{
-    grid-template-columns: 1fr 1fr; 
-}
-.grid3{
-    grid-template-columns: 1fr 3fr;
+.form-group label {
+    display: flex;
+    flex-direction: column; /* Để tiêu đề nằm trên input */
+    width: 100%;
 }
 
 /* ============================================

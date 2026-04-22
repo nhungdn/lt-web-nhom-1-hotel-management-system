@@ -317,13 +317,15 @@ input[type="submit"] {
     justify-content: space-between;
     padding: 40px 20px;
     margin: 30px 20px 0;
-    
+
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     transition: all 0.3s ease;
-    
+
+    position: relative;
+    z-index: 10;
 }
 
 .filter-date-container:hover {
@@ -332,44 +334,141 @@ input[type="submit"] {
     border-color: rgba(52, 211, 153, 0.4);
 }
 
-.filter-date-container > div{
+.filter-date-container > div:first-child {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     align-items: center;
-    margin: 0 50px;
-}
-.filter-date-container button#custInfo{
-    border-radius: 50%;
-    aspect-ratio: 1/1;
-    width: 60px;          /* Bắt buộc phải set 1 chiều cố định */
-
-    background-color: var(--danger);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 50px;
-}
-.filter-date-container button#custInfo.filled {
-    background-color: var(--emerald);
+    flex-wrap: wrap;
 }
 
-.filter-date-container > button:hover {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-.filter-date-container button iconify-icon{
-    font-size: 40px;
-}
-
-.filter-date-container .filter-item, #custInfo{
+/* ============================================
+   INPUT DATE & FILTER ITEM
+============================================ */
+.filter-item {
     position: relative;
     display: flex;
+    flex-direction: column;
 }
-.filter-date-container .dropdown-form, .filter-date-container .filter-error{
+
+.filter-date-container input[type="date"] {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px 15px;
+    color: white;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.filter-date-container input[type="date"]:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--emerald-light);
+    box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+}
+
+/* Custom icon lịch cho đẹp (Chrome/Edge) */
+::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Chuyển icon sang màu trắng */
+    cursor: pointer;
+}
+
+/* ============================================
+   BUTTONS
+============================================ */
+#filterdateBtn, button.save {
+    background: var(--emerald-light);
+    color: #064e3b;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#filterdateBtn:hover, button.save {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+/* Nút Customer Info (Tròn) */
+button#custInfo {
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    border: none;
+    cursor: pointer;
+    background: var(--danger); /* Đỏ khi chưa điền */
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    font-size: 25px;
+}
+
+button#custInfo.filled {
+    background: var(--emerald-light);
+    box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3);
+}
+
+button#custInfo:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* ============================================
+   ERROR & DROPDOWN MESSAGES
+============================================ */
+.filter-error {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+/* Mũi tên nhỏ cho box lỗi */
+.filter-error::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 15px;
+    border: 6px solid transparent;
+    border-bottom-color: #ef4444;
+}
+.filter-error.right{
+    left: auto;
     right: 0;
 }
-.filter-date-container .filter-item{
+.filter-error.right::after {
+    left: auto;
+    right: 15px;
+}
 
+.warning {
+    color: #fbbf24; /* Màu vàng cảnh báo */
+    font-size: 13px;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Dropdown form bám theo nút người dùng */
+.dropdown-form {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 750px;
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    z-index: 10;
 }
 
 /* -----------------------------------------------------------------------------

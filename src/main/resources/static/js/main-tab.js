@@ -163,56 +163,63 @@ function renderSelectedSidebar() {
 }
 
 function validateInput1() {
+    return validateDates() && validateCustomer();
+}
+
+// Hàm validate riêng cho phần Ngày tháng
+function validateDates() {
     const startInput = document.querySelector('#start');
     const endInput = document.querySelector('#end');
-    const customerForm = document.querySelector('#customerForm');
+    let isValid = true;
 
-    const hiddenStart = startInput.parentElement.querySelector('.filter-error');
-    const hiddenEnd = endInput.parentElement.querySelector('.filter-error');
-    const hiddenForm = document.querySelector('.filter-error-form'); // Đảm bảo class này đúng
+    if (!startInput.value) {
+        showErrorMessage(startInput);
+        isValid = false;
+    } else hideErrorMessage(startInput);
 
-    function showErrorMessage(element, msgBox) {
-        if(msgBox) msgBox.classList.remove('hidden');
-        element.classList.add('input-error');
-    }
+    if (!endInput.value) {
+        showErrorMessage(endInput);
+        isValid = false;
+    } else if (startInput.value && new Date(endInput.value) <= new Date(startInput.value)) {
+        const errorBox = endInput.closest('.filter-item').querySelector('.filter-error');
+        if (errorBox) {
+            errorBox.textContent = "Ngày trả phải sau ngày nhận";
+            errorBox.classList.remove('hidden');
+        }
+        endInput.classList.add('input-error');
+        isValid = false;
+    } else hideErrorMessage(endInput);
 
-    // Gán sự kiện ẩn lỗi ngay khi khởi tạo
-    [startInput, endInput, customerForm].forEach(input => {
-        if (!input.dataset.hasListener) { // Tránh gán trùng lặp sự kiện
-            input.addEventListener('input', () => {
-                const errorBox = input.parentElement.querySelector('.filter-error') || hiddenForm;
-                if(errorBox) errorBox.classList.add('hidden');
-                input.classList.remove('input-error');
-            });
-            input.dataset.hasListener = "true";
+    return isValid;
+}
+
+// Hàm validate riêng cho phần Thông tin khách hàng
+function validateCustomer() {
+    const custBtn = document.querySelector('#custInfo');
+    const dropdownForm = document.querySelector('.dropdown-form');
+    const inputsInForm = dropdownForm.querySelectorAll('input[required], select[required]');
+    let isValid = true;
+
+    inputsInForm.forEach(input => {
+        if (!input.value || !input.checkValidity()) {
+            isValid = false;
+            input.classList.add('input-error'); // Highlight từng ô sai trong form
+        } else {
+            input.classList.remove('input-error');
         }
     });
 
-    let isAllValid = true;
-
-    if (!startInput.checkValidity()) {
-        showErrorMessage(startInput, hiddenStart);
-        isAllValid = false;
-    }
-    if (!endInput.checkValidity()) {
-        showErrorMessage(endInput, hiddenEnd);
-        isAllValid = false;
-    }
-    if (customerForm && !customerForm.checkValidity()) {
-        showErrorMessage(customerForm, hiddenForm);
-        isAllValid = false;
+    if (!isValid) {
+        showErrorMessage(custBtn);
+        const formError = custBtn.closest('.filter-item').querySelector('.filter-error');
+        if (formError) formError.textContent = "Vui lòng hoàn thiện thông tin khách hàng";
+        custBtn.classList.remove('filled');
+    } else {
+        custBtn.classList.add('filled');
+        hideErrorMessage(custBtn);
     }
 
-    // Ngày kết thúc phải sau ngày bắt đầu
-    if (startInput.value && endInput.value) {
-        if (new Date(endInput.value) <= new Date(startInput.value)) {
-            showErrorMessage(endInput, hiddenEnd);
-            // Bạn có thể đổi text thông báo lỗi ở đây nếu muốn cụ thể hơn
-            isAllValid = false;
-        }
-    }
-
-    return isAllValid; // Trả về kết quả cuối cùng
+    return isValid;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -232,11 +239,22 @@ document.addEventListener('DOMContentLoaded', () => {
             switchTab(1);
         } else console.log("Khách quên điền hết form.");
     });
-    
+
     backBtn.addEventListener('click', () => {
         switchTab(0);
     });
 
+    const dropdownForm = document.querySelector('.dropdown-form');
+    const saveBtn = dropdownForm.querySelector('button.save');
+
+    saveBtn.onclick = () => {
+        if (validateCustomer()) {
+            dropdownForm.classList.add('hidden');
+            // Cập nhật trạng thái nút custInfo sang màu xanh (class filled)
+            const custBtn = document.querySelector('#custInfo');
+            if (custBtn) custBtn.classList.add('filled');
+        }
+    }
 });
 
 function switchTab(tabIndex) {
