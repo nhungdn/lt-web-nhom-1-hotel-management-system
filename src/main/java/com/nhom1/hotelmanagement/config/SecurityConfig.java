@@ -31,13 +31,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                    // 1. Lưu Token vào Cookie và cho phép JS đọc (HttpOnly = false)
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    // 2. Ép Spring gửi Token về ngay từ request GET đầu tiên
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                 )
-//                .csrf(csrf -> {
-//                })
+                        // 1. Lưu Token vào Cookie và cho phép JS đọc (HttpOnly = false)
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        // 2. Ép Spring gửi Token về ngay từ request GET đầu tiên
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                // .csrf(csrf -> {
+                // })
                 .authorizeHttpRequests(auth -> auth
                         // Static resources & Public pages
                         .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
@@ -45,7 +44,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/services/api/all", "/filter/**", "/book").permitAll()
                         // Role-based access
-                        .requestMatchers("/users/**").hasRole("ADMIN")
+                        .requestMatchers("/users/**", "/dashboard").hasRole("ADMIN")
 
                         // Authenticated users
                         .requestMatchers("/roomtypes/**", "/rooms/**", "/booking/**", "/profile/**").authenticated()
@@ -59,7 +58,7 @@ public class SecurityConfig {
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .userDetailsService(userDetailsService);
@@ -79,9 +78,13 @@ public class SecurityConfig {
                         user.getUsername(),
                         user.getFullName(),
                         user.getRole()));
-                response.sendRedirect("/dashboard");
+                if (user.getRole().toString().equals("ADMIN")) {
+                    response.sendRedirect("/dashboard");
+                } else {
+                    response.sendRedirect("/booking/status");
+                }
             } else {
-                response.sendRedirect("/login?error=user_not_found");
+                response.sendRedirect("/login?error=true");
             }
         };
     }

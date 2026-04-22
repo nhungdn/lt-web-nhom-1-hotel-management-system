@@ -11,7 +11,8 @@ import com.nhom1.hotelmanagement.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,31 @@ public class DashboardServiceImpl implements DashboardService {
                 PageRequest.of(0, limit)
         );
         return list.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Integer, BigDecimal> getRevenueByDay(int year, int month) {
+        List<Object[]> rows = paymentRepository.revenueByDay(year, month);
+        Map<Integer, BigDecimal> result = new LinkedHashMap<>();
+        // Điền đủ 28-31 ngày, ngày không có doanh thu = 0
+        int daysInMonth = java.time.YearMonth.of(year, month).lengthOfMonth();
+        for (int d = 1; d <= daysInMonth; d++) result.put(d, BigDecimal.ZERO);
+        for (Object[] row : rows) {
+            result.put(((Number) row[0]).intValue(), (BigDecimal) row[1]);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<Integer, BigDecimal> getRevenueByMonth(int year) {
+        List<Object[]> rows = paymentRepository.revenueByMonth(year);
+        Map<Integer, BigDecimal> result = new LinkedHashMap<>();
+        // Điền đủ 12 tháng, tháng không có = 0
+        for (int m = 1; m <= 12; m++) result.put(m, BigDecimal.ZERO);
+        for (Object[] row : rows) {
+            result.put(((Number) row[0]).intValue(), (BigDecimal) row[1]);
+        }
+        return result;
     }
 
     @Override

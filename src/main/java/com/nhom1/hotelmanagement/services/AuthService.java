@@ -18,25 +18,6 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername());
-
-        if (user == null) {
-            return null;
-        }
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return null;
-        }
-
-        // map Entity -> DTO
-        return new LoginResponse(
-                user.getUserId(),
-                user.getUsername(),
-                user.getFullName(),
-                user.getRole());
-    }
-
     public void signup(SignUpRequest request) {
         if (request == null || request.getUsername() == null) {
             throw new IllegalArgumentException("Thong tin dang ky khong hop le");
