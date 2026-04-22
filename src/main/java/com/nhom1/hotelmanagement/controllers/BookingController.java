@@ -62,4 +62,12 @@ public class BookingController {
             return "roomstat";
         return "redirect:/";
     }
+    
+    @PostMapping("/change-status")
+    @ResponseBody
+    public ResponseEntity<String> changeStatus(@RequestBody BookingDTO.StatusDTO request, HttpSession session) {
+        bookingService.changeStatus(request.getId(), request.getStatus());
+        return ResponseEntity.ok("Sửa đơn thành công!");
+    }
+    
 }

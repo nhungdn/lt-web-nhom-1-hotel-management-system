@@ -17,6 +17,30 @@ async function renderEditForm(btn) {
   form.dataset.rawCheckIn = detail.checkIn;
   form.dataset.rawCheckOut = detail.checkOut;
 
+
+  //select để checkin checkout
+  const statusSelect = form.querySelector("#status-select");
+
+// 1. Set giá trị hiện tại từ DB
+  statusSelect.value = detail.status;
+
+// 2. Hàm cập nhật màu sắc dựa trên giá trị đang chọn
+  const updateColor = (el) => {
+    const val = el.value;
+    el.classList.remove('yellow', 'blue', 'green', 'red'); // Dọn class cũ
+
+    if (val === 'PENDING') el.classList.add('yellow');
+    else if (val === 'CHECKED_IN') el.classList.add('blue');
+    else if (val === 'COMPLETED') el.classList.add('green');
+    else if (val === 'CANCELED') el.classList.add('red');
+  };
+
+  updateColor(statusSelect);
+  statusSelect.onchange = function() {
+    updateColor(this);
+    sendChangeStatus(detailId, this.value);
+  };
+
   // Đổ dữ liệu text vào đúng các div/span
   form.querySelector(".roomNumber").textContent = `Phòng: ${detail.roomNumber}`;
   form.querySelector(".checkIn").textContent = formatDateTime(detail.checkIn);
@@ -221,5 +245,30 @@ async function sendCancelForm(id) {
     }
   } catch (err) {
     console.error("Gửi form thất bại:", err);
+  }
+}
+
+async function sendChangeStatus(id, newStatus) {
+  const token = document.querySelector('meta[name="_csrf"]')?.content;
+  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+  try {
+    const response = await fetch('/booking/change-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [header]: token
+      },
+      body: JSON.stringify({ id: id, status: newStatus })
+    });
+
+    if (response.ok) {
+      console.log("Đã cập nhật trạng thái!");
+      location.reload();
+    } else {
+      alert("Lỗi server khi đổi trạng thái");
+    }
+  } catch (err) {
+    console.error("Lỗi fetch:", err);
   }
 }

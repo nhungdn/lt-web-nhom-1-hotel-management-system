@@ -16,7 +16,7 @@ function renderBookingList(data) {
     tr.querySelector(".email").textContent = booking.customerEmail;
 
     const statusBadge = tr.querySelector(".status-badge");
-    statusBadge.textContent = renderStatusBadge(booking);
+    renderStatusBadge(booking, statusBadge);
 
     // Gán sự kiện click để hiện detail
     tr.addEventListener("click", function () {
@@ -58,10 +58,11 @@ function toggleDetailRow(clickedRow, booking) {
   const detailBody = detailRow.querySelector(".detail-body");
   if (booking.details && booking.details.length > 0) {
     booking.details.forEach((d) => {
+      const badgeClass = getStatusClass(d.status);
       const rowHtml = `
                 <tr>
                     <td class="bdid">${d.bookingDetailId}</td>
-                    <td><span class="status-badge">${d.status}</span></td>
+                    <td><span class="status-badge ${badgeClass}">${d.status}</span></td>
                     <td><strong>${d.roomNumber || "N/A"}</strong></td>
                     <td>${formatDateTime(d.checkIn)}</td>
                     <td>${formatDateTime(d.checkOut)}</td>
@@ -82,12 +83,37 @@ function toggleDetailRow(clickedRow, booking) {
   clickedRow.after(detailRow);
 }
 
-function renderStatusBadge(booking) {
+function renderStatusBadge(booking, statusBadge) {
+  statusBadge.className = 'status-badge';
   if (booking.details && booking.details.length > 0) {
     const allPaid = booking.details.every((d) => d.status === "COMPLETED");
-    return allPaid ? "PAID" : "UNPAID";
+    if(allPaid){
+      statusBadge.textContent = "PAID";
+      statusBadge.classList.add('green');
+    } else {
+      statusBadge.textContent = "UNPAID";
+      statusBadge.classList.add('red');
+    }
   }
-  return "No Details";
+  else{
+      statusBadge.textContent = "No Details";
+      statusBadge.classList.add('yellow');
+  }
+}
+
+function getStatusClass(status) {
+  switch (status) {
+    case 'PENDING':
+      return 'yellow';
+    case 'CHECKED_IN':
+      return 'blue';
+    case 'COMPLETED':
+      return 'green';
+    case 'CANCELED':
+      return 'red';
+    default:
+      return '';
+  }
 }
 
 function formatDateTime(isoString) {

@@ -199,12 +199,15 @@
 
 #edit-form .form-actions button[type="submit"] {
     background: var(--emerald-light);
-    color: black;
+    color: var(--text-primary);
     border: none;
     padding: 12px;
     border-radius: 10px;
     font-weight: 700;
     cursor: pointer;
+}
+#edit-form .form-actions button[type="submit"]:hover{
+    background: var(--emerald);
 }
 
 #edit-form .form-actions button[type="reset"] {

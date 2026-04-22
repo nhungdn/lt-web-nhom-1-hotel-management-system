@@ -42,4 +42,10 @@ public class BookingDTO {
         private Long id;
         private boolean isDetail;
     }
+    
+    @Data
+    public static class StatusDTO{
+        private Long id;
+        private String status;
+    }
 }

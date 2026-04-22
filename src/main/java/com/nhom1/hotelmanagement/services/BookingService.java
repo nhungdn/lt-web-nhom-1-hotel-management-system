@@ -267,6 +267,14 @@ public class BookingService {
         }
         return error;
     }
+    
+    @Transactional
+    public void changeStatus(Long id, String status){
+        BookingDetail bd = detailRepo.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
+        bd.setStatus(BookingDetail.Status.valueOf(status));
+        detailRepo.save(bd);
+    }
 
     @Transactional
     public void cancelBooking(Long id, boolean isDetail) {
