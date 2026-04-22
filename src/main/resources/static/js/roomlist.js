@@ -67,7 +67,7 @@ function toggleDetailRow(clickedRow, booking) {
                     <td>${formatDateTime(d.checkOut)}</td>
                     <td>
                         <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}" 
-                            onclick=renderEditForm(this) class="action">Edit</button></td>
+                            onclick=renderEditForm(this) class="card-btn action">Edit</button></td>
                 </tr>
             `;
       detailBody.insertAdjacentHTML("beforeend", rowHtml);
