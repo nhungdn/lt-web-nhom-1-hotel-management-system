@@ -46,6 +46,7 @@ async function filter() {
         alert("Vui lòng chọn đầy đủ ngày!");
         return;
     }
+    if(!validateDates()) return;
 
     try {
         const response = await fetch('/filter', {

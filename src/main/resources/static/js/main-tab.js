@@ -165,6 +165,22 @@ function renderSelectedSidebar() {
 function validateInput1() {
     return validateDates() && validateCustomer();
 }
+function showErrorMessage(element, isForm = false) {
+    const group = element.closest('.filter-item');
+    if (group) {
+        const errorBox = group.querySelector('.filter-error');
+        if (errorBox) errorBox.classList.remove('hidden');
+    }
+    element.classList.add('input-error');
+}
+function hideErrorMessage(element, isForm = false) {
+    const group = element.closest('.filter-item');
+    if (group) {
+        const errorBox = group.querySelector('.filter-error');
+        if (errorBox) errorBox.classList.add('hidden');
+    }
+    element.classList.remove('input-error');
+}
 
 // Hàm validate riêng cho phần Ngày tháng
 function validateDates() {
