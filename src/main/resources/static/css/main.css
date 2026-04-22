@@ -78,8 +78,12 @@ nav.main-menu > ul li:last-child {
     font-weight: 700;
     font-size: 18px;
 }
-.site-logo a span:hover{
-    text-decoration: none;
+.site-logo a, 
+.site-logo a:hover, 
+.site-logo a span, 
+.site-logo a span:hover {
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 .site-logo img {
