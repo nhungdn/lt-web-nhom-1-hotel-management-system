@@ -37,22 +37,30 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
-    @Autowired private BookingRepository bookingRepo;
-    @Autowired private BookingDetailRepository detailRepo;
-    @Autowired private RoomRepository roomRepo;
-    @Autowired private RoomTypeRepository roomTypeRepo;
-    @Autowired private CustomerRepository customerRepo;
-    @Autowired private UserRepository userRepo;
-    @Autowired private BookingHotelServiceRepository bookingHotelServiceRepo;
-    @Autowired private HotelServiceRepository hotelServiceRepo;
-    
-//    public int checkCustomer(String phone, String idCard, String email) {
-//        if (customerRepo.existsByPhone(phone)) return 1;
-//        if (customerRepo.existsByEmail(email)) return 2;
-//        if (customerRepo.existsByIdCard(idCard)) return 3;
-//        return 0;
-//    }
-    
+    @Autowired
+    private BookingRepository bookingRepo;
+    @Autowired
+    private BookingDetailRepository detailRepo;
+    @Autowired
+    private RoomRepository roomRepo;
+    @Autowired
+    private RoomTypeRepository roomTypeRepo;
+    @Autowired
+    private CustomerRepository customerRepo;
+    @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private BookingHotelServiceRepository bookingHotelServiceRepo;
+    @Autowired
+    private HotelServiceRepository hotelServiceRepo;
+
+    // public int checkCustomer(String phone, String idCard, String email) {
+    // if (customerRepo.existsByPhone(phone)) return 1;
+    // if (customerRepo.existsByEmail(email)) return 2;
+    // if (customerRepo.existsByIdCard(idCard)) return 3;
+    // return 0;
+    // }
+
     public List<BookingDetailDTO> getAllBooking() {
         return bookingRepo.findAll().stream()
                 .sorted(Comparator.comparing(Booking::getBookingId).reversed())
@@ -76,6 +84,7 @@ public class BookingService {
                     BookingDetailDTO.DetailDTO dDto = new BookingDetailDTO.DetailDTO();
                     dDto.setBookingDetailId(bd.getBookingDetailId());
                     dDto.setRoomNumber(bd.getRoom() != null ? bd.getRoom().getRoomNumber() : "N/A");
+                    dDto.setRoomId(bd.getRoom() != null ? bd.getRoom().getRoomId() : null);
                     dDto.setStatus(bd.getStatus());
                     dDto.setCheckIn(bd.getCheckInDate().toString());
                     dDto.setCheckOut(bd.getCheckOutDate().toString());
@@ -150,7 +159,8 @@ public class BookingService {
 
             if (availRooms.size() < item.getQuantity()) {
                 RoomType rt = roomTypeRepo.findById(item.getRoomTypeId()).orElse(null);
-                errors.add("Loại phòng " + (rt != null ? rt.getName() : "ID: " + item.getRoomTypeId()) + " không đủ chỗ.");
+                errors.add(
+                        "Loại phòng " + (rt != null ? rt.getName() : "ID: " + item.getRoomTypeId()) + " không đủ chỗ.");
             } else {
                 // Nếu đủ, cho vào Map
                 availRoomsMap.put(item.getRoomTypeId(), availRooms);
@@ -189,7 +199,7 @@ public class BookingService {
                 detail.setCheckOutDate(endTime);
                 detail.setStatus(BookingDetail.Status.PENDING);
                 detail.setPriceAtBooking(room.getRoomType().getPrice());
-                
+
                 BookingDetail savedDetail = detailRepo.save(detail);
 
                 // Lưu Dịch vụ
@@ -212,6 +222,7 @@ public class BookingService {
     }
 
     public List<String> editBooking(BookingDetailDTO request) {
+        System.out.println("Service nhận request edit: ");
         List<String> error = new ArrayList<>();
         for (BookingDetailDTO.DetailDTO detail : request.getDetails()) {
             LocalDateTime start = LocalDateTime.parse(detail.getCheckIn());
@@ -255,9 +266,9 @@ public class BookingService {
         }
         return error;
     }
-    
+
     @Transactional
-    public void cancelBooking(Long id, boolean isDetail){
+    public void cancelBooking(Long id, boolean isDetail) {
         if (isDetail) {
             BookingDetail bd = detailRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
@@ -275,5 +286,5 @@ public class BookingService {
             detailRepo.saveAll(details);
         }
     }
-    
+
 }

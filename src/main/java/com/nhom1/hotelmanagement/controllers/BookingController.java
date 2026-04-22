@@ -48,16 +48,18 @@ public class BookingController {
     @ResponseBody
     public ResponseEntity<?> editBook(@RequestBody BookingDetailDTO request) {
         List<String> error = bookingService.editBooking(request);
-        if (!error.isEmpty()) return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        if (!error.isEmpty())
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         return ResponseEntity.ok("Sửa đơn thành công!");
     }
 
     @PostMapping("/cancel")
     @ResponseBody
-    public String cancelBook(@RequestBody BookingDTO.CancelBook request, HttpSession session){
+    public String cancelBook(@RequestBody BookingDTO.CancelBook request, HttpSession session) {
         bookingService.cancelBooking(request.getId(), request.isDetail());
         LoginResponse user = (LoginResponse) session.getAttribute("user");
-        if(user.getRole() == User.Role.ADMIN) return "roomstat";
+        if (user.getRole() == User.Role.ADMIN)
+            return "roomstat";
         return "redirect:/";
     }
 }

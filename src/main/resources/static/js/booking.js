@@ -1,94 +1,115 @@
 async function renderEditForm(btn) {
-    const popup = document.querySelector(".popup");
-    const form = document.querySelector("#edit-form");
+  const popup = document.querySelector(".popup");
+  const form = document.querySelector("#edit-form");
 
-    const overlay = document.getElementById("popupOverlay");
-    overlay.classList.add("active");
+  const overlay = document.getElementById("popupOverlay");
+  overlay.classList.add("active");
 
-    const bookingId = Number(btn.dataset.bookingId);
-    const detailId = Number(btn.dataset.detailId);
-    form.dataset.detailId = detailId;
+  const bookingId = Number(btn.dataset.bookingId);
+  const detailId = Number(btn.dataset.detailId);
+  form.dataset.detailId = detailId;
 
-    const booking = bookingData.find(b => b.bookingId === bookingId);
-    const detail = booking.details.find(bd => bd.bookingDetailId === detailId);
+  const booking = bookingData.find((b) => b.bookingId === bookingId);
+  const detail = booking.details.find((bd) => bd.bookingDetailId === detailId);
 
-    form.dataset.detailId = detailId;
-    form.dataset.roomId = detail.roomId;
-    form.dataset.rawCheckIn = detail.checkIn;
-    form.dataset.rawCheckOut = detail.checkOut;
-    // Đổ dữ liệu text vào đúng các div/span
-    form.querySelector('.roomNumber').textContent = `Phòng: ${detail.roomNumber}`;
-    form.querySelector('.checkIn').textContent = formatDateTime(detail.checkIn);
-    form.querySelector('.checkOut').textContent = formatDateTime(detail.checkOut);
-    form.querySelector('.customer .name').textContent = booking.customerName;
-    form.querySelector('.customer .id-card').textContent = "ID Card: " + booking.customerIDCard;
-    form.querySelector('.customer .phone').textContent = "SĐT: " + booking.customerPhone;
-    form.querySelector('.customer .email').textContent = "Email: " + booking.customerEmail;
+  form.dataset.detailId = detailId;
+  form.dataset.roomId = detail.roomId ?? detail.room?.roomId ?? "";
+  form.dataset.rawCheckIn = detail.checkIn;
+  form.dataset.rawCheckOut = detail.checkOut;
 
-    const container = form.querySelector(".service-container");
-    const template = container.querySelector("template");
+  // Đổ dữ liệu text vào đúng các div/span
+  form.querySelector(".roomNumber").textContent = `Phòng: ${detail.roomNumber}`;
+  form.querySelector(".checkIn").textContent = formatDateTime(detail.checkIn);
+  form.querySelector(".checkOut").textContent = formatDateTime(detail.checkOut);
+  form.querySelector(".customer .name").textContent = booking.customerName;
+  form.querySelector(".customer .id-card").textContent =
+    "ID Card: " + booking.customerIDCard;
+  form.querySelector(".customer .phone").textContent =
+    "SDT: " + booking.customerPhone;
+  form.querySelector(".customer .email").textContent =
+    "Email: " + booking.customerEmail;
 
-    // Xóa các hàng dịch vụ cũ nhưng giữ lại nút "Edit Service", "Add" và "Template"
-    // Ta xóa tất cả div.service mà KHÔNG chứa chữ "Add"
-    const oldItems = container.querySelectorAll(".service");
-    oldItems.forEach(item => {
-        if (item.textContent.trim() !== "Add" && !item.classList.contains('new-service-item')) {
-            item.remove();
-        }
-    });
+  const container = form.querySelector(".service-container");
+  const template = container.querySelector("template");
 
-    // Render dịch vụ hiện có
-    if (detail.services) {
-        detail.services.forEach(s => {
-            const clone = template.content.cloneNode(true);
-            const div = clone.querySelector(".service");
-
-            div.dataset.serviceId = s.hotelServiceId;
-            div.querySelector(".name").textContent = s.serviceName;
-            div.querySelector(".quantity").value = s.quantity;
-            div.querySelector(".price").textContent = new Intl.NumberFormat('vi-VN').format(s.price) + "đ";
-
-            // Chèn vào TRƯỚC nút Add
-            const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
-            container.insertBefore(clone, addBtn);
-        });
+  // Xóa các hàng dịch vụ cũ nhưng giữ lại nút "Edit Service", "Add" và "Template"
+  // Ta xóa tất cả div.service mà KHÔNG chứa chữ "Add"
+  const oldItems = container.querySelectorAll(".service");
+  oldItems.forEach((item) => {
+    if (
+      item.textContent.trim() !== "Add" &&
+      !item.classList.contains("new-service-item")
+    ) {
+      item.remove();
     }
+  });
 
-    // Xử lý nút Add
-    const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
-    addBtn.onclick = () => {
-        renderNewServiceRow(container, template); // Truyền container vào đây
-    };
+  // Render dịch vụ hiện có
+  if (detail.services) {
+    detail.services.forEach((s) => {
+      const clone = template.content.cloneNode(true);
+      const div = clone.querySelector(".service");
 
-    // Nút reset
-    form.querySelector('button[type="reset"]').onclick = (e) => {
-        e.preventDefault();
-        overlay.classList.remove("active");
-    };
+      div.dataset.serviceId = s.hotelServiceId;
+      div.querySelector(".name").textContent = s.serviceName;
+      div.querySelector(".quantity").value = s.quantity;
+      div.querySelector(".price").textContent =
+        new Intl.NumberFormat("vi-VN").format(s.price) + "đ";
 
-    overlay.onclick = (e) => {
-        if (e.target === overlay) {
-            overlay.classList.remove("active");
-        }
-    };
+      // Chèn vào TRƯỚC nút Add
+      const addBtn = Array.from(container.querySelectorAll(".service")).find(
+        (el) => el.textContent === "Add",
+      );
+      container.insertBefore(clone, addBtn);
+    });
+  }
 
-    form.querySelector('.cancel').onclick = (e) => {
-        e.preventDefault(); // Chống reload trang
-        if (confirm("Xác nhận hủy phòng này?")) {
-            sendCancelForm(detailId);
-        }
-    };
+  // Xử lý nút Add
+  const addBtn = Array.from(container.querySelectorAll(".service")).find(
+    (el) => el.textContent === "Add",
+  );
+  addBtn.onclick = () => {
+    renderNewServiceRow(container, template); // Truyền container vào đây
+  };
+
+  // Nút reset
+  form.querySelector('button[type="reset"]').onclick = (e) => {
+    e.preventDefault();
+    overlay.classList.remove("active");
+  };
+
+  // Nút Save
+  form.querySelector('button[type="submit"]').onclick = (e) => {
+    // e.preventDefault(); // Chống reload trang
+    confirm("Xác nhận lưu thay đổi?") && sendEditForm(e);
+  };
+
+  overlay.onclick = (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove("active");
+    }
+  };
+
+  form.querySelector(".cancel").onclick = (e) => {
+    e.preventDefault(); // Chống reload trang
+    if (confirm("Xác nhận hủy phòng này?")) {
+      sendCancelForm(detailId);
+    }
+  };
 }
 
 function renderNewServiceRow(container, template) {
-    const row = document.createElement('div');
-    row.className = 'service new-service-item';
+  const row = document.createElement("div");
+  row.className = "service new-service-item";
 
-    let options = allServices.map(s =>
-        `<option value="${s.serviceId}">${s.name} (${new Intl.NumberFormat('vi-VN').format(s.price)}đ)</option>`
-    ).join('');
+  let options = allServices
+    .map(
+      (s) =>
+        `<option value="${s.serviceId}">${s.name} (${new Intl.NumberFormat("vi-VN").format(s.price)}đ)</option>`,
+    )
+    .join("");
 
-    row.innerHTML = `
+  row.innerHTML = `
         <label>
             <select class="new-service-id" style="margin-right: 5px;">
                 <option value="">-- Chọn dịch vụ --</option>
@@ -99,86 +120,104 @@ function renderNewServiceRow(container, template) {
         <button type="button" class="remove-service" style="color:red; background:none; border:none; cursor:pointer;">&times;</button>
     `;
 
-    row.querySelector('.remove-service').onclick = () => row.remove();
+  row.querySelector(".remove-service").onclick = () => row.remove();
 
-    // Chèn vào TRƯỚC nút Add
-    const addBtn = Array.from(container.querySelectorAll(".service")).find(el => el.textContent === "Add");
-    container.insertBefore(row, addBtn);
+  // Chèn vào TRƯỚC nút Add
+  const addBtn = Array.from(container.querySelectorAll(".service")).find(
+    (el) => el.textContent === "Add",
+  );
+  container.insertBefore(row, addBtn);
 }
 
 async function sendEditForm(e) {
-    e.preventDefault();
-    const form = e.target;
-    const container = form.querySelector(".service-container");
+  e.preventDefault();
+  const form = document.querySelector("#edit-form");
 
-    // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
-    const existingServices = Array.from(container.querySelectorAll(".service"))
-        .filter(el => el.dataset.serviceId) // Chỉ lấy hàng có ID dịch vụ
-        .map(el => ({
-            hotelServiceId: Number(el.dataset.serviceId),
-            quantity: Number(el.querySelector(".quantity").value)
-        }));
+  if (!form) {
+    console.error("Không tìm thấy #edit-form");
+    return;
+  }
 
-    // 2. Thu thập dịch vụ mới (những div được add thêm có select)
-    const newServices = Array.from(container.querySelectorAll(".new-service-item")).map(el => ({
-        hotelServiceId: Number(el.querySelector(".new-service-id").value),
-        quantity: Number(el.querySelector(".quantity").value)
-    })).filter(s => s.hotelServiceId > 0);
+  const container = form.querySelector(".service-container");
+  if (!container) {
+    console.error("Không tìm thấy .service-container");
+    return;
+  }
 
-    // 3. Chuẩn bị payload khớp với BookingDetailDTO.java
-    const payload = {
-        // Mặc dù popup sửa 1 phòng, nhưng Service đang lặp qua List<DetailDTO>
-        details: [{
-            bookingDetailId: Number(form.dataset.detailId),
-            roomId: Number(form.dataset.roomId), // Bạn nhớ gán roomId vào dataset ở hàm render
-            checkIn: form.dataset.rawCheckIn,    // Dùng định dạng ISO gốc từ DB (LocalDateTime.parse cần cái này)
-            checkOut: form.dataset.rawCheckOut,  // Không dùng chuỗi đã format tiếng Việt "T3, 21/04..."
-            status: "PENDING", // Hoặc lấy từ 1 select status nếu có
-            services: [...existingServices, ...newServices]
-        }]
-    };
+  // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
+  const existingServices = Array.from(container.querySelectorAll(".service"))
+    .filter((el) => el.dataset.serviceId) // Chỉ lấy hàng có ID dịch vụ
+    .map((el) => ({
+      hotelServiceId: Number(el.dataset.serviceId),
+      quantity: Number(el.querySelector(".quantity").value),
+    }));
 
-    const token = document.querySelector('meta[name="_csrf"]')?.content;
-    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-    try {
-        const response = await fetch('/booking/edit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', [header]: token },
-            body: JSON.stringify(payload)
-        });
+  // 2. Thu thập dịch vụ mới (những div được add thêm có select)
+  const newServices = Array.from(
+    container.querySelectorAll(".new-service-item"),
+  )
+    .map((el) => ({
+      hotelServiceId: Number(el.querySelector(".new-service-id").value),
+      quantity: Number(el.querySelector(".quantity").value),
+    }))
+    .filter((s) => s.hotelServiceId > 0);
 
-        if (response.ok) {
-            alert("Cập nhật thành công!");
-            location.reload();
-        } else {
-            const errors = await response.json();
-            alert("Lỗi: " + errors.join("\n"));
-        }
-    } catch (err) {
-        console.error("Gửi form thất bại:", err);
+  // 3. Chuẩn bị payload khớp với BookingDetailDTO.java
+  const payload = {
+    // Mặc dù popup sửa 1 phòng, nhưng Service đang lặp qua List<DetailDTO>
+    details: [
+      {
+        bookingDetailId: Number(form.dataset.detailId),
+        roomId: Number(form.dataset.roomId), // Bạn nhớ gán roomId vào dataset ở hàm render
+        checkIn: form.dataset.rawCheckIn, // Dùng định dạng ISO gốc từ DB (LocalDateTime.parse cần cái này)
+        checkOut: form.dataset.rawCheckOut, // Không dùng chuỗi đã format tiếng Việt "T3, 21/04..."
+        status: "PENDING", // Hoặc lấy từ 1 select status nếu có
+        services: [...existingServices, ...newServices],
+      },
+    ],
+  };
+
+  const token = document.querySelector('meta[name="_csrf"]')?.content;
+  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+  try {
+    const response = await fetch("/booking/edit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", [header]: token },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      alert("Cập nhật thành công!");
+      location.reload();
+    } else {
+      const errors = await response.json();
+      alert("Lỗi: " + errors.join("\n"));
     }
+  } catch (err) {
+    console.error("Gửi form thất bại:", err);
+  }
 }
 
 document.querySelector("#edit-form").onsubmit = sendEditForm;
 
 async function sendCancelForm(id) {
-    const token = document.querySelector('meta[name="_csrf"]')?.content;
-    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-    try {
-        const response = await fetch('/booking/cancel', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', [header]: token},
-            body: JSON.stringify({id: id, isDetail: true})
-        });
+  const token = document.querySelector('meta[name="_csrf"]')?.content;
+  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+  try {
+    const response = await fetch("/booking/cancel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", [header]: token },
+      body: JSON.stringify({ id: id, isDetail: true }),
+    });
 
-        if (response.ok) {
-            alert("Cập nhật thành công!");
-            location.reload();
-        } else {
-            const errors = await response.json();
-            alert("Lỗi: " + errors.join("\n"));
-        }
-    } catch (err) {
-        console.error("Gửi form thất bại:", err);
+    if (response.ok) {
+      alert("Cập nhật thành công!");
+      location.reload();
+    } else {
+      const errors = await response.json();
+      alert("Lỗi: " + errors.join("\n"));
     }
+  } catch (err) {
+    console.error("Gửi form thất bại:", err);
+  }
 }
