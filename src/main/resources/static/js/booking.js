@@ -61,6 +61,7 @@ async function renderEditForm(btn) {
         (el) => el.textContent === "Add",
       );
       container.insertBefore(clone, addBtn);
+      initCustomSelectForElement($(container).find(".custom-select"));
     });
   }
 
@@ -111,7 +112,7 @@ function renderNewServiceRow(container, template) {
 
   row.innerHTML = `
         <label>
-            <select class="new-service-id" style="margin-right: 5px;">
+            <select class="custom-select new-service-id" style="margin-right: 5px;">
                 <option value="">-- Chọn dịch vụ --</option>
                 ${options}
             </select>
@@ -127,6 +128,7 @@ function renderNewServiceRow(container, template) {
     (el) => el.textContent === "Add",
   );
   container.insertBefore(row, addBtn);
+  initCustomSelectForElement($(row).find(".custom-select"));
 }
 
 async function sendEditForm(e) {

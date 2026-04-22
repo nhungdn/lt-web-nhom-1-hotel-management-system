@@ -220,3 +220,114 @@
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
+/* Custom Select Wrapper */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    user-select: none;
+    vertical-align: middle;
+}
+
+.custom-select-wrapper select {
+    display: none !important;
+}
+
+/* Visual Select Container */
+.custom-select-visual {
+    position: relative;
+    display: inline-block;
+}
+
+/* Trigger Button */
+.custom-select-trigger {
+    position: relative;
+    display: block;
+    min-width: 220px;
+    padding: 0 40px 0 15px;
+    font-size: 14px;
+    color: #fff;
+    line-height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.custom-select-trigger:after {
+    position: absolute;
+    content: '';
+    width: 8px;
+    height: 8px;
+    top: 50%;
+    right: 15px;
+    margin-top: -5px;
+    border-bottom: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
+}
+
+/* Opened State */
+.custom-select-visual.opened .custom-select-trigger {
+    border-color: #34d399;
+}
+
+.custom-select-visual.opened .custom-select-trigger:after {
+    margin-top: 2px;
+    transform: rotate(-135deg);
+}
+
+.custom-select-visual.opened .custom-options {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+/* Options List */
+.custom-options {
+    position: absolute;
+    display: none;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    min-width: 250px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 99999 !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.custom-option {
+    display: block;
+    padding: 10px 15px;
+    font-size: 13px;
+    color: #cbd5e1;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.custom-option:hover {
+    background: rgba(52, 211, 153, 0.2);
+    color: #34d399;
+}
+
+.custom-option.selection {
+    background: rgba(52, 211, 153, 0.3);
+    color: #fff;
+}
+
+/* Fix Overflow cho Popup */
+.service-container, .service, .new-service-item, .service label {
+    overflow: visible !important;
+}

@@ -221,6 +221,7 @@ public class BookingService {
 
     }
 
+    @Transactional
     public List<String> editBooking(BookingDetailDTO request) {
         System.out.println("Service nhận request edit: ");
         List<String> error = new ArrayList<>();
