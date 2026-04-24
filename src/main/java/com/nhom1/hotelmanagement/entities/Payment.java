@@ -14,8 +14,8 @@ public class Payment {
     private Long paymentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+    @JoinColumn(name = "booking_detail_id")
+    private BookingDetail bookingDetail;
 
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
@@ -29,8 +29,8 @@ public class Payment {
     public Long getPaymentId() { return paymentId; }
     public void setPaymentId(Long paymentId) { this.paymentId = paymentId; }
 
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking booking) { this.booking = booking; }
+    public BookingDetail getBookingDetail() { return bookingDetail; }
+    public void setBookingDetail(BookingDetail bookingDetail) { this.bookingDetail = bookingDetail; }
 
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }

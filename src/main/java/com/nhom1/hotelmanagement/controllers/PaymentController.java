@@ -1,12 +1,10 @@
 package com.nhom1.hotelmanagement.controllers;
 
 import com.nhom1.hotelmanagement.dto.PaymentRequest;
-import com.nhom1.hotelmanagement.entities.Booking;
 import com.nhom1.hotelmanagement.entities.Payment;
 import com.nhom1.hotelmanagement.services.PaymentService;
-import com.nhom1.hotelmanagement.repositories.BookingRepository;
+import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +20,7 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @Autowired
-    private BookingRepository bookingRepository;
+    private BookingDetailRepository bookingDetailRepository;
 
     @GetMapping("/payments")
     public String listPayments(Model model) {
@@ -34,7 +32,7 @@ public class PaymentController {
     @GetMapping("/payments/create")
     public String createPaymentForm(Model model) {
         model.addAttribute("payment", new PaymentRequest());
-        model.addAttribute("bookings", bookingRepository.findAll());
+        model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
         return "payment-form";
     }
 
@@ -55,11 +53,11 @@ public class PaymentController {
         request.setPaymentId(payment.getPaymentId());
         request.setTotalAmount(payment.getTotalAmount());
         request.setStatus(payment.getStatus());
-        request.setBookingId(payment.getBooking() != null ? payment.getBooking().getBookingId() : null);
+        request.setBookingDetailId(payment.getBookingDetail() != null ? payment.getBookingDetail().getBookingDetailId() : null);
         request.setPaymentDate(payment.getPaymentDate() != null ? payment.getPaymentDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : "");
 
         model.addAttribute("payment", request);
-        model.addAttribute("bookings", bookingRepository.findAll());
+        model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
         return "payment-form";
     }
 

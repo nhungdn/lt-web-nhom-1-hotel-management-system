@@ -1,9 +1,8 @@
 package com.nhom1.hotelmanagement.services;
 
 import com.nhom1.hotelmanagement.dto.PaymentRequest;
-import com.nhom1.hotelmanagement.entities.Booking;
 import com.nhom1.hotelmanagement.entities.Payment;
-import com.nhom1.hotelmanagement.repositories.BookingRepository;
+import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import com.nhom1.hotelmanagement.repositories.PaymentRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +16,7 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     @Autowired
-    private BookingRepository bookingRepository;
+    private BookingDetailRepository bookingDetailRepository;
 
     public List<Payment> listAll() {
         return paymentRepository.findAll();
@@ -53,8 +52,8 @@ public class PaymentService {
         payment.setStatus(request.getStatus() == null || request.getStatus().isBlank() ? "PENDING" : request.getStatus());
         payment.setPaymentDate(parsePaymentDate(request.getPaymentDate()));
 
-        if (request.getBookingId() != null) {
-            bookingRepository.findById(request.getBookingId()).ifPresent(payment::setBooking);
+        if (request.getBookingDetailId() != null) {
+            bookingDetailRepository.findById(request.getBookingDetailId()).ifPresent(payment::setBookingDetail);
         }
     }
 

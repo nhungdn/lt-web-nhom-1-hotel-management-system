@@ -601,11 +601,11 @@
                     </div>
                     <div class="scroll-wrap" style="max-height:320px;">
                         <div class="pay-list">
-                            <div th:each="p : ${payments}" class="pay-item" th:if="${p.booking != null}">
+                            <div th:each="p : ${payments}" class="pay-item" th:if="${p.bookingDetail != null and p.bookingDetail.booking != null}">
                                 <div>
                                     <div class="pay-name"
-                                         th:text="'Booking #' + ${p.booking.bookingId} + ' – '
-                                              + ${(p.booking.customer != null) ? p.booking.customer.name : 'N/A'}">---</div>
+                                         th:text="'Booking #' + ${p.bookingDetail.booking.bookingId} + ' – '
+                                              + ${(p.bookingDetail.booking.customer != null) ? p.bookingDetail.booking.customer.name : 'N/A'}">---</div>
                                     <div class="pay-date"
                                          th:text="${#temporals.format(p.paymentDate,'dd/MM/yyyy HH:mm')}">--/--</div>
                                 </div>

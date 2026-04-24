@@ -28,7 +28,7 @@
                         <thead>
                             <tr>
                                 <th>Payment ID</th>
-                                <th>Booking ID</th>
+                                <th>Booking Detail ID</th>
                                 <th>Total</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -38,7 +38,7 @@
                         <tbody>
                             <tr th:each="payment : ${payments}">
                                 <td th:text="${payment.paymentId}">1</td>
-                                <td th:text="${payment.booking != null ? payment.booking.bookingId : 'N/A'}">Booking</td>
+                                <td th:text="${payment.bookingDetail != null ? payment.bookingDetail.bookingDetailId : 'N/A'}">Booking Detail</td>
                                 <td th:text="${#numbers.formatDecimal(payment.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</td>
                                 <td th:text="${payment.paymentDate != null ? #temporals.format(payment.paymentDate, 'yyyy-MM-dd HH:mm') : 'N/A'}">Date</td>
                                 <td th:text="${payment.status}">Status</td>

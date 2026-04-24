@@ -319,11 +319,12 @@ public class DashboardExcelService {
             setRowHeight(ws, 2 + i, 20);
             String rowBg = i % 2 == 0 ? BG_DARK : BG_MID;
 
-            String bid  = p.getBooking() != null
-                    ? "#" + p.getBooking().getBookingId() : "—";
-            String cus  = (p.getBooking() != null
-                    && p.getBooking().getCustomer() != null)
-                    ? p.getBooking().getCustomer().getName() : "—";
+            String bid  = (p.getBookingDetail() != null && p.getBookingDetail().getBooking() != null)
+                    ? "#" + p.getBookingDetail().getBooking().getBookingId() : "—";
+            String cus  = (p.getBookingDetail() != null
+                    && p.getBookingDetail().getBooking() != null
+                    && p.getBookingDetail().getBooking().getCustomer() != null)
+                    ? p.getBookingDetail().getBooking().getCustomer().getName() : "—";
             String date = p.getPaymentDate() != null
                     ? p.getPaymentDate().format(FMT) : "—";
             boolean isPaid = "PAID".equals(p.getStatus());

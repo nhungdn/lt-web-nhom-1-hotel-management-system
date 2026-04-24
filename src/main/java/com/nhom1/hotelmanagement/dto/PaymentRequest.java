@@ -7,7 +7,7 @@ public class PaymentRequest {
     private BigDecimal totalAmount;
     private String paymentDate;
     private String status;
-    private Long bookingId;
+    private Long bookingDetailId;
 
     public Long getPaymentId() {
         return paymentId;
@@ -41,11 +41,11 @@ public class PaymentRequest {
         this.status = status;
     }
 
-    public Long getBookingId() {
-        return bookingId;
+    public Long getBookingDetailId() {
+        return bookingDetailId;
     }
 
-    public void setBookingId(Long bookingId) {
-        this.bookingId = bookingId;
+    public void setBookingDetailId(Long bookingDetailId) {
+        this.bookingDetailId = bookingDetailId;
     }
 }

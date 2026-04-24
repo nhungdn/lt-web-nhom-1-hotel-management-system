@@ -154,7 +154,7 @@ INSERT IGNORE INTO `booking_service` (`booking_detail_id`, `service_id`, `quanti
 (1, 1, 2), (2, 1, 2), (4, 3, 1), (7, 7, 2);
 
 -- 9. Bảng `payment`
-INSERT IGNORE INTO `payment` (`payment_id`, `booking_id`, `total_amount`, `payment_date`, `status`) VALUES
+INSERT IGNORE INTO `payment` (`payment_id`, `booking_detail_id`, `total_amount`, `payment_date`, `status`) VALUES
 (1, 1, 1300000, '2026-03-03 09:00:00', 'PAID'),
 (2, 2, 1850000, '2026-03-07 09:00:00', 'PAID'),
 (3, 4, 2500000, '2026-04-17 09:00:00', 'UNPAID');
