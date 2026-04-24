@@ -8,6 +8,8 @@
     <th:block th:fragment="head">
       <link rel="stylesheet" th:href="@{/css/room-card.css}" />
       <link rel="stylesheet" th:href="@{/css/users-list.css}" />
+      <meta name="_csrf" th:content="${_csrf.token}" />
+      <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     </th:block>
   </head>
   <body>
@@ -161,7 +163,6 @@
               type="tel"
               name="phoneNumber"
               th:value="${editingUser.phoneNumber}"
-              required
             />
 
             <label>Vai trò</label>
