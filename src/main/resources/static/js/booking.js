@@ -4,6 +4,9 @@ async function renderEditForm(btn) {
 
   const overlay = document.getElementById("popupOverlay");
   overlay.classList.add("active");
+  if (typeof syncModalBodyLock === "function") {
+    syncModalBodyLock();
+  }
 
   const bookingId = Number(btn.dataset.bookingId);
   const detailId = Number(btn.dataset.detailId);
@@ -103,6 +106,9 @@ async function renderEditForm(btn) {
   form.querySelector('button[type="reset"]').onclick = (e) => {
     e.preventDefault();
     overlay.classList.remove("active");
+    if (typeof syncModalBodyLock === "function") {
+      syncModalBodyLock();
+    }
   };
 
   // Nút Save
@@ -116,6 +122,9 @@ async function renderEditForm(btn) {
   overlay.onclick = (e) => {
     if (e.target === overlay) {
       overlay.classList.remove("active");
+      if (typeof syncModalBodyLock === "function") {
+        syncModalBodyLock();
+      }
     }
   };
 

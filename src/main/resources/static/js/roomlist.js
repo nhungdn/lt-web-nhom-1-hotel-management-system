@@ -49,6 +49,15 @@ function renderBookingList(data) {
   });
 }
 
+function setModalBodyLock(isLocked) {
+  document.body.classList.toggle("modal-open", Boolean(isLocked));
+}
+
+function syncModalBodyLock() {
+  const hasActiveOverlay = document.querySelector(".popup-overlay.active");
+  setModalBodyLock(Boolean(hasActiveOverlay));
+}
+
 function getBookingRoomNumbers(booking) {
   if (!booking?.details || booking.details.length === 0) {
     return [];
@@ -346,6 +355,7 @@ async function openPaymentPopupByDetail(button) {
       : "Thanh toán & tải hóa đơn txt";
 
     overlay.classList.add("active");
+    syncModalBodyLock();
   } catch (error) {
     console.error(error);
     alert("Không tải được thông tin hóa đơn. Vui lòng thử lại.");
@@ -358,6 +368,7 @@ function closePaymentPopup() {
     return;
   }
   overlay.classList.remove("active");
+  syncModalBodyLock();
 }
 
 async function submitBookingPayment() {

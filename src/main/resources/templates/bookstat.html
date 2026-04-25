@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org" 
       th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
     <head>
-        <title>Room Status</title>
+        <title>Booking Status</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta name="_csrf" th:content="${_csrf.token}"/>
@@ -20,19 +20,59 @@
     </head>
     
     <body>
-        <h1 th:fragment="title">Room Status</h1>
+        <h1 th:fragment="title">Booking Status</h1>
         <div th:fragment="content">
             <section class="content-grid">
                 <!-- Data Table -->
                 <div class="glass-card table-card">
                     <div class="card-header">
                         <div>
-                            <h2 class="card-title">Recent change</h2>
-                            <p class="card-subtitle">Latest booking and cleaning status</p>
+                            <h2 class="card-title" th:text="${'Booking Status - Tháng ' + selectedMonth + '/' + selectedYear}">Recent change</h2>
+                            <br/>
+                            <a class="card-btn" href="/">+ New booking</a>
                         </div>
-                        <div class="card-actions">
-                            <input type="text" id="roomSearchInput" class="card-search-input" placeholder="Search room number (e.g. 101)" />
-                            <button class="card-btn" onclick="window.location.reload()">Refresh All</button>
+                        <div class="card-actions" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <form
+                                th:action="@{/booking/status}"
+                                method="get"
+                                style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end"
+                            >
+                                <select
+                                    name="month"
+                                    class="card-search-input"
+                                    style="min-width: 120px"
+                                >
+                                    <option
+                                        th:each="m : ${#numbers.sequence(1,12)}"
+                                        th:value="${m}"
+                                        th:selected="${m == selectedMonth}"
+                                        th:text="${'Tháng ' + m}"
+                                    >
+                                        Tháng
+                                    </option>
+                                </select>
+
+                                <select
+                                    name="year"
+                                    class="card-search-input"
+                                    style="min-width: 120px"
+                                >
+                                    <option
+                                        th:each="y : ${#numbers.sequence(currentYear - 5, currentYear + 1)}"
+                                        th:value="${y}"
+                                        th:selected="${y == selectedYear}"
+                                        th:text="${y}"
+                                    >
+                                        Năm
+                                    </option>
+                                </select>
+
+                                <button type="submit" class="card-btn">Lọc</button>
+                            </form>
+
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                                <input type="text" id="roomSearchInput" class="card-search-input" placeholder="Search room number (e.g. 101)" />
+                            </div>
                         </div>
                     </div>
 
@@ -171,7 +211,7 @@
                             </div>
 
                             <div class="payment-actions">
-                                <button type="button" class="card-btn" id="confirmPayBtn">Thanh toán & tải hóa đơn txt</button>
+                                <button type="button" class="card-btn" id="confirmPayBtn">Thanh toán & xuất hóa đơn</button>
                             </div>
                         </div>
                     </div>
@@ -179,7 +219,7 @@
                 </div>
             </section>
             <script th:inline="javascript">
-                const bookingData = [[${bookingList}]]; 
+                const bookingData = /*[[${bookingList}]]*/ []; 
 
                 document.addEventListener('DOMContentLoaded', () => {
                     console.log(bookingData);

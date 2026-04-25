@@ -63,8 +63,14 @@
                           class="nav-link"
                           th:text="|Welcome, ${session.user.fullName}|"
                         ></span>
-                        <a th:href="@{/dashboard}" class="public-login-btn"
+                        <a
+                          th:if="${session.user.role.toString() == 'ADMIN'}"
+                          th:href="@{/dashboard}"
+                          class="public-login-btn"
                           >Dashboard</a
+                        >
+                        <a th:href="@{/booking/status}" class="public-login-btn"
+                          >Booking Status</a
                         >
                         <a
                           th:href="@{/logout}"
