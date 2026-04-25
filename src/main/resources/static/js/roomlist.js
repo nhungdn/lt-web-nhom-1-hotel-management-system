@@ -98,20 +98,21 @@ function toggleDetailRow(clickedRow, booking) {
 }
 
 function renderStatusBadge(booking, statusBadge) {
-  // Reset class cơ bản
-  statusBadge.className = "status-badge";
+  // Xóa nội dung cũ và reset class
+  statusBadge.innerHTML = "";
+  statusBadge.className = "status-container"; // Sử dụng class container để quản lý layout
 
-  // Kiểm tra nếu không có dữ liệu chi tiết
   if (!booking.details || booking.details.length === 0) {
-    statusBadge.textContent = "No Details";
-    statusBadge.classList.add("gray"); // Màu mặc định khi trống
+    const noneBadge = document.createElement("div");
+    noneBadge.className = "status-badge gray";
+    noneBadge.textContent = "No Details";
+    statusBadge.appendChild(noneBadge);
     return;
   }
 
-  // Lấy danh sách các status duy nhất có trong booking
+  // Lấy danh sách các status duy nhất
   const uniqueStatuses = [...new Set(booking.details.map((d) => d.status))];
 
-  // Định nghĩa bảng màu và tên hiển thị trên giao diện
   const statusConfig = {
     PENDING: { color: "yellow", label: "PENDING" },
     CHECKED_IN: { color: "blue", label: "CHECKED_IN" },
@@ -119,18 +120,27 @@ function renderStatusBadge(booking, statusBadge) {
     CANCELED: { color: "red", label: "CANCELED" },
   };
 
-  if (uniqueStatuses.length === 1) {
-    // Trường hợp tất cả cùng 1 status
-    const status = uniqueStatuses[0];
+  // Tạo các dòng trạng thái
+  uniqueStatuses.forEach((status) => {
+    const roomsForStatus = booking.details
+      .filter((d) => d.status === status)
+      .map((d) => d.roomNumber || "N/A")
+      .join(", ");
+
     const config = statusConfig[status] || { color: "gray", label: status };
 
-    statusBadge.textContent = config.label;
-    statusBadge.classList.add(config.color);
-  } else {
-    // Trường hợp có nhiều status khác nhau
-    statusBadge.textContent = uniqueStatuses.join(", ");
-    statusBadge.classList.add("purple");
-  }
+    // Tạo một wrapper div để ép xuống dòng
+    const row = document.createElement("div");
+    row.className = "status-row";
+
+    // Tạo badge bên trong row
+    const badge = document.createElement("span");
+    badge.className = `status-badge ${config.color}`;
+    badge.textContent = `${config.label} [${roomsForStatus}]`;
+
+    row.appendChild(badge);
+    statusBadge.appendChild(row);
+  });
 }
 
 function getStatusClass(status) {

@@ -282,14 +282,12 @@
   box-shadow: 0 0 8px var(--amber);
 }
 
-.status-badge.purple {
-  background: rgba(205, 95, 235, 0.15);
-  color: var(--mix);
+.status-row {
+  margin-bottom: 8px;
 }
 
-.status-badge.purple::before {
-  background: var(--mix);
-  box-shadow: 0 0 8px var(--mix);
+.status-row:last-child {
+  margin-bottom: 0;
 }
 
 .table-amount {
