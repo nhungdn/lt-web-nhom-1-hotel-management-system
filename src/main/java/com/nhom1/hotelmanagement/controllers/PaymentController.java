@@ -6,6 +6,7 @@ import com.nhom1.hotelmanagement.entities.Payment;
 import com.nhom1.hotelmanagement.services.PaymentService;
 import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -40,6 +41,7 @@ public class PaymentController {
     public String createPaymentForm(Model model) {
         model.addAttribute("payment", new PaymentRequest());
         model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
+        model.addAttribute("viewOnly", false);
         return PAYMENT_FORM_VIEW;
     }
 
@@ -58,6 +60,34 @@ public class PaymentController {
 
         model.addAttribute("payment", mapToPaymentRequest(payment));
         model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
+        model.addAttribute("viewOnly", false);
+        return PAYMENT_FORM_VIEW;
+    }
+
+    @GetMapping("/payments/view/{id}")
+    public String viewPaymentDetail(@PathVariable Long id, Model model) {
+        Payment payment = paymentService.getById(id);
+        if (payment == null) {
+            return "redirect:/payments";
+        }
+
+        model.addAttribute("payment", mapToPaymentRequest(payment));
+        model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
+        model.addAttribute("viewOnly", true);
+
+        BookingInvoiceDTO invoiceSummary = null;
+        BookingInvoiceDTO.InvoiceItemDTO selectedInvoice = null;
+        if (payment.getBookingDetail() != null && payment.getBookingDetail().getBookingDetailId() != null) {
+            invoiceSummary = paymentService.getDetailInvoiceSummary(payment.getBookingDetail().getBookingDetailId());
+            selectedInvoice = invoiceSummary.getPaidInvoices().stream()
+                .filter(invoice -> Objects.equals(invoice.getPaymentId(), payment.getPaymentId()))
+                .findFirst()
+                .orElse(null);
+        }
+
+        model.addAttribute("invoiceSummary", invoiceSummary);
+        model.addAttribute("selectedInvoice", selectedInvoice);
+        model.addAttribute("currentPaymentId", payment.getPaymentId());
         return PAYMENT_FORM_VIEW;
     }
 

@@ -1,64 +1,78 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
-<head>
-    <title>Payments</title>
+<!doctype html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}"
+>
+  <head>
+    <title>Hóa đơn</title>
     <th:block th:fragment="head">
-        <link rel="stylesheet" th:href="@{/css/room-card.css}" />
-        <link rel="stylesheet" th:href="@{/css/form.css}" />
+      <link rel="stylesheet" th:href="@{/css/room-card.css}" />
+      <link rel="stylesheet" th:href="@{/css/form.css}" />
     </th:block>
-</head>
-<body>
-    <h1 th:fragment="title">Payment Management</h1>
+  </head>
+  <body>
+    <h1 th:fragment="title">Quản lý hóa đơn</h1>
     <div th:fragment="content">
-        <section class="content-grid" style="grid-template-columns: 1fr;">
-            <div class="glass-card table-card">
-                <div class="card-header">
-                    <div>
-                        <h2 class="card-title">Payments</h2>
-                        <p class="card-subtitle">Track and manage payment records for bookings</p>
-                    </div>
-                    <div class="card-actions">
-                        <a th:href="@{/payments/create}" class="card-btn">+ Create Payment</a>
-                    </div>
-                </div>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Payment ID</th>
-                                <th>Booking Detail ID</th>
-                                <th>Total</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="payment : ${payments}">
-                                <td th:text="${payment.paymentId}">1</td>
-                                <td th:text="${payment.bookingDetail != null ? payment.bookingDetail.bookingDetailId : 'N/A'}">Booking Detail</td>
-                                <td th:text="${#numbers.formatDecimal(payment.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</td>
-                                <td th:text="${payment.paymentDate != null ? #temporals.format(payment.paymentDate, 'yyyy-MM-dd HH:mm') : 'N/A'}">Date</td>
-                                <td th:text="${payment.status}">Status</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a th:href="@{/payments/edit/{id}(id=${payment.paymentId})}" class="card-btn" style="padding: 6px 12px;">Edit</a>
-                                        <form th:action="@{/payments/delete/{id}(id=${payment.paymentId})}" method="post" style="display:inline;">
-                                            <button type="submit" class="card-btn btn-danger" style="padding: 6px 12px; background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.5);" onclick="return confirm('Delete payment record?')">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(payments)}">
-                                <td colspan="6" class="empty-state">No payments found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+      <section class="content-grid" style="grid-template-columns: 1fr">
+        <div class="glass-card table-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Danh sách hóa đơn theo tháng</h2>
             </div>
-        </section>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã hóa đơn</th>
+                  <th>Tổng tiền</th>
+                  <th>Ngày thanh toán</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="payment : ${payments}">
+                  <td th:text="${payment.paymentId}">1</td>
+                  <td
+                    th:text="${#numbers.formatDecimal(payment.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                  >
+                    0 đ
+                  </td>
+                  <td
+                    th:text="${payment.paymentDate != null ? #temporals.format(payment.paymentDate, 'yyyy-MM-dd HH:mm') : 'N/A'}"
+                  >
+                    Date
+                  </td>
+                  <td>
+                    <span
+                      th:text="${payment.status}"
+                      class="status-badge"
+                      th:classappend="${payment.status == 'PAID' ? 'green' : 'red'}"
+                    >
+                      Status
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <a
+                        th:href="@{/payments/view/{id}(id=${payment.paymentId})}"
+                        class="card-btn"
+                        style="padding: 6px 12px"
+                        >View</a
+                      >
+                    </div>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(payments)}">
+                  <td colspan="5" class="empty-state">No payments found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
-</body>
+  </body>
 </html>
