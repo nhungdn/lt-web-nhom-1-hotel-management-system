@@ -11,15 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import java.time.LocalDate;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -59,22 +56,22 @@ public class DashboardController {
         model.addAttribute("activePage", "dashboard");
 
         // Stat cards
-        model.addAttribute("totalBookings",   dashboardService.getTotalBookings());
-        model.addAttribute("totalRevenue",    dashboardService.getTotalRevenue());
-        model.addAttribute("availableRooms",  dashboardService.countRoomByStatus("AVAILABLE"));
-        model.addAttribute("occupiedRooms",   dashboardService.countRoomByStatus("OCCUPIED"));
-        model.addAttribute("cleaningRooms",   dashboardService.countRoomByStatus("CLEANING"));
-        model.addAttribute("bookedRooms",     dashboardService.countRoomByStatus("BOOKED"));
+        model.addAttribute("totalBookings", dashboardService.getTotalBookings());
+        model.addAttribute("totalRevenue", dashboardService.getTotalRevenue());
+        model.addAttribute("availableRooms", dashboardService.countRoomByStatus("AVAILABLE"));
+        model.addAttribute("occupiedRooms", dashboardService.countRoomByStatus("OCCUPIED"));
+        model.addAttribute("cleaningRooms", dashboardService.countRoomByStatus("CLEANING"));
+        model.addAttribute("bookedRooms", dashboardService.countRoomByStatus("BOOKED"));
         model.addAttribute("pendingBookings", dashboardService.countBookingByStatus("PENDING"));
-        model.addAttribute("checkedIn",       dashboardService.countBookingByStatus("CHECKED_IN"));
-        model.addAttribute("unpaidCount",     dashboardService.countUnpaidPayments());
+        model.addAttribute("checkedIn", dashboardService.countBookingByStatus("CHECKED_IN"));
+        model.addAttribute("unpaidCount", dashboardService.countUnpaidPayments());
 
         // Tables
         model.addAttribute("recentBookings", dashboardService.getRecentBookings(10));
-        model.addAttribute("rooms",          roomService.getFullRoomList());
-        model.addAttribute("payments",       dashboardService.getRecentPayments(5));
-        model.addAttribute("services",       hotelServiceService.listAllDto());
-        model.addAttribute("users",          userService.getAllUsers());
+        model.addAttribute("rooms", roomService.getFullRoomList());
+        model.addAttribute("payments", dashboardService.getRecentPayments(5));
+        model.addAttribute("services", hotelServiceService.listAllDto());
+        model.addAttribute("users", userService.getAllUsers());
 
         return "dashboard/index";
     }
@@ -112,16 +109,18 @@ public class DashboardController {
         if (session.getAttribute("user") == null)
             return ResponseEntity.status(401).build();
 
-        int currentYear  = java.time.LocalDate.now().getYear();
+        int currentYear = java.time.LocalDate.now().getYear();
         int currentMonth = java.time.LocalDate.now().getMonthValue();
-        if (year  == 0) year  = currentYear;
-        if (month == 0) month = currentMonth;
+        if (year == 0)
+            year = currentYear;
+        if (month == 0)
+            month = currentMonth;
 
         Map<String, Object> data = new HashMap<>();
-        data.put("revenueByDay",   dashboardService.getRevenueByDay(year, month));
+        data.put("revenueByDay", dashboardService.getRevenueByDay(year, month));
         data.put("revenueByMonth", dashboardService.getRevenueByMonth(year));
-        data.put("selectedYear",   year);
-        data.put("selectedMonth",  month);
+        data.put("selectedYear", year);
+        data.put("selectedMonth", month);
 
         return ResponseEntity.ok(data);
     }

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,9 +42,9 @@ public class RoomTypeService {
         roomType.setName(dto.getName());
         roomType.setPrice(dto.getPrice());
         roomType.setDescription(dto.getDescription());
-        
+
         RoomType savedRoomType = roomTypeRepository.save(roomType);
-        
+
         // Save associated images if provided
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             for (RoomTypeImageRequest imageRequest : dto.getImages()) {
@@ -58,7 +57,7 @@ public class RoomTypeService {
                 }
             }
         }
-        
+
         return savedRoomType;
     }
 
@@ -79,7 +78,7 @@ public class RoomTypeService {
             roomType.setDescription(dto.getDescription());
         }
         RoomType savedRoomType = roomTypeRepository.save(roomType);
-        
+
         // Save new associated images if provided
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             for (RoomTypeImageRequest imageRequest : dto.getImages()) {
@@ -92,7 +91,7 @@ public class RoomTypeService {
                 }
             }
         }
-        
+
         return savedRoomType;
     }
 
@@ -105,7 +104,8 @@ public class RoomTypeService {
     }
 
     public RoomTypeResponse toDto(RoomType roomType) {
-        if (roomType == null) return null;
+        if (roomType == null)
+            return null;
         RoomTypeResponse dto = new RoomTypeResponse();
         dto.setRoomTypeId(roomType.getRoomTypeId());
         dto.setName(roomType.getName());
@@ -116,12 +116,11 @@ public class RoomTypeService {
         dto.setTotalRooms(totalRooms);
         return dto;
     }
-    
-    
+
     public List<RoomTypeResponse> filterAvailableRooms(String start, String end) {
         LocalDate startD = LocalDate.parse(start);
         LocalDate endD = LocalDate.parse(end);
-        
+
         LocalDateTime startTime = startD.atTime(12, 0);
         LocalDateTime endTime = endD.atTime(8, 0);
         // Lấy tất cả RoomTypes
