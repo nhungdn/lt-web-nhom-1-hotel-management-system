@@ -84,6 +84,27 @@
   gap: 8px;
 }
 
+.card-search-input {
+  min-width: 220px;
+  padding: 8px 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.card-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.card-search-input:focus {
+  border-color: var(--emerald-light);
+}
+
 .card-btn {
   padding: 8px 16px;
   background: var(--glass-bg);
@@ -294,4 +315,21 @@
   font-family: "Space Mono", monospace;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .card-search-input {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
 }

@@ -2,10 +2,21 @@ function renderBookingList(data) {
   const tbody = document.querySelector("#roomTable tbody");
   const template = document.getElementById("booking-template");
 
+  if (!renderBookingList.templateHtml && template) {
+    renderBookingList.templateHtml = template.innerHTML;
+  }
+
+  if (!renderBookingList.templateHtml) {
+    console.error("Không tìm thấy template booking để render bảng.");
+    return;
+  }
+
   tbody.innerHTML = ""; // Xóa trắng bảng trước khi render
 
   data.forEach((booking) => {
-    const clone = template.content.cloneNode(true);
+    const rowTemplate = document.createElement("template");
+    rowTemplate.innerHTML = renderBookingList.templateHtml.trim();
+    const clone = rowTemplate.content.cloneNode(true);
     const tr = clone.querySelector("tr");
 
     // Đổ dữ liệu vào hàng chính
@@ -36,6 +47,40 @@ function renderBookingList(data) {
 
     tbody.appendChild(tr);
   });
+}
+
+function getBookingRoomNumbers(booking) {
+  if (!booking?.details || booking.details.length === 0) {
+    return [];
+  }
+
+  return booking.details
+    .map((detail) => String(detail.roomNumber ?? "").trim())
+    .filter((room) => room.length > 0);
+}
+
+function initRoomSearch(data) {
+  const input = document.getElementById("roomSearchInput");
+  if (!input) {
+    return;
+  }
+
+  const filterByRoomNumber = () => {
+    const keyword = input.value.trim().toLowerCase();
+    if (!keyword) {
+      renderBookingList(data);
+      return;
+    }
+
+    const filtered = data.filter((booking) => {
+      const rooms = getBookingRoomNumbers(booking);
+      return rooms.some((room) => room.toLowerCase().includes(keyword));
+    });
+
+    renderBookingList(filtered);
+  };
+
+  input.addEventListener("input", filterByRoomNumber);
 }
 
 function toggleDetailRow(clickedRow, booking) {

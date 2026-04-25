@@ -31,6 +31,7 @@
                             <p class="card-subtitle">Latest booking and cleaning status</p>
                         </div>
                         <div class="card-actions">
+                            <input type="text" id="roomSearchInput" class="card-search-input" placeholder="Search room number (e.g. 101)" />
                             <button class="card-btn" onclick="window.location.reload()">Refresh All</button>
                         </div>
                     </div>
@@ -183,6 +184,7 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     console.log(bookingData);
                     renderBookingList(bookingData);
+                    initRoomSearch(bookingData);
                     loadAllServices();
                 });
                 let allServices = [];
