@@ -89,6 +89,30 @@
               </li>
               <li class="nav-item">
                 <a
+                th:if="${session.user != null and session.user.role.toString() == 'ADMIN'}"
+                  th:href="@{/payments}"
+                  class="nav-link"
+                  th:classappend="${activePage == 'payments'} ? ' active' : ''"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="nav-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3" />
+                    <path d="M3 10h18" />
+                    <path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10" />
+                    <path d="M8 14h8" />
+                    <path d="M8 18h5" />
+                  </svg>
+                  Hóa đơn
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
                   th:href="@{/booking/status}"
                   class="nav-link"
                   th:classappend="${activePage == 'bookstat'} ? ' active' : ''"
@@ -210,29 +234,6 @@
                     />
                   </svg>
                   Customer
-                </a>
-              </li>
-              <li class="nav-item">
-                <a
-                  th:href="@{/payments}"
-                  class="nav-link"
-                  th:classappend="${activePage == 'payments'} ? ' active' : ''"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="nav-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M21 10V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3" />
-                    <path d="M3 10h18" />
-                    <path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10" />
-                    <path d="M8 14h8" />
-                    <path d="M8 18h5" />
-                  </svg>
-                  Payments
                 </a>
               </li>
             </ul>

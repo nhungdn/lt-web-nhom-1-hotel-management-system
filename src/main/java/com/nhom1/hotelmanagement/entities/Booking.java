@@ -16,7 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class Booking {
 
     @Id
@@ -27,10 +29,10 @@ public class Booking {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-    
+    // @ManyToOne
+    // @JoinColumn(name = "userId")
+    // private User user;
+
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookingDetail> bookingDetails = new ArrayList<>();
 }

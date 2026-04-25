@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/services/api/all", "/filter/**", "/book").permitAll()
                         // Role-based access
-                        .requestMatchers("/users/**", "/dashboard").hasRole("ADMIN")
+                        .requestMatchers("/users/**", "/dashboard", "/payments").hasRole("ADMIN")
 
                         // Authenticated users
                         .requestMatchers("/roomtypes/**", "/rooms/**", "/booking/**", "/profile/**").authenticated()
