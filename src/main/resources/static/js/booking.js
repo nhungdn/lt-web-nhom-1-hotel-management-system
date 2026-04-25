@@ -51,7 +51,7 @@ async function renderEditForm(btn) {
   const oldItems = container.querySelectorAll(".service");
   oldItems.forEach((item) => {
     if (
-      item.textContent.trim() !== "Add" &&
+        !isAddServiceButton(item) &&
       !item.classList.contains("new-service-item")
     ) {
       item.remove();
@@ -64,28 +64,39 @@ async function renderEditForm(btn) {
       const clone = template.content.cloneNode(true);
       const div = clone.querySelector(".service");
 
+      div.classList.add("existing-service-item");
       div.dataset.serviceId = s.hotelServiceId;
+      div.dataset.quantity = s.quantity;
       div.querySelector(".name").textContent = s.serviceName;
-      div.querySelector(".quantity").value = s.quantity;
+      const quantityInput = div.querySelector(".quantity");
+      if (quantityInput) {
+        quantityInput.value = s.quantity;
+        quantityInput.readOnly = true;
+        quantityInput.tabIndex = -1;
+        quantityInput.title = "Số lượng hiện tại, không thể chỉnh sửa";
+      }
+      const addedAt = div.querySelector(".addedAt");
+      if (addedAt) {
+        addedAt.textContent = s.addedAt ? `Ngày thêm: ${s.addedAt}` : "Ngày thêm: N/A";
+      }
       div.querySelector(".price").textContent =
         new Intl.NumberFormat("vi-VN").format(s.price) + "đ";
 
       // Chèn vào TRƯỚC nút Add
-      const addBtn = Array.from(container.querySelectorAll(".service")).find(
-        (el) => el.textContent === "Add",
-      );
+        const addBtn = getAddServiceButton(container);
       container.insertBefore(clone, addBtn);
       initCustomSelectForElement($(container).find(".custom-select"));
     });
   }
 
   // Xử lý nút Add
-  const addBtn = Array.from(container.querySelectorAll(".service")).find(
-    (el) => el.textContent === "Add",
-  );
-  addBtn.onclick = () => {
-    renderNewServiceRow(container, template); // Truyền container vào đây
-  };
+    const addBtn = getAddServiceButton(container);
+  if (addBtn) {
+    addBtn.textContent = "Thêm dịch vụ mới";
+      addBtn.onclick = () => {
+        renderNewServiceRow(container, template); // Truyền container vào đây
+      };
+    }
 
   // Nút reset
   form.querySelector('button[type="reset"]').onclick = (e) => {
@@ -135,16 +146,37 @@ function renderNewServiceRow(container, template) {
         <button type="button" class="remove-service" style="color:red; background:none; border:none; cursor:pointer;">&times;</button>
     `;
 
+  const addedAt = row.querySelector(".addedAt");
+  if (addedAt) {
+    addedAt.textContent = "Ngày thêm: Sẽ được ghi khi lưu";
+  }
+
   row.querySelector(".remove-service").onclick = () => row.remove();
 
   // Chèn vào TRƯỚC nút Add
-  const addBtn = Array.from(container.querySelectorAll(".service")).find(
-    (el) => el.textContent === "Add",
-  );
+    const addBtn = getAddServiceButton(container);
   container.insertBefore(row, addBtn);
   initCustomSelectForElement($(row).find(".custom-select"));
 }
 
+  function isAddServiceButton(element) {
+    if (!element || !element.classList || !element.classList.contains("service")) {
+      return false;
+    }
+
+    const text = element.textContent.trim();
+    return text === "Add" || text === "Thêm dịch vụ mới";
+  }
+
+  function getAddServiceButton(container) {
+    return Array.from(container.querySelectorAll(".service")).find((element) => {
+      return (
+        !element.dataset.serviceId &&
+        !element.classList.contains("new-service-item") &&
+        isAddServiceButton(element)
+      );
+    });
+  }
 async function sendEditForm(e) {
   e.preventDefault();
   const form = document.querySelector("#edit-form");
@@ -161,11 +193,12 @@ async function sendEditForm(e) {
   }
 
   // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
-  const existingServices = Array.from(container.querySelectorAll(".service"))
-    .filter((el) => el.dataset.serviceId) // Chỉ lấy hàng có ID dịch vụ
+  const existingServices = Array.from(
+    container.querySelectorAll(".existing-service-item"),
+  )
     .map((el) => ({
       hotelServiceId: Number(el.dataset.serviceId),
-      quantity: Number(el.querySelector(".quantity").value),
+      quantity: Number(el.dataset.quantity || el.querySelector(".quantity")?.value || 0),
     }));
 
   // 2. Thu thập dịch vụ mới (những div được add thêm có select)

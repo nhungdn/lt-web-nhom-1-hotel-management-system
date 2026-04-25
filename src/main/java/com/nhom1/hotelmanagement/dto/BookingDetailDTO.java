@@ -33,5 +33,6 @@ public class BookingDetailDTO {
         private String serviceName;
         private Integer quantity;
         private BigDecimal price;
+        private String addedAt;
     }
 }

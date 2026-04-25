@@ -18,8 +18,19 @@ function renderBookingList(data) {
     const statusBadge = tr.querySelector(".status-badge");
     renderStatusBadge(booking, statusBadge);
 
+    const detailsBtn = tr.querySelector(".details-btn");
+    if (detailsBtn) {
+      detailsBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        toggleDetailRow(tr, booking);
+      });
+    }
+
     // Gán sự kiện click để hiện detail
-    tr.addEventListener("click", function () {
+    tr.addEventListener("click", function (event) {
+      if (event.target.closest("button")) {
+        return;
+      }
       toggleDetailRow(this, booking);
     });
 
@@ -68,7 +79,10 @@ function toggleDetailRow(clickedRow, booking) {
                     <td>${formatDateTime(d.checkOut)}</td>
                     <td>
                         <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}" 
-                            onclick=renderEditForm(this) class="card-btn action">Edit</button></td>
+                        onclick=renderEditForm(this) class="card-btn action">Edit</button>
+                      <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}"
+                        onclick="openPaymentPopupByDetail(this)" type="button" class="card-btn action">Thanh toán</button>
+                    </td>
                 </tr>
             `;
       detailBody.insertAdjacentHTML("beforeend", rowHtml);
@@ -84,35 +98,34 @@ function toggleDetailRow(clickedRow, booking) {
 }
 
 function renderStatusBadge(booking, statusBadge) {
-  statusBadge.className = 'status-badge';
+  statusBadge.className = "status-badge";
   if (booking.details && booking.details.length > 0) {
     const allPaid = booking.details.every((d) => d.status === "COMPLETED");
-    if(allPaid){
+    if (allPaid) {
       statusBadge.textContent = "PAID";
-      statusBadge.classList.add('green');
+      statusBadge.classList.add("green");
     } else {
       statusBadge.textContent = "UNPAID";
-      statusBadge.classList.add('red');
+      statusBadge.classList.add("red");
     }
-  }
-  else{
-      statusBadge.textContent = "No Details";
-      statusBadge.classList.add('yellow');
+  } else {
+    statusBadge.textContent = "No Details";
+    statusBadge.classList.add("yellow");
   }
 }
 
 function getStatusClass(status) {
   switch (status) {
-    case 'PENDING':
-      return 'yellow';
-    case 'CHECKED_IN':
-      return 'blue';
-    case 'COMPLETED':
-      return 'green';
-    case 'CANCELED':
-      return 'red';
+    case "PENDING":
+      return "yellow";
+    case "CHECKED_IN":
+      return "blue";
+    case "COMPLETED":
+      return "green";
+    case "CANCELED":
+      return "red";
     default:
-      return '';
+      return "";
   }
 }
 
@@ -132,3 +145,204 @@ function formatDateTime(isoString) {
 
   return `${dayName}, ${day}/${month}/${year}`;
 }
+
+function formatMoney(amount) {
+  const numeric = Number(amount || 0);
+  return `${new Intl.NumberFormat("vi-VN").format(numeric)} đ`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function renderInvoiceList(listElement, invoices, isPaid) {
+  if (!invoices || invoices.length === 0) {
+    listElement.innerHTML = `<div class="payment-empty">${isPaid ? "Chưa có hóa đơn đã thanh toán" : "Không còn hóa đơn chưa thanh toán"}</div>`;
+    return;
+  }
+
+  const html = invoices
+    .map((invoice) => {
+      const linesHtml = (invoice.chargeLines || [])
+        .map(
+          (line) => `
+      <tr>
+        <td>${escapeHtml(line.label)}</td>
+        <td>${line.quantity ?? "-"}</td>
+        <td>${formatMoney(line.unitPrice)}</td>
+        <td>${formatMoney(line.lineTotal)}</td>
+      </tr>
+    `,
+        )
+        .join("");
+
+      return `
+      <div class="payment-invoice-item ${isPaid ? "paid" : "unpaid"}">
+        <div class="payment-invoice-head">
+          <strong>Detail #${invoice.bookingDetailId} - Phòng ${escapeHtml(invoice.roomNumber || "N/A")}</strong>
+          <span>${isPaid ? "Đã thanh toán" : "Chưa thanh toán"}</span>
+        </div>
+        <div class="payment-invoice-meta">
+          ${isPaid ? `Payment #${invoice.paymentId ?? "N/A"} | ${escapeHtml(invoice.paymentDate || "N/A")}` : `Đã trả: ${formatMoney(invoice.alreadyPaid)} | Còn lại: ${formatMoney(invoice.remaining)}`}
+        </div>
+        <table class="payment-detail-table">
+          <thead>
+            <tr>
+              <th>Hạng mục</th>
+              <th>SL</th>
+              <th>Đơn giá</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${linesHtml}
+          </tbody>
+        </table>
+        <div class="payment-invoice-total">Số tiền ${isPaid ? "đã" : "cần"} thanh toán: ${formatMoney(invoice.amount)}</div>
+      </div>
+    `;
+    })
+    .join("");
+
+  listElement.innerHTML = html;
+}
+
+let activePaymentDetailId = null;
+
+async function openPaymentPopupByDetail(button) {
+  const detailId = Number(button?.dataset?.detailId || 0);
+  const bookingId = Number(button?.dataset?.bookingId || 0);
+  const booking = bookingData.find((b) => b.bookingId === bookingId);
+
+  if (!detailId || !booking) {
+    alert("Không tìm thấy thông tin chi tiết phòng để thanh toán.");
+    return;
+  }
+
+  const overlay = document.getElementById("paymentPopupOverlay");
+  if (!overlay) {
+    return;
+  }
+
+  activePaymentDetailId = detailId;
+  document.getElementById("paymentBookingCode").textContent =
+    `#${booking.bookingId} - Detail #${detailId}`;
+  document.getElementById("paymentCustomerInfo").innerHTML = `
+    <div><strong>Khách hàng:</strong> ${escapeHtml(booking.customerName || "N/A")}</div>
+    <div><strong>Số điện thoại:</strong> ${escapeHtml(booking.customerPhone || "N/A")}</div>
+    <div><strong>Email:</strong> ${escapeHtml(booking.customerEmail || "N/A")}</div>
+  `;
+
+  try {
+    const response = await fetch(`/payments/detail/${detailId}/summary`, {
+      method: "GET",
+    });
+    if (!response.ok) {
+      throw new Error("Không thể tải dữ liệu hóa đơn");
+    }
+
+    const summary = await response.json();
+    document.getElementById("paidTotalAmount").textContent = formatMoney(
+      summary.paidTotal,
+    );
+    document.getElementById("unpaidTotalAmount").textContent = formatMoney(
+      summary.unpaidTotal,
+    );
+
+    renderInvoiceList(
+      document.getElementById("paidInvoiceList"),
+      summary.paidInvoices,
+      true,
+    );
+    renderInvoiceList(
+      document.getElementById("unpaidInvoiceList"),
+      summary.unpaidInvoices,
+      false,
+    );
+
+    const payButton = document.getElementById("confirmPayBtn");
+    payButton.disabled = Number(summary.unpaidTotal || 0) <= 0;
+    payButton.textContent = payButton.disabled
+      ? "Đã thanh toán đầy đủ"
+      : "Thanh toán & tải hóa đơn txt";
+
+    overlay.classList.add("active");
+  } catch (error) {
+    console.error(error);
+    alert("Không tải được thông tin hóa đơn. Vui lòng thử lại.");
+  }
+}
+
+function closePaymentPopup() {
+  const overlay = document.getElementById("paymentPopupOverlay");
+  if (!overlay) {
+    return;
+  }
+  overlay.classList.remove("active");
+}
+
+async function submitBookingPayment() {
+  if (!activePaymentDetailId) {
+    return;
+  }
+
+  if (!confirm("Xác nhận thanh toán các khoản chưa thanh toán?")) {
+    return;
+  }
+
+  const token = document.querySelector('meta[name="_csrf"]')?.content;
+  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+  try {
+    const response = await fetch(
+      `/payments/pay-detail/${activePaymentDetailId}`,
+      {
+        method: "POST",
+        headers: {
+          ...(header && token ? { [header]: token } : {}),
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Thanh toán thất bại");
+    }
+
+    const blob = await response.blob();
+    const fileUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = `invoice-detail-${activePaymentDetailId}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(fileUrl);
+
+    alert("Thanh toán thành công! Hóa đơn txt đã được tải về.");
+    closePaymentPopup();
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    alert("Không thể thanh toán. Vui lòng thử lại.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const closeButton = document.getElementById("paymentPopupClose");
+  const overlay = document.getElementById("paymentPopupOverlay");
+  const payButton = document.getElementById("confirmPayBtn");
+
+  closeButton?.addEventListener("click", closePaymentPopup);
+  payButton?.addEventListener("click", submitBookingPayment);
+
+  overlay?.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      closePaymentPopup();
+    }
+  });
+});

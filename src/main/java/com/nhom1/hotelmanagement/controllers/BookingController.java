@@ -1,14 +1,10 @@
 package com.nhom1.hotelmanagement.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhom1.hotelmanagement.dto.BookingDTO;
 import com.nhom1.hotelmanagement.dto.BookingDetailDTO;
 import com.nhom1.hotelmanagement.dto.LoginResponse;
-import com.nhom1.hotelmanagement.dto.RoomStatDTO;
 import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.services.BookingService;
-import com.nhom1.hotelmanagement.services.RoomService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +58,12 @@ public class BookingController {
             return "roomstat";
         return "redirect:/";
     }
-    
+
     @PostMapping("/change-status")
     @ResponseBody
     public ResponseEntity<String> changeStatus(@RequestBody BookingDTO.StatusDTO request, HttpSession session) {
         bookingService.changeStatus(request.getId(), request.getStatus());
         return ResponseEntity.ok("Sửa đơn thành công!");
     }
-    
+
 }

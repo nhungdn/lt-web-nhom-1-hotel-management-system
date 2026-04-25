@@ -1,20 +1,27 @@
 package com.nhom1.hotelmanagement.controllers;
 
+import com.nhom1.hotelmanagement.dto.BookingInvoiceDTO;
 import com.nhom1.hotelmanagement.dto.PaymentRequest;
 import com.nhom1.hotelmanagement.entities.Payment;
 import com.nhom1.hotelmanagement.services.PaymentService;
 import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PaymentController {
+    private static final String PAYMENT_FORM_VIEW = "payment-form";
 
     @Autowired
     private PaymentService paymentService;
@@ -33,7 +40,7 @@ public class PaymentController {
     public String createPaymentForm(Model model) {
         model.addAttribute("payment", new PaymentRequest());
         model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
-        return "payment-form";
+        return PAYMENT_FORM_VIEW;
     }
 
     @PostMapping("/payments/create")
@@ -49,16 +56,9 @@ public class PaymentController {
             return "redirect:/payments";
         }
 
-        PaymentRequest request = new PaymentRequest();
-        request.setPaymentId(payment.getPaymentId());
-        request.setTotalAmount(payment.getTotalAmount());
-        request.setStatus(payment.getStatus());
-        request.setBookingDetailId(payment.getBookingDetail() != null ? payment.getBookingDetail().getBookingDetailId() : null);
-        request.setPaymentDate(payment.getPaymentDate() != null ? payment.getPaymentDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : "");
-
-        model.addAttribute("payment", request);
+        model.addAttribute("payment", mapToPaymentRequest(payment));
         model.addAttribute("bookingDetails", bookingDetailRepository.findAll());
-        return "payment-form";
+        return PAYMENT_FORM_VIEW;
     }
 
     @PostMapping("/payments/update/{id}")
@@ -71,5 +71,51 @@ public class PaymentController {
     public String deletePayment(@PathVariable Long id) {
         paymentService.delete(id);
         return "redirect:/payments";
+    }
+
+    @GetMapping("/payments/booking/{bookingId}/summary")
+    @ResponseBody
+    public ResponseEntity<BookingInvoiceDTO> getBookingInvoiceSummary(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(paymentService.getBookingInvoiceSummary(bookingId));
+    }
+
+    @GetMapping("/payments/detail/{detailId}/summary")
+    @ResponseBody
+    public ResponseEntity<BookingInvoiceDTO> getDetailInvoiceSummary(@PathVariable Long detailId) {
+        return ResponseEntity.ok(paymentService.getDetailInvoiceSummary(detailId));
+    }
+
+    @PostMapping("/payments/pay/{bookingId}")
+    public ResponseEntity<byte[]> payBooking(@PathVariable Long bookingId) {
+        byte[] txtData = paymentService.payBookingAndGenerateInvoiceTxt(bookingId);
+        return buildTxtDownloadResponse("invoice-booking-" + bookingId + ".txt", txtData);
+    }
+
+    @PostMapping("/payments/pay-detail/{detailId}")
+    public ResponseEntity<byte[]> payDetail(@PathVariable Long detailId) {
+        byte[] txtData = paymentService.payDetailAndGenerateInvoiceTxt(detailId);
+        return buildTxtDownloadResponse("invoice-detail-" + detailId + ".txt", txtData);
+        }
+
+        private PaymentRequest mapToPaymentRequest(Payment payment) {
+        PaymentRequest request = new PaymentRequest();
+        request.setPaymentId(payment.getPaymentId());
+        request.setTotalAmount(payment.getTotalAmount());
+        request.setStatus(payment.getStatus());
+        request.setBookingDetailId(
+            payment.getBookingDetail() != null ? payment.getBookingDetail().getBookingDetailId() : null);
+        request.setPaymentDate(
+            payment.getPaymentDate() != null ? payment.getPaymentDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                : "");
+        return request;
+        }
+
+        private ResponseEntity<byte[]> buildTxtDownloadResponse(String fileName, byte[] txtData) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        headers.setContentDisposition(ContentDisposition.attachment()
+            .filename(fileName)
+                .build());
+        return ResponseEntity.ok().headers(headers).body(txtData);
     }
 }

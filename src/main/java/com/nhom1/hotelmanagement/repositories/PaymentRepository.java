@@ -13,6 +13,12 @@ import java.util.List;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
+        List<Payment> findByBookingDetail_Booking_BookingId(Long bookingId);
+
+        List<Payment> findByBookingDetail_Booking_BookingIdAndStatusIgnoreCase(Long bookingId, String status);
+
+        List<Payment> findByBookingDetail_BookingDetailId(Long bookingDetailId);
+
     long countByStatus(String status);
 
     @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Payment p WHERE p.status = :status")

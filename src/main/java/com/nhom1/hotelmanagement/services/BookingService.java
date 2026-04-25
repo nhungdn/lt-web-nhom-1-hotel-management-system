@@ -2,23 +2,19 @@ package com.nhom1.hotelmanagement.services;
 
 import com.nhom1.hotelmanagement.dto.BookingDTO;
 import com.nhom1.hotelmanagement.dto.BookingDetailDTO;
-import com.nhom1.hotelmanagement.dto.CustomerDTO;
-import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.entities.Booking;
 import com.nhom1.hotelmanagement.entities.BookingDetail;
 import com.nhom1.hotelmanagement.entities.BookingHotelService;
 import com.nhom1.hotelmanagement.entities.Customer;
-import com.nhom1.hotelmanagement.entities.HotelService;
 import com.nhom1.hotelmanagement.entities.Room;
 import com.nhom1.hotelmanagement.entities.RoomType;
-import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
 import com.nhom1.hotelmanagement.repositories.BookingRepository;
 import com.nhom1.hotelmanagement.repositories.CustomerRepository;
 import com.nhom1.hotelmanagement.repositories.RoomRepository;
-import com.nhom1.hotelmanagement.repositories.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +33,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final int CHECK_IN_HOUR = 14;
+    private static final int CHECK_OUT_HOUR = 12;
+
     @Autowired
     private BookingRepository bookingRepo;
     @Autowired
@@ -47,8 +47,6 @@ public class BookingService {
     private RoomTypeRepository roomTypeRepo;
     @Autowired
     private CustomerRepository customerRepo;
-    @Autowired
-    private UserRepository userRepo;
     @Autowired
     private BookingHotelServiceRepository bookingHotelServiceRepo;
     @Autowired
@@ -90,17 +88,20 @@ public class BookingService {
                     dDto.setCheckOut(bd.getCheckOutDate().toString());
 
                     // Lưu giá phòng tại thời điểm đặt
-                    BigDecimal roomPrice = bd.getPriceAtBooking() != null ? bd.getPriceAtBooking() : BigDecimal.ZERO;
+                    // BigDecimal roomPrice = bd.getPriceAtBooking() != null ?
+                    // bd.getPriceAtBooking() : BigDecimal.ZERO;
                     // dDto.setPrice(roomPrice); // Nếu DTO của bạn có trường này
 
                     if (bd.getBookingHotelServices() != null) {
                         List<BookingDetailDTO.ServiceDTO> sDtos = bd.getBookingHotelServices().stream()
+                                .filter(bhs -> bhs.getService() != null)
                                 .map(bhs -> {
                                     BookingDetailDTO.ServiceDTO sDto = new BookingDetailDTO.ServiceDTO();
                                     sDto.setHotelServiceId(bhs.getService().getServiceId());
                                     sDto.setServiceName(bhs.getService().getName());
                                     sDto.setQuantity(bhs.getQuantity());
                                     sDto.setPrice(bhs.getService().getPrice());
+                                    sDto.setAddedAt(formatDateTime(bhs.getAddedAt()));
                                     return sDto;
                                 }).collect(Collectors.toList());
                         dDto.setServices(sDtos);
@@ -118,7 +119,8 @@ public class BookingService {
 
                     // Tiền dịch vụ = Sum(price * quantity)
                     BigDecimal sPrice = bd.getBookingHotelServices().stream()
-                            .map(s -> s.getService().getPrice().multiply(new BigDecimal(s.getQuantity())))
+                            .filter(s -> s.getService() != null)
+                            .map(s -> s.getService().getPrice().multiply(BigDecimal.valueOf(s.getQuantity())))
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
                     return rPrice.add(sPrice);
@@ -152,8 +154,8 @@ public class BookingService {
         // KIỂM TRA & CACHE PHÒNG
         for (BookingDTO.BookingItem item : request.getBookingItems()) {
             // Đồng nhất khung giờ check-in/out
-            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(14, 0);
-            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(12, 0);
+            LocalDateTime startTime = toCheckInDateTime(item.getCheckIn());
+            LocalDateTime endTime = toCheckOutDateTime(item.getCheckOut());
 
             List<Room> availRooms = roomRepo.findAvailableRoomByType(item.getRoomTypeId(), startTime, endTime);
 
@@ -182,10 +184,10 @@ public class BookingService {
             // Lấy danh sách phòng
             List<Room> roomsForThisType = availRoomsMap.get(item.getRoomTypeId());
 
-            LocalDateTime startTime = LocalDate.parse(item.getCheckIn()).atTime(14, 0);
-            LocalDateTime endTime = LocalDate.parse(item.getCheckOut()).atTime(12, 0);
+            LocalDateTime startTime = toCheckInDateTime(item.getCheckIn());
+            LocalDateTime endTime = toCheckOutDateTime(item.getCheckOut());
 
-            if (availRoomsMap.size() < item.getQuantity()) {
+            if (roomsForThisType == null || roomsForThisType.size() < item.getQuantity()) {
                 throw new RuntimeException("Phòng không đủ");
             }
 
@@ -203,17 +205,7 @@ public class BookingService {
                 BookingDetail savedDetail = detailRepo.save(detail);
 
                 // Lưu Dịch vụ
-                if (item.getServiceItems() != null) {
-                    for (BookingDTO.ServiceItem sDto : item.getServiceItems()) {
-                        hotelServiceRepo.findById(sDto.getServiceId()).ifPresent(hs -> {
-                            BookingHotelService bhs = new BookingHotelService();
-                            bhs.setBookingDetail(savedDetail);
-                            bhs.setService(hs);
-                            bhs.setQuantity(sDto.getQuantity());
-                            bookingHotelServiceRepo.save(bhs);
-                        });
-                    }
-                }
+                saveServiceItems(savedDetail, item.getServiceItems());
             }
         }
 
@@ -257,21 +249,57 @@ public class BookingService {
 
             // Update Service đi kèm (Xóa cũ thêm mới)
             bookingHotelServiceRepo.deleteByBookingDetail(bd);
-            for (BookingDetailDTO.ServiceDTO service : detail.getServices()) {
-                BookingHotelService bhs = new BookingHotelService();
-                bhs.setBookingDetail(bd);
-                bhs.setService(hotelServiceRepo.findById(service.getHotelServiceId()).get());
-                bhs.setQuantity(service.getQuantity());
-                bookingHotelServiceRepo.save(bhs);
-            }
+            saveEditedServices(bd, detail.getServices());
         }
         return error;
     }
-    
+
+    private void saveServiceItems(BookingDetail detail, List<BookingDTO.ServiceItem> serviceItems) {
+        if (serviceItems == null || serviceItems.isEmpty()) {
+            return;
+        }
+
+        for (BookingDTO.ServiceItem serviceItem : serviceItems) {
+            hotelServiceRepo.findById(serviceItem.getServiceId()).ifPresent(hs -> {
+                BookingHotelService bhs = new BookingHotelService();
+                bhs.setBookingDetail(detail);
+                bhs.setService(hs);
+                bhs.setQuantity(serviceItem.getQuantity());
+                bhs.setAddedAt(LocalDateTime.now());
+                bookingHotelServiceRepo.save(bhs);
+            });
+        }
+    }
+
+    private void saveEditedServices(BookingDetail detail, List<BookingDetailDTO.ServiceDTO> services) {
+        if (services == null || services.isEmpty()) {
+            return;
+        }
+
+        for (BookingDetailDTO.ServiceDTO service : services) {
+            hotelServiceRepo.findById(service.getHotelServiceId()).ifPresent(hs -> {
+                BookingHotelService bhs = new BookingHotelService();
+                bhs.setBookingDetail(detail);
+                bhs.setService(hs);
+                bhs.setQuantity(service.getQuantity());
+                bhs.setAddedAt(LocalDateTime.now());
+                bookingHotelServiceRepo.save(bhs);
+            });
+        }
+    }
+
+    private LocalDateTime toCheckInDateTime(String checkInDate) {
+        return LocalDate.parse(checkInDate).atTime(CHECK_IN_HOUR, 0);
+    }
+
+    private LocalDateTime toCheckOutDateTime(String checkOutDate) {
+        return LocalDate.parse(checkOutDate).atTime(CHECK_OUT_HOUR, 0);
+    }
+
     @Transactional
-    public void changeStatus(Long id, String status){
+    public void changeStatus(Long id, String status) {
         BookingDetail bd = detailRepo.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
         bd.setStatus(BookingDetail.Status.valueOf(status));
         detailRepo.save(bd);
     }
@@ -294,6 +322,13 @@ public class BookingService {
             }
             detailRepo.saveAll(details);
         }
+    }
+
+    private String formatDateTime(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        return dateTime.format(DATE_TIME_FORMATTER);
     }
 
 }

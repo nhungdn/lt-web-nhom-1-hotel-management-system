@@ -151,6 +151,35 @@
     border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
+#edit-form .service-container .service.existing-service-item,
+#edit-form .service-container .service.new-service-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+#edit-form .service-container .service.existing-service-item label,
+#edit-form .service-container .service.new-service-item label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#edit-form .service-container .service.existing-service-item .price,
+#edit-form .service-container .service.existing-service-item .addedAt,
+#edit-form .service-container .service.new-service-item .price,
+#edit-form .service-container .service.new-service-item .addedAt {
+    width: 100%;
+}
+
+#edit-form .service-container .service.existing-service-item .addedAt,
+#edit-form .service-container .service.new-service-item .addedAt {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
 /* Nút Add Service */
 #edit-form .service-container .service:last-of-type {
     color: var(--emerald-light);
@@ -345,6 +374,158 @@
 .custom-option.selection {
     background: rgba(52, 211, 153, 0.3);
     color: #fff;
+}
+
+/* Payment popup */
+.payment-popup {
+    width: 900px;
+    max-width: 96%;
+}
+
+.payment-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
+.payment-popup-header h3 {
+    margin: 0;
+    color: var(--emerald-light);
+}
+
+.payment-close-btn {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.payment-customer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.payment-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.payment-summary-item {
+    border-radius: 10px;
+    padding: 12px;
+    display: grid;
+    gap: 5px;
+}
+
+.payment-summary-item.paid {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.payment-summary-item.unpaid {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.payment-summary-item strong {
+    font-size: 18px;
+}
+
+.payment-section {
+    margin-bottom: 16px;
+}
+
+.payment-section h4 {
+    margin: 0 0 8px;
+}
+
+.payment-invoice-list {
+    display: grid;
+    gap: 10px;
+}
+
+.payment-invoice-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.payment-invoice-item.paid {
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.payment-invoice-item.unpaid {
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.payment-invoice-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.payment-invoice-meta {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.payment-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.payment-detail-table th,
+.payment-detail-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 7px 6px;
+    text-align: left;
+}
+
+.payment-invoice-total {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.payment-empty {
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+}
+
+.payment-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.payment-actions .card-btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .payment-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-invoice-head {
+        flex-direction: column;
+    }
 }
 
 /* Fix Overflow cho Popup */
