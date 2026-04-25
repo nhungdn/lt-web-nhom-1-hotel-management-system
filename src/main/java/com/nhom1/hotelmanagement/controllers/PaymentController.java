@@ -5,6 +5,7 @@ import com.nhom1.hotelmanagement.dto.PaymentRequest;
 import com.nhom1.hotelmanagement.entities.Payment;
 import com.nhom1.hotelmanagement.services.PaymentService;
 import com.nhom1.hotelmanagement.repositories.BookingDetailRepository;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -31,9 +33,19 @@ public class PaymentController {
     private BookingDetailRepository bookingDetailRepository;
 
     @GetMapping("/payments")
-    public String listPayments(Model model) {
+    public String listPayments(
+        @RequestParam(value = "month", required = false) Integer month,
+        @RequestParam(value = "year", required = false) Integer year,
+        Model model) {
+        LocalDate now = LocalDate.now();
+        int selectedMonth = (month != null && month >= 1 && month <= 12) ? month : now.getMonthValue();
+        int selectedYear = (year != null && year >= 2000 && year <= 2100) ? year : now.getYear();
+
         model.addAttribute("activePage", "payments");
-        model.addAttribute("payments", paymentService.listAll());
+        model.addAttribute("payments", paymentService.listByMonthYear(selectedMonth, selectedYear));
+        model.addAttribute("selectedMonth", selectedMonth);
+        model.addAttribute("selectedYear", selectedYear);
+        model.addAttribute("currentYear", now.getYear());
         return "payments";
     }
 

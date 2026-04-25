@@ -27,6 +27,12 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT p FROM Payment p ORDER BY p.paymentId DESC")
     List<Payment> findRecentPayments(Pageable pageable);
 
+    @Query("SELECT p FROM Payment p " +
+            "WHERE YEAR(p.paymentDate) = :year " +
+            "AND MONTH(p.paymentDate) = :month " +
+            "ORDER BY p.paymentDate DESC, p.paymentId DESC")
+    List<Payment> findByPaymentMonthYear(@Param("month") int month, @Param("year") int year);
+
     // Doanh thu theo từng ngày trong 1 tháng cụ thể
     @Query("SELECT DAY(p.paymentDate), SUM(p.totalAmount) " +
             "FROM Payment p " +

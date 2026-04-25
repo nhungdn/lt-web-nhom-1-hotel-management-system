@@ -88,6 +88,7 @@
   min-width: 220px;
   padding: 8px 12px;
   background: var(--glass-bg);
+  background-color: var(--slate);
   border: 1px solid var(--glass-border);
   border-radius: 8px;
   color: var(--text-primary);

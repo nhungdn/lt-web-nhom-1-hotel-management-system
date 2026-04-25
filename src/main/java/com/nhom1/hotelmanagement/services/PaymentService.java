@@ -59,6 +59,10 @@ public class PaymentService {
         return paymentRepository.findAll();
     }
 
+    public List<Payment> listByMonthYear(int month, int year) {
+        return paymentRepository.findByPaymentMonthYear(month, year);
+    }
+
     public Payment getById(Long id) {
         return paymentRepository.findById(id).orElse(null);
     }

@@ -18,7 +18,51 @@
         <div class="glass-card table-card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Danh sách hóa đơn theo tháng</h2>
+              <h2
+                class="card-title"
+                th:text="${'Danh sách hóa đơn Tháng ' + selectedMonth + '/' + selectedYear}"
+              >
+                Danh sách hóa đơn
+              </h2>
+            </div>
+            <div class="card-actions">
+              <form
+                th:action="@{/payments}"
+                method="get"
+                style="display: flex; gap: 8px; flex-wrap: wrap"
+              >
+                <select
+                  name="month"
+                  class="card-search-input"
+                  style="min-width: 120px"
+                >
+                  <option
+                    th:each="m : ${#numbers.sequence(1,12)}"
+                    th:value="${m}"
+                    th:selected="${m == selectedMonth}"
+                    th:text="${'Tháng ' + m}"
+                  >
+                    Tháng
+                  </option>
+                </select>
+
+                <select
+                  name="year"
+                  class="card-search-input"
+                  style="min-width: 120px"
+                >
+                  <option
+                    th:each="y : ${#numbers.sequence(currentYear - 5, currentYear + 1)}"
+                    th:value="${y}"
+                    th:selected="${y == selectedYear}"
+                    th:text="${y}"
+                  >
+                    Năm
+                  </option>
+                </select>
+
+                <button type="submit" class="card-btn">Lọc</button>
+              </form>
             </div>
           </div>
           <div class="table-wrapper">
