@@ -98,19 +98,38 @@ function toggleDetailRow(clickedRow, booking) {
 }
 
 function renderStatusBadge(booking, statusBadge) {
+  // Reset class cơ bản
   statusBadge.className = "status-badge";
-  if (booking.details && booking.details.length > 0) {
-    const allPaid = booking.details.every((d) => d.status === "COMPLETED");
-    if (allPaid) {
-      statusBadge.textContent = "PAID";
-      statusBadge.classList.add("green");
-    } else {
-      statusBadge.textContent = "UNPAID";
-      statusBadge.classList.add("red");
-    }
-  } else {
+
+  // Kiểm tra nếu không có dữ liệu chi tiết
+  if (!booking.details || booking.details.length === 0) {
     statusBadge.textContent = "No Details";
-    statusBadge.classList.add("yellow");
+    statusBadge.classList.add("gray"); // Màu mặc định khi trống
+    return;
+  }
+
+  // Lấy danh sách các status duy nhất có trong booking
+  const uniqueStatuses = [...new Set(booking.details.map((d) => d.status))];
+
+  // Định nghĩa bảng màu và tên hiển thị trên giao diện
+  const statusConfig = {
+    PENDING: { color: "yellow", label: "PENDING" },
+    CHECKED_IN: { color: "blue", label: "CHECKED_IN" },
+    COMPLETED: { color: "green", label: "COMPLETED" },
+    CANCELED: { color: "red", label: "CANCELED" },
+  };
+
+  if (uniqueStatuses.length === 1) {
+    // Trường hợp tất cả cùng 1 status
+    const status = uniqueStatuses[0];
+    const config = statusConfig[status] || { color: "gray", label: status };
+
+    statusBadge.textContent = config.label;
+    statusBadge.classList.add(config.color);
+  } else {
+    // Trường hợp có nhiều status khác nhau
+    statusBadge.textContent = uniqueStatuses.join(", ");
+    statusBadge.classList.add("purple");
   }
 }
 

@@ -2,54 +2,59 @@
    GLASS CARD BASE
 ============================================ */
 .glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius);
-    padding: var(--card-padding);
-    position: relative;
-    overflow: hidden;
-    transition: all var(--transition-normal);
-    transform-style: preserve-3d;
-    perspective: 1000px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+  padding: var(--card-padding);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .glass-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
 }
 
 .glass-card:hover {
-    background: var(--glass-hover);
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 
-        0 25px 50px -12px var(--glass-shadow),
-        0 0 40px rgba(52, 211, 153, 0.1);
+  background: var(--glass-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 25px 50px -12px var(--glass-shadow),
+    0 0 40px rgba(52, 211, 153, 0.1);
 }
 
 /* 3D Tilt Effect */
 .glass-card-3d {
-    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+  transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
 }
 
 .glass-card-3d:hover {
-    transform: rotateX(5deg) rotateY(-5deg) translateZ(10px);
+  transform: rotateX(5deg) rotateY(-5deg) translateZ(10px);
 }
 
 /* ============================================
    CONTENT GRID
 ============================================ */
 .content-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
 }
 
 /* ============================================
@@ -57,216 +62,238 @@
 ============================================ */
 
 .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
 .card-title {
-    font-size: 18px;
-    font-weight: 600;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .card-subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
 }
 
 .card-actions {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .card-btn {
-    padding: 8px 16px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    color: var(--text-secondary);
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all var(--transition-fast);
+  padding: 8px 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .card-btn:hover,
 .card-btn.active {
-    background: var(--glass-hover);
-    border-color: var(--emerald-light);
-    color: var(--text-primary);
+  background: var(--glass-hover);
+  border-color: var(--emerald-light);
+  color: var(--text-primary);
 }
 
 /* ============================================
    DATA TABLE
 ============================================ */
 .table-card {
-    grid-column: span 2;
+  grid-column: span 2;
 }
 
 .table-wrapper {
-    overflow-x: auto;
-    margin: 0 -10px;
-    padding: 0 10px;
+  overflow-x: auto;
+  margin: 0 -10px;
+  padding: 0 10px;
 }
 
 .table-wrapper::-webkit-scrollbar {
-    height: 8px;
+  height: 8px;
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, var(--emerald), var(--gold));
-    border-radius: 4px;
+  background: linear-gradient(90deg, var(--emerald), var(--gold));
+  border-radius: 4px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(90deg, var(--emerald-light), var(--gold-light));
+  background: linear-gradient(90deg, var(--emerald-light), var(--gold-light));
 }
 
-.data-table, .detail-table {
-    width: 100%;
-    min-width: 700px;
-    border-collapse: collapse;
+.data-table,
+.detail-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
 }
 
-.data-table th, .data-table td,
-.detail-table th, .detail-table td  {
-    padding: 16px;
-    text-align: left;
+.data-table th,
+.data-table td,
+.detail-table th,
+.detail-table td {
+  padding: 16px;
+  text-align: left;
 }
 
-.data-table th, .detail-table th {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--glass-border);
+.data-table th,
+.detail-table th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--glass-border);
 }
 
-.data-table tr, .detail-table tr {
-    transition: background var(--transition-fast);
+.data-table tr,
+.detail-table tr {
+  transition: background var(--transition-fast);
 }
 
-.data-table tbody tr:hover, .detail-table tbody tr:hover {
-    background: var(--glass-hover);
+.data-table tbody tr:hover,
+.detail-table tbody tr:hover {
+  background: var(--glass-hover);
 }
 
-.data-table td, .detail-table td {
-    font-size: 14px;
-    color: var(--text-secondary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+.data-table td,
+.detail-table td {
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .active-row {
-    background-color: var(--text-muted);
+  background-color: var(--text-muted);
 }
 
 /* Phần bảng detail */
 .detail-row {
-    background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .detail-container {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.2); /* Tạo chiều sâu */
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.2); /* Tạo chiều sâu */
 
-    border: 1px solid var(--glass-border);
-    border-left: 4px solid var(--emerald-light); /* Điểm nhấn bên trái */
+  border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--emerald-light); /* Điểm nhấn bên trái */
 
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.detail-container h4{padding-bottom:10px;}
+.detail-container h4 {
+  padding-bottom: 10px;
+}
 
 .detail-table {
-    width: 100%;
-    min-width: unset;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+  width: 100%;
+  min-width: unset;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-.table-wrapper .customer,.table-wrapper .contact  {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.table-wrapper .customer,
+.table-wrapper .contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.table-wrapper .customer .name, .table-wrapper .contact .phone {
-    color: var(--text-primary);
-    font-weight: 500;
+.table-wrapper .customer .name,
+.table-wrapper .contact .phone {
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
-.table-wrapper .customer .id-card, .table-wrapper .contact .email {
-    font-size: 12px;
-    color: var(--text-muted);
+.table-wrapper .customer .id-card,
+.table-wrapper .contact .email {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .status-badge::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
 .status-badge.green {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
 }
 
 .status-badge.green::before {
-    background: var(--success);
-    box-shadow: 0 0 8px var(--success);
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
 }
 
 .status-badge.yellow {
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--warning);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
 }
 
 .status-badge.yellow::before {
-    background: var(--warning);
-    box-shadow: 0 0 8px var(--warning);
+  background: var(--warning);
+  box-shadow: 0 0 8px var(--warning);
 }
 
 .status-badge.blue {
-    background: rgba(59, 130, 246, 0.15);
-    color: var(--info);
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--info);
 }
 
 .status-badge.blue::before {
-    background: var(--info);
-    box-shadow: 0 0 8px var(--info);
+  background: var(--info);
+  box-shadow: 0 0 8px var(--info);
 }
 
 .status-badge.red {
-    background: rgba(224, 122, 95, 0.15);
-    color: var(--amber);
+  background: rgba(224, 122, 95, 0.15);
+  color: var(--amber);
 }
 
 .status-badge.red::before {
-    background: var(--amber);
-    box-shadow: 0 0 8px var(--amber);
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+}
+
+.status-badge.purple {
+  background: rgba(205, 95, 235, 0.15);
+  color: var(--mix);
+}
+
+.status-badge.purple::before {
+  background: var(--mix);
+  box-shadow: 0 0 8px var(--mix);
 }
 
 .table-amount {
-    font-family: 'Space Mono', monospace;
-    font-weight: 600;
-    color: var(--text-primary);
+  font-family: "Space Mono", monospace;
+  font-weight: 600;
+  color: var(--text-primary);
 }
