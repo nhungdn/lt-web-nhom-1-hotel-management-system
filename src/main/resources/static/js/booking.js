@@ -17,17 +17,16 @@ async function renderEditForm(btn) {
   form.dataset.rawCheckIn = detail.checkIn;
   form.dataset.rawCheckOut = detail.checkOut;
 
-
   //select để checkin checkout
   const statusSelect = form.querySelector("#status-select");
 
   // Set giá trị hiện tại từ DB
   statusSelect.value = detail.status;
-  statusSelect.classList.add(getStatusClass(statusSelect.value))
+  statusSelect.classList.add(getStatusClass(statusSelect.value));
   // Cập nhật màu sắc dựa trên giá trị đang chọn
-  statusSelect.onchange = function() {
-    statusSelect.classList.remove('yellow', 'blue', 'green', 'red');
-    statusSelect.classList.add(getStatusClass(statusSelect.value))
+  statusSelect.onchange = function () {
+    statusSelect.classList.remove("yellow", "blue", "green", "red");
+    statusSelect.classList.add(getStatusClass(statusSelect.value));
     sendChangeStatus(detailId, this.value);
   };
 
@@ -51,7 +50,7 @@ async function renderEditForm(btn) {
   const oldItems = container.querySelectorAll(".service");
   oldItems.forEach((item) => {
     if (
-        !isAddServiceButton(item) &&
+      !isAddServiceButton(item) &&
       !item.classList.contains("new-service-item")
     ) {
       item.remove();
@@ -77,26 +76,28 @@ async function renderEditForm(btn) {
       }
       const addedAt = div.querySelector(".addedAt");
       if (addedAt) {
-        addedAt.textContent = s.addedAt ? `Ngày thêm: ${s.addedAt}` : "Ngày thêm: N/A";
+        addedAt.textContent = s.addedAt
+          ? `Ngày thêm: ${s.addedAt}`
+          : "Ngày thêm: N/A";
       }
       div.querySelector(".price").textContent =
         new Intl.NumberFormat("vi-VN").format(s.price) + "đ";
 
       // Chèn vào TRƯỚC nút Add
-        const addBtn = getAddServiceButton(container);
+      const addBtn = getAddServiceButton(container);
       container.insertBefore(clone, addBtn);
       initCustomSelectForElement($(container).find(".custom-select"));
     });
   }
 
   // Xử lý nút Add
-    const addBtn = getAddServiceButton(container);
+  const addBtn = getAddServiceButton(container);
   if (addBtn) {
     addBtn.textContent = "Thêm dịch vụ mới";
-      addBtn.onclick = () => {
-        renderNewServiceRow(container, template); // Truyền container vào đây
-      };
-    }
+    addBtn.onclick = () => {
+      renderNewServiceRow(container, template); // Truyền container vào đây
+    };
+  }
 
   // Nút reset
   form.querySelector('button[type="reset"]').onclick = (e) => {
@@ -106,8 +107,10 @@ async function renderEditForm(btn) {
 
   // Nút Save
   form.querySelector('button[type="submit"]').onclick = (e) => {
-    // e.preventDefault(); // Chống reload trang
-    confirm("Xác nhận lưu thay đổi?") && sendEditForm(e);
+    e.preventDefault();
+    if (confirm("Xác nhận lưu thay đổi?")) {
+      sendEditForm(e);
+    }
   };
 
   overlay.onclick = (e) => {
@@ -154,29 +157,33 @@ function renderNewServiceRow(container, template) {
   row.querySelector(".remove-service").onclick = () => row.remove();
 
   // Chèn vào TRƯỚC nút Add
-    const addBtn = getAddServiceButton(container);
+  const addBtn = getAddServiceButton(container);
   container.insertBefore(row, addBtn);
   initCustomSelectForElement($(row).find(".custom-select"));
 }
 
-  function isAddServiceButton(element) {
-    if (!element || !element.classList || !element.classList.contains("service")) {
-      return false;
-    }
-
-    const text = element.textContent.trim();
-    return text === "Add" || text === "Thêm dịch vụ mới";
+function isAddServiceButton(element) {
+  if (
+    !element ||
+    !element.classList ||
+    !element.classList.contains("service")
+  ) {
+    return false;
   }
 
-  function getAddServiceButton(container) {
-    return Array.from(container.querySelectorAll(".service")).find((element) => {
-      return (
-        !element.dataset.serviceId &&
-        !element.classList.contains("new-service-item") &&
-        isAddServiceButton(element)
-      );
-    });
-  }
+  const text = element.textContent.trim();
+  return text === "Add" || text === "Thêm dịch vụ mới";
+}
+
+function getAddServiceButton(container) {
+  return Array.from(container.querySelectorAll(".service")).find((element) => {
+    return (
+      !element.dataset.serviceId &&
+      !element.classList.contains("new-service-item") &&
+      isAddServiceButton(element)
+    );
+  });
+}
 async function sendEditForm(e) {
   e.preventDefault();
   const form = document.querySelector("#edit-form");
@@ -195,11 +202,12 @@ async function sendEditForm(e) {
   // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
   const existingServices = Array.from(
     container.querySelectorAll(".existing-service-item"),
-  )
-    .map((el) => ({
-      hotelServiceId: Number(el.dataset.serviceId),
-      quantity: Number(el.dataset.quantity || el.querySelector(".quantity")?.value || 0),
-    }));
+  ).map((el) => ({
+    hotelServiceId: Number(el.dataset.serviceId),
+    quantity: Number(
+      el.dataset.quantity || el.querySelector(".quantity")?.value || 0,
+    ),
+  }));
 
   // 2. Thu thập dịch vụ mới (những div được add thêm có select)
   const newServices = Array.from(
@@ -276,13 +284,13 @@ async function sendChangeStatus(id, newStatus) {
   const header = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   try {
-    const response = await fetch('/booking/change-status', {
-      method: 'POST',
+    const response = await fetch("/booking/change-status", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        [header]: token
+        "Content-Type": "application/json",
+        [header]: token,
       },
-      body: JSON.stringify({ id: id, status: newStatus })
+      body: JSON.stringify({ id: id, status: newStatus }),
     });
 
     if (response.ok) {
