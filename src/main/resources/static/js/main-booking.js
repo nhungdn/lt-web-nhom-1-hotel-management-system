@@ -78,7 +78,7 @@ async function handleFinish() {
                 successMsg.remove();
             }, 3000);
 
-            // window.location.reload();
+            window.location.reload();
         } else {
             const errors = await response.json();
             alert("Đặt phòng thất bại: " + (Array.isArray(errors) ? errors.join(", ") : errors));

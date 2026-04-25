@@ -89,12 +89,13 @@ function updateRoomGrid(roomTypes, roomTypeImages) {
             <div class="roomtype-card">
                 <img src="${imgSrc}" class="roomtype-image" alt="Room">
                 <div class="roomtype-body">
+                    <div style="display:flex; flex-direction: row; justify-content: space-between; align-content: center">
                     <div>
                         <h3 class="roomtype-name">${rt.name}</h3>
                         <p class="roomtype-description">${rt.description}</p>
                     </div>
                     <!-- chỉnh số lượng phòng ở đây -->
-                    <div class="quantity-control hidden">
+                    <div class="quantity-control hidden glass-card">
                         <button class="decrease" data-id="${rt.roomTypeId}" 
                             data-name="${rt.name}" data-price="${rt.price}"
                             onclick="changeQuantityRoom(this)"> - </button>
@@ -103,6 +104,8 @@ function updateRoomGrid(roomTypes, roomTypeImages) {
                             data-name="${rt.name}" data-price="${rt.price}"
                             onclick="changeQuantityRoom(this)"> + </button>
                     </div>
+                    </div>
+                    
                     <div class="roomtype-price">${rt.price.toLocaleString()} VNĐ/night</div>
                     <div class="available-info">Còn trống: <span>${rt.availableRooms}</span>/${rt.totalRooms} phòng</div>
                     <!-- nút book với detail phòng ở đây -->
@@ -236,10 +239,16 @@ function updateCardUI(card, count) {
     // 2. Ẩn/Hiện điều khiển
     if (count > 0) {
         qtyControl.classList.remove('hidden');
-        if (bookBtn) bookBtn.classList.add('hidden');
+        if (bookBtn) {
+            bookBtn.classList.add('hidden');
+            qtyControl.classList.remove('hidden');
+        }
     } else {
         if (card.classList.contains('.roomtype-card')) qtyControl.classList.add('hidden');
-        if (bookBtn) bookBtn.classList.remove('hidden');
+        if (bookBtn) {
+            bookBtn.classList.remove('hidden');
+            qtyControl.classList.add('hidden');
+        }
     }
 
     // 3. Khóa nút nếu đạt giới hạn
