@@ -22,18 +22,37 @@ async function renderEditForm(btn) {
   form.dataset.status = detail.status;
 
   //select để checkin checkout
-  const statusSelect = form.querySelector("#status-select");
+  const $statusSelect = $("#status-select");
+  const statusValue = detail.status;
 
-  // Set giá trị hiện tại từ DB
-  statusSelect.value = detail.status;
-  statusSelect.classList.remove("yellow", "blue", "green", "red");
-  statusSelect.classList.add(getStatusClass(statusSelect.value));
-  // Cập nhật màu sắc dựa trên giá trị đang chọn
-  statusSelect.onchange = function () {
-    statusSelect.classList.remove("yellow", "blue", "green", "red");
-    statusSelect.classList.add(getStatusClass(statusSelect.value));
-    form.dataset.status = this.value;
-  };
+// 1. Khởi tạo custom select
+  initCustomSelectForElement($statusSelect);
+
+// 2. Lấy cái wrapper và cái trigger (giao diện giả)
+  const $wrapper = $statusSelect.closest(".custom-select-wrapper");
+  const $trigger = $wrapper.find(".custom-select-trigger");
+
+// 3. Cập nhật giá trị và giao diện
+  $statusSelect.val(statusValue); // Cập nhật select thật để submit form
+  $trigger.text(statusValue);      // Cập nhật chữ hiển thị trên giao diện giả
+
+// 4. Cập nhật màu sắc cho cái TRIGGER (giao diện giả)
+  $trigger.removeClass("yellow blue green red");
+  $trigger.addClass(getStatusClass(statusValue) + " status-badge");
+
+// 5. Lắng nghe sự kiện thay đổi
+// Vì script custom select của ông có dòng .trigger('change'),
+// nên mình lắng nghe ở đây là chuẩn bài
+  $statusSelect.on("change", function () {
+    const newVal = $(this).val();
+
+    // Cập nhật màu sắc cho cái trigger giả khi người dùng chọn option mới
+    $trigger.removeClass("yellow blue green red");
+    $trigger.addClass(getStatusClass(newVal));
+
+    // Lưu vào dataset của form
+    form.dataset.status = newVal;
+  });
 
   // Đổ dữ liệu text vào đúng các div/span
   form.querySelector(".roomNumber").textContent = `Phòng: ${detail.roomNumber}`;
@@ -151,13 +170,13 @@ function renderNewServiceRow(container, template) {
 
   row.innerHTML = `
         <label>
-            <select class="custom-select new-service-id" style="margin-right: 5px;">
+            <select class="custom-select new-service-id" style="margin-right: 5px;" placeholder="-- Chọn dịch vụ --">
                 <option value="">-- Chọn dịch vụ --</option>
                 ${options}
             </select>
             <input type="number" class="quantity" value="1" min="1" style="width: 50px;"></input>
         </label>
-        <button type="button" class="remove-service" style="color:red; background:none; border:none; cursor:pointer;">&times;</button>
+        <button type="button" class="remove-service">&times;</button>
     `;
 
   const addedAt = row.querySelector(".addedAt");
@@ -271,7 +290,12 @@ async function sendEditForm(e) {
   }
 }
 
-document.querySelector("#edit-form").onsubmit = sendEditForm;
+document.addEventListener('submit', (e) => {
+  // Kiểm tra xem cái form đang submit có đúng là #edit-form không
+  if (e.target && e.target.id === 'edit-form') {
+    sendEditForm(e);
+  }
+});
 
 async function sendCancelForm(id) {
   const token = document.querySelector('meta[name="_csrf"]')?.content;

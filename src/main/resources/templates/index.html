@@ -233,26 +233,30 @@
         <template id="service-item">
           <li>
             <div class="name">Service name</div>
-            <div class="amount">Amount</div>
-            <div class="price">Price</div>
+            <div style="display: flex; flex-direction: row;gap: 5px;">
+              <div class="price">Price</div>
+              <div class="amount">Amount</div>
+            </div>
           </li>
         </template>
 
         <div class="total-and-toggle">
           <h6>total</h6>
-          <button class="back">Quay lại</button>
-          <button class="forward" onclick="validateInput1()">
-            Tiếp tục
-            <iconify-icon
-              icon="material-symbols:arrow-right-alt-rounded"
-            ></iconify-icon>
-          </button>
-          <button class="finish hidden" type="submit">
-            Thanh toán
-            <iconify-icon
-              icon="material-symbols:arrow-right-alt-rounded"
-            ></iconify-icon>
-          </button>
+          <div style="display: flex; flex-direction: row;gap:10px; justify-content: center; margin: 0 10px;">
+            <button class="back">Quay lại</button>
+            <button class="forward" onclick="validateInput1()">
+              Tiếp tục
+              <iconify-icon
+                icon="material-symbols:arrow-right-alt-rounded"
+              ></iconify-icon>
+            </button>
+            <button class="finish hidden" type="submit">
+              Thanh toán
+              <iconify-icon
+                icon="material-symbols:arrow-right-alt-rounded"
+              ></iconify-icon>
+            </button>
+          </div>
         </div>
       </div>
       <!-- end sidebar -->

@@ -106,7 +106,7 @@ function renderSelectedSidebar() {
 
         if(currentDaygroup && item.start === currentDaygroup[0] && item.end === currentDaygroup[1])
             rowDiv.classList.add('active');
-        rowDiv.querySelector('.day').onclick = () => {
+        rowDiv.onclick = () => {
             if (currentTabIndex === 0) {
                 currentFocusTempId = null;
                 currentDaygroup = [item.start, item.end];
@@ -148,7 +148,7 @@ function renderSelectedSidebar() {
                 sLi.classList.add('service-item');
                 sLi.querySelector('.name').textContent = s.serviceName;
                 sLi.querySelector('.amount').textContent = 'x' + s.quantity;
-                sLi.querySelector('.price').textContent = Number(s.price);
+                sLi.querySelector('.price').textContent = Number(s.price).toLocaleString()+" đ";
                 totalPrice += s.quantity * s.price;
                 sLi.dataset.serviceId = s.serviceId;
                 serviceListUl.appendChild(sLi);
@@ -159,7 +159,7 @@ function renderSelectedSidebar() {
     });
 
     //Tính tổng giá
-    container.querySelector('.total-and-toggle h6').textContent = totalPrice.toLocaleString() + ' VNĐ';
+    container.querySelector('.total-and-toggle h6').textContent = 'Tổng cộng: ' + totalPrice.toLocaleString() + ' VNĐ';
 
 }
 
@@ -231,6 +231,10 @@ function validateCustomer() {
         const formError = custBtn.closest('.filter-item').querySelector('.filter-error');
         if (formError) formError.textContent = "Vui lòng hoàn thiện thông tin khách hàng";
         custBtn.classList.remove('filled');
+        custBtn.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     } else {
         custBtn.classList.add('filled');
         hideErrorMessage(custBtn);

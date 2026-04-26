@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" 
-      th:replace="~{layout/base :: main_layout(~{::content}, ~{::title}, ~{::head})}">
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: main_layout(
+          main_content=~{::content},
+          page_title=~{::title},
+          extra_head=~{::head},
+          global_popup=~{::popups})}">
+
     <head>
         <title>Booking Status</title>
         <meta charset="UTF-8"/>
@@ -16,9 +21,14 @@
             <link rel="stylesheet" th:href="@{/css/room-card.css}" />
             <link rel="stylesheet" th:href="@{/css/form.css}"/>
             <link rel="stylesheet" th:href="@{/css/detail-popup.css}"/>
+
+            <script src="https://code.jquery.com/jquery-1.11.3.min.js" defer></script>
+            <script th:src="@{/js/booking-list.js}" defer></script>
+            <script th:src="@{/js/booking-select.js}" defer></script>
+            <script th:src="@{/js/booking.js}" defer></script>
         </th:block>
     </head>
-    
+
     <body>
         <h1 th:fragment="title">Booking Status</h1>
         <div th:fragment="content">
@@ -41,6 +51,7 @@
                                     name="month"
                                     class="card-search-input"
                                     style="min-width: 120px"
+                                    placeholder="-- Chọn tháng --"
                                 >
                                     <option
                                         th:each="m : ${#numbers.sequence(1,12)}"
@@ -56,6 +67,7 @@
                                     name="year"
                                     class="card-search-input"
                                     style="min-width: 120px"
+                                    placeholder="-- Chọn năm --"
                                 >
                                     <option
                                         th:each="y : ${#numbers.sequence(currentYear - 5, currentYear + 1)}"
@@ -104,7 +116,7 @@
                                             </div>
                                         </td>
                                         <td><span class="status-badge"></span></td>
-                                        
+
                                         <td>
                                             <button type="button" class="card-btn details-btn" style="padding: 6px 12px;">Details</button>
                                         </td>
@@ -112,7 +124,7 @@
                                 </template>
                             </tbody>
                         </table>
-                        
+
                         <template id="detail-template">
                             <td colspan='5'>
                                 <div class="detail-container">
@@ -129,97 +141,16 @@
                                     </tr>
                                     </thead>
                                     <tbody class="detail-body"></tbody>
+                                    </table>
                                 </div>
                             </tr>
                         </template>
-                            
+
                     </div>
-                    <!-- start details popup -->
-                    <div class="popup-overlay" id="popupOverlay">
-                        <div class="glass popup">
-                            <form id="edit-form">
-                                <div class="roomNumber"></div>
-                                <div class="status-group">
-                                    <label for="status-select">Status:</label>
-                                    <select id="status-select" class="status-badge">
-                                        <option value="PENDING">PENDING</option>
-                                        <option value="CHECKED_IN">CHECKED_IN</option>
-                                        <option value="COMPLETED">COMPLETED</option>
-                                        <option value="CANCELED">CANCELED</option>
-                                    </select>
-                                </div>
-                                <div class="checkIn"></div>
-                                <div class="checkOut"></div>
-                                <div class="customer">
-                                    <span class="name"></span>
-                                    <span class="id-card"></span>
-                                    <span class="phone"></span>
-                                    <span class="email"></span>
-                                </div>
-                                <div class="service-container">
-                                    <button>Edit Service</button>
-                                    <div class="service">Add</div>
-                                    <template>
-                                        <div class="service">
-                                            <label>
-                                                <div class="name"></div> :
-                                                <input name='service-quantity' class="quantity"></input>
-                                            </label>
-                                            <div class="price"></div>
-                                            <div class="addedAt"></div>
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="submit">Save</button>
-                                    <button type="reset">Reset</button>
-                                </div>
-                                <button class="cancel">Cancel Booking This Room</button>
-                            </form>
-                        </div>
-                    </div>
-                    <!-- end popup-->
-
-                    <!-- start payment popup -->
-                    <div class="popup-overlay" id="paymentPopupOverlay">
-                        <div class="glass popup payment-popup">
-                            <div class="payment-popup-header">
-                                <h3>Hóa đơn booking <span id="paymentBookingCode">#</span></h3>
-                                <button type="button" class="payment-close-btn" id="paymentPopupClose">Đóng</button>
-                            </div>
-                            <div class="payment-customer" id="paymentCustomerInfo"></div>
-
-                            <div class="payment-summary-grid">
-                                <div class="payment-summary-item paid">
-                                    <span>Đã thanh toán</span>
-                                    <strong id="paidTotalAmount">0 đ</strong>
-                                </div>
-                                <div class="payment-summary-item unpaid">
-                                    <span>Chưa thanh toán</span>
-                                    <strong id="unpaidTotalAmount">0 đ</strong>
-                                </div>
-                            </div>
-
-                            <div class="payment-section">
-                                <h4>Hóa đơn đã thanh toán</h4>
-                                <div id="paidInvoiceList" class="payment-invoice-list"></div>
-                            </div>
-
-                            <div class="payment-section">
-                                <h4>Hóa đơn chưa thanh toán</h4>
-                                <div id="unpaidInvoiceList" class="payment-invoice-list"></div>
-                            </div>
-
-                            <div class="payment-actions">
-                                <button type="button" class="card-btn" id="confirmPayBtn">Thanh toán & xuất hóa đơn</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end payment popup -->
                 </div>
             </section>
             <script th:inline="javascript">
-                const bookingData = /*[[${bookingList}]]*/ []; 
+                const bookingData = /*[[${bookingList}]]*/ [];
 
                 document.addEventListener('DOMContentLoaded', () => {
                     console.log(bookingData);
@@ -241,10 +172,89 @@
                     }
                 }
             </script>
-            <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-            <script th:src="@{/js/roomlist.js}"></script>
-            <script th:src="@{/js/booking-select.js}"></script>
-            <script th:src="@{/js/booking.js}"></script>
         </div>
+        <!-- start popup group -->
+        <div th:fragment="popups">
+            <div class="popup-overlay" id="popupOverlay">
+                <div class="glass popup">
+                    <form id="edit-form">
+                        <div class="roomNumber"></div>
+                        <div class="status-group">
+                            <label for="status-select">Status:</label>
+                            <select id="status-select" class="status-badge">
+                                <option value="PENDING">PENDING</option>
+                                <option value="CHECKED_IN">CHECKED_IN</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                                <option value="CANCELED">CANCELED</option>
+                            </select>
+                        </div>
+                        <div class="checkIn"></div>
+                        <div class="checkOut"></div>
+                        <div class="customer">
+                            <span class="name"></span>
+                            <span class="id-card"></span>
+                            <span class="phone"></span>
+                            <span class="email"></span>
+                        </div>
+                        <div class="service-container">
+                            <button>Edit Service</button>
+                            <div class="service">Add</div>
+                            <template>
+                                <div class="service">
+                                    <label>
+                                        <div class="name"></div> :
+                                        <input name='service-quantity' class="quantity"></input>
+                                    </label>
+                                    <div class="price"></div>
+                                    <div class="addedAt"></div>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">Save</button>
+                            <button type="reset">Reset</button>
+                        </div>
+                        <button class="cancel">Cancel Booking This Room</button>
+                    </form>
+                </div>
+            </div>
+            <!-- start payment popup -->
+            <div class="popup-overlay" id="paymentPopupOverlay">
+                <div class="glass popup payment-popup">
+                    <div class="payment-popup-header">
+                        <h3>Hóa đơn booking <span id="paymentBookingCode">#</span></h3>
+                        <button type="button" class="payment-close-btn" id="paymentPopupClose">Đóng</button>
+                    </div>
+                    <div class="payment-customer" id="paymentCustomerInfo"></div>
+
+                    <div class="payment-summary-grid">
+                        <div class="payment-summary-item paid">
+                            <span>Đã thanh toán</span>
+                            <strong id="paidTotalAmount">0 đ</strong>
+                        </div>
+                        <div class="payment-summary-item unpaid">
+                            <span>Chưa thanh toán</span>
+                            <strong id="unpaidTotalAmount">0 đ</strong>
+                        </div>
+                    </div>
+
+                    <div class="payment-section">
+                        <h4>Hóa đơn đã thanh toán</h4>
+                        <div id="paidInvoiceList" class="payment-invoice-list"></div>
+                    </div>
+
+                    <div class="payment-section">
+                        <h4>Hóa đơn chưa thanh toán</h4>
+                        <div id="unpaidInvoiceList" class="payment-invoice-list"></div>
+                    </div>
+
+                    <div class="payment-actions">
+                        <button type="button" class="card-btn" id="confirmPayBtn">Thanh toán & xuất hóa đơn</button>
+                    </div>
+                </div>
+            </div>
+            <!-- end payment popup -->
+        </div>
+        <!-- end popup-->
     </body>
 </html>

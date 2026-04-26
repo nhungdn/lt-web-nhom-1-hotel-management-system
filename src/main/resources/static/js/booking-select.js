@@ -1,4 +1,4 @@
-// ĐOẠN NÀY ĐỂ NGOÀI CÙNG FILE JS
+
 $(document).on("click", ".custom-select-trigger", function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -41,7 +41,7 @@ function initCustomSelectForElement($element) {
         var $this = $(this);
         if ($this.parent().hasClass("custom-select-wrapper")) return;
 
-        var placeholder = $this.attr("placeholder") || "-- Chọn dịch vụ --";
+        var placeholder = $this.attr("placeholder") || "-- Chọn --";
 
         // SỬA TẠI ĐÂY: Thêm 1 class định danh riêng cho div giả, ví dụ: 'custom-select-visual'
         var template = '<div class="custom-select custom-select-visual">';
@@ -61,3 +61,8 @@ function initCustomSelectForElement($element) {
         $this.after(template);
     });
 }
+
+$(document).ready(function() {
+    // Gọi hàm cho tất cả các thẻ select có class .my-select
+    initCustomSelectForElement($("select.card-search-input"));
+});

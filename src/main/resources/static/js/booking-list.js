@@ -132,10 +132,12 @@ function toggleDetailRow(clickedRow, booking) {
                     <td>${formatDateTime(d.checkIn)}</td>
                     <td>${formatDateTime(d.checkOut)}</td>
                     <td>
-                        <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}" 
+                    <div style="display:flex; gap: 10px; flex-direction: column">
+                      <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}" 
                         onclick=renderEditForm(this) class="card-btn action">Edit</button>
                       <button data-booking-id="${booking.bookingId}" data-detail-id="${d.bookingDetailId}"
                         onclick="openPaymentPopupByDetail(this)" type="button" class="card-btn action">Thanh toán</button>
+                    </div>
                     </td>
                 </tr>
             `;
