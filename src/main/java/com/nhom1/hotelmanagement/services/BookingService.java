@@ -84,6 +84,7 @@ public class BookingService {
             dto.setCustomerName(c.getName());
             dto.setCustomerEmail(c.getEmail());
             dto.setCustomerIDCard(c.getIdCard());
+            dto.setCustomerPhone(c.getPhone());
         });
 
         // 1. Map danh sách Details
