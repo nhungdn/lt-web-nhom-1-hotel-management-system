@@ -91,10 +91,12 @@ public class PaymentController {
         BookingInvoiceDTO.InvoiceItemDTO selectedInvoice = null;
         if (payment.getBookingDetail() != null && payment.getBookingDetail().getBookingDetailId() != null) {
             invoiceSummary = paymentService.getDetailInvoiceSummary(payment.getBookingDetail().getBookingDetailId());
-            selectedInvoice = invoiceSummary.getPaidInvoices().stream()
-                .filter(invoice -> Objects.equals(invoice.getPaymentId(), payment.getPaymentId()))
-                .findFirst()
-                .orElse(null);
+            if (invoiceSummary != null && invoiceSummary.getPaidInvoices() != null) {
+                selectedInvoice = invoiceSummary.getPaidInvoices().stream()
+                    .filter(invoice -> Objects.equals(invoice.getPaymentId(), payment.getPaymentId()))
+                    .findFirst()
+                    .orElse(null);
+            }
         }
 
         model.addAttribute("invoiceSummary", invoiceSummary);

@@ -8,35 +8,14 @@
     <title>Payment Form</title>
     <th:block th:fragment="head">
       <link rel="stylesheet" th:href="@{/css/room-card.css}" />
-      <link rel="stylesheet" th:href="@{/css/form.css}" />
+      <link rel="stylesheet" th:href="@{/css/payment-form.css}" />
     </th:block>
   </head>
   <body>
-    <h1
-      th:fragment="title"
-      th:text="${viewOnly} ? 'Payment Detail' : (${payment.paymentId} != null ? 'Edit Payment' : 'Create Payment')"
-    >
-      Payment Form
-    </h1>
+    <h1 th:fragment="title">Chi tiết hóa đơn</h1>
     <div th:fragment="content">
       <section class="content-grid" style="grid-template-columns: 1fr">
         <div class="glass-card table-card">
-          <div class="card-header">
-            <div>
-              <h2
-                class="card-title"
-                th:text="${viewOnly} ? 'Payment Detail' : (${payment.paymentId} != null ? 'Edit Payment' : 'Create New Payment')"
-              >
-                Payment Form
-              </h2>
-              <p
-                class="card-subtitle"
-                th:text="${viewOnly} ? 'Chi tiết hóa đơn của lần thanh toán này (read-only)' : (${payment.paymentId} != null ? 'Update payment details' : 'Add a new payment record')"
-              >
-                Payment record
-              </p>
-            </div>
-          </div>
           <div class="payment-detail-view" th:if="${viewOnly}">
             <div class="payment-customer">
               <div>
@@ -69,7 +48,10 @@
               </div>
             </div>
 
-            <div class="payment-summary-grid" th:if="${selectedInvoice != null}">
+            <div
+              class="payment-summary-grid"
+              th:if="${selectedInvoice != null}"
+            >
               <div class="payment-summary-item paid">
                 <span>Số tiền hóa đơn</span>
                 <strong
@@ -81,27 +63,24 @@
 
             <div class="payment-section">
               <h4>Chi tiết hóa đơn</h4>
-              <div
-                class="payment-empty"
-                th:if="${selectedInvoice == null}"
-              >
+              <div class="payment-empty" th:if="${selectedInvoice == null}">
                 Không tìm thấy chi tiết cho hóa đơn này.
               </div>
               <div
                 class="payment-invoice-list"
-                th:unless="${selectedInvoice == null}"
+                th:if="${selectedInvoice != null}"
               >
                 <div class="payment-invoice-item paid">
                   <div class="payment-invoice-head">
                     <strong
-                      th:text="'Detail #' + selectedInvoice.bookingDetailId + ' - Phòng ' + (selectedInvoice.roomNumber != null ? selectedInvoice.roomNumber : 'N/A')"
+                      th:text="${'Phòng ' + (selectedInvoice.roomNumber != null ? selectedInvoice.roomNumber : 'N/A')}"
                       >Detail</strong
                     >
                     <span>Đã thanh toán</span>
                   </div>
                   <div
                     class="payment-invoice-meta"
-                    th:text="'Payment #' + (selectedInvoice.paymentId != null ? selectedInvoice.paymentId : 'N/A') + ' | ' + (selectedInvoice.paymentDate != null ? selectedInvoice.paymentDate : 'N/A')"
+                    th:text="${'Mã hóa đơn #' + (selectedInvoice.paymentId != null ? selectedInvoice.paymentId : 'N/A') + ' | ' + (selectedInvoice.paymentDate != null ? selectedInvoice.paymentDate : 'N/A')}"
                   >
                     Payment
                   </div>
@@ -146,203 +125,11 @@
             </div>
 
             <div class="form-actions">
-              <a th:href="@{/payments}" class="btn-cancel">Back to List</a>
+              <a th:href="@{/payments}" class="card-btn">Quay lại</a>
             </div>
           </div>
-
-          <form
-            th:if="${!viewOnly}"
-            th:action="${payment.paymentId} != null ? '/payments/update/' + ${payment.paymentId} : '/payments/create'"
-            th:object="${payment}"
-            method="post"
-            class="form-container"
-          >
-            <input
-              type="hidden"
-              th:name="${_csrf.parameterName}"
-              th:value="${_csrf.token}"
-            />
-            <div class="form-group">
-              <label for="bookingDetailId" class="form-label"
-                >Booking Detail</label
-              >
-              <select
-                id="bookingDetailId"
-                th:field="*{bookingDetailId}"
-                class="form-input glass"
-                required
-              >
-                <option
-                  th:each="detail : ${bookingDetails}"
-                  th:value="${detail.bookingDetailId}"
-                  th:text="'Detail #' + ${detail.bookingDetailId} + ' - Booking #' + ${detail.booking.bookingId}"
-                ></option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="totalAmount" class="form-label">Total Amount</label>
-              <input
-                id="totalAmount"
-                type="number"
-                th:field="*{totalAmount}"
-                class="form-input glass"
-                placeholder="Amount"
-                step="0.01"
-                min="0"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label for="paymentDate" class="form-label">Payment Date</label>
-              <input
-                id="paymentDate"
-                type="datetime-local"
-                th:field="*{paymentDate}"
-                class="form-input glass"
-              />
-            </div>
-            <div class="form-group">
-              <label for="status" class="form-label">Status</label>
-              <input
-                id="status"
-                type="text"
-                th:field="*{status}"
-                class="form-input glass"
-                placeholder="e.g., PAID, PENDING"
-              />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn-submit">Save Payment</button>
-              <a th:href="@{/payments}" class="btn-cancel">Cancel</a>
-            </div>
-          </form>
         </div>
       </section>
-
-      <style>
-        .payment-detail-view {
-          display: grid;
-          gap: 16px;
-        }
-
-        .payment-customer {
-          display: grid;
-          gap: 6px;
-          padding: 14px;
-          border: 1px solid var(--glass-border);
-          border-radius: 10px;
-          background: rgba(0, 0, 0, 0.15);
-        }
-
-        .payment-summary-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 12px;
-        }
-
-        .payment-summary-item {
-          padding: 14px;
-          border-radius: 10px;
-          border: 1px solid var(--glass-border);
-          background: rgba(255, 255, 255, 0.04);
-          display: grid;
-          gap: 6px;
-        }
-
-        .payment-summary-item span {
-          color: var(--text-muted);
-          font-size: 13px;
-        }
-
-        .payment-summary-item strong {
-          font-size: 18px;
-          color: var(--text-primary);
-        }
-
-        .payment-summary-item.paid strong {
-          color: #34d399;
-        }
-
-        .payment-summary-item.unpaid strong {
-          color: #fbbf24;
-        }
-
-        .payment-summary-item.total strong {
-          color: #60a5fa;
-        }
-
-        .payment-section h4 {
-          margin: 0 0 10px;
-          color: var(--text-primary);
-        }
-
-        .payment-invoice-list {
-          display: grid;
-          gap: 12px;
-        }
-
-        .payment-invoice-item {
-          border: 1px solid var(--glass-border);
-          border-radius: 10px;
-          padding: 12px;
-          background: rgba(255, 255, 255, 0.03);
-        }
-
-        .payment-invoice-item.paid {
-          border-color: rgba(52, 211, 153, 0.35);
-        }
-
-        .payment-invoice-item.unpaid {
-          border-color: rgba(251, 191, 36, 0.35);
-        }
-
-        .payment-invoice-head {
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          margin-bottom: 8px;
-          color: var(--text-primary);
-          flex-wrap: wrap;
-        }
-
-        .payment-invoice-meta {
-          color: var(--text-muted);
-          margin-bottom: 8px;
-          font-size: 13px;
-        }
-
-        .payment-detail-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 8px;
-        }
-
-        .payment-detail-table th,
-        .payment-detail-table td {
-          border-bottom: 1px solid var(--glass-border);
-          padding: 6px;
-          text-align: left;
-          font-size: 13px;
-        }
-
-        .payment-invoice-total {
-          font-weight: 600;
-          color: var(--text-primary);
-        }
-
-        .payment-empty {
-          color: var(--text-muted);
-          padding: 10px;
-          border: 1px dashed var(--glass-border);
-          border-radius: 8px;
-        }
-
-        @media (max-width: 768px) {
-          .payment-summary-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      </style>
     </div>
   </body>
 </html>
