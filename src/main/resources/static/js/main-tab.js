@@ -17,7 +17,7 @@ async function renderServiceGrid() {
             <div class="hs-card">
                 <div data-name="${s.name}" class="hs-name">${s.name}</div>
                 <div data-price="${s.price}" class="hs-price">${s.price.toLocaleString()} VNĐ</div>
-                <div class="quantity-control">
+                <div class="quantity-control glass-card">
                     <button class="decrease" data-service-id="${s.serviceId}" 
                     data-name="${s.name}" onclick="changeQuantityService(this)"> - </button>
                     <span class="quantity"> 0 </span>
@@ -120,7 +120,7 @@ function renderSelectedSidebar() {
         item.rooms.forEach(r => {
             let rnode = riTemplate.content.cloneNode(true);
             let rLi = rnode.querySelector('li');
-
+            rLi.classList.add('room-item');
             rLi.querySelector('.roomname').textContent = r.roomTypeName;
             rLi.querySelector('.price').textContent = Number(r.price).toLocaleString() + " VNĐ";
             totalPrice += Number(r.price);
@@ -145,6 +145,7 @@ function renderSelectedSidebar() {
             (r.services || []).forEach(s => {
                 let snode = siTemplate.content.cloneNode(true);
                 let sLi = snode.querySelector('li');
+                sLi.classList.add('service-item');
                 sLi.querySelector('.name').textContent = s.serviceName;
                 sLi.querySelector('.amount').textContent = 'x' + s.quantity;
                 sLi.querySelector('.price').textContent = Number(s.price);

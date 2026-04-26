@@ -153,6 +153,7 @@
 
     <!-- start room and selected room info-->
     <div class="selected-room">
+      <!-- start room grid-->
       <div class="roomtypes-grid" th:unless="${#lists.isEmpty(roomTypes)}">
         <div class="roomtype-card" th:each="roomType : ${roomTypes}">
           <img
@@ -182,34 +183,32 @@
 
             <div class="roomtype-actions">
               <button class="btn-book" disabled>📅 Book Now</button>
-              <button
-                type="button"
-                class="btn-view-more"
-                th:data-id="${roomType.roomTypeId}"
-                th:data-name="${roomType.name}"
-                th:data-description="${roomType.description}"
-                onclick="viewRoomTypeDetails(this)"
-              >
+              <button type="button" class="btn-view-more"
+                th:data-id="${roomType.roomTypeId}" th:data-name="${roomType.name}"
+                th:data-description="${roomType.description}" onclick="viewRoomTypeDetails(this)">
                 View More
               </button>
             </div>
           </div>
         </div>
       </div>
+      <!-- end room grid -->
+      <!-- start services grid -->
       <div class="service-grid hidden">
         <div class="hs-card">
           <div class="hs-name">Hotel Service Name</div>
           <div class="hs-price">Price</div>
-          <div class="quantity-control">
+          <div class="quantity-control glass-card">
             <button class="decrease">-</button>
             <span class="quantity">0</span>
             <button class="increase">+</button>
           </div>
         </div>
       </div>
-
+      <!-- end services grid -->
+      <!-- start sidebar -->
       <div class="select-sidebar">
-        <h2>Thông tin đặt phòng</h2>
+        <h5>Thông tin đặt phòng</h5>
 
         <template id="item">
           <div class="booking-item-row">
@@ -222,8 +221,10 @@
 
         <template id="room-item">
           <li>
-            <div class="roomname">Room Name</div>
-            <div class="price">Price</div>
+            <div class="room-info">
+              <div class="roomname">Room Name</div>
+              <div class="price">Price</div>
+            </div>
             <ul>
               <!--service item li sẽ nằm trong đây-->
             </ul>
@@ -254,6 +255,7 @@
           </button>
         </div>
       </div>
+      <!-- end sidebar -->
     </div>
     <!-- end room and selected room info-->
 
