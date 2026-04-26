@@ -1,7 +1,5 @@
 package com.nhom1.hotelmanagement.services;
 
-import com.nhom1.hotelmanagement.dto.LoginRequest;
-import com.nhom1.hotelmanagement.dto.LoginResponse;
 import com.nhom1.hotelmanagement.dto.SignUpRequest;
 import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.repositories.UserRepository;
