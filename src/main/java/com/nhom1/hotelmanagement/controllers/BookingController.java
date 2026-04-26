@@ -45,9 +45,6 @@ public class BookingController {
         int selectedYear = (year != null && year >= 2000 && year <= 2100) ? year : now.getYear();
 
         model.addAttribute("activePage", "bookstat");
-        // List<BookingDetailDTO> bookingList = bookingService.getAllBooking().stream()
-        // .filter(booking -> hasDetailInMonth(booking, selectedMonth, selectedYear))
-        // .toList();
 
         List<BookingDetailDTO> bookingList = bookingService.getBookingsByMonth(selectedMonth, selectedYear);
 
@@ -76,12 +73,4 @@ public class BookingController {
             return "roomstat";
         return "redirect:/";
     }
-
-    @PostMapping("/change-status")
-    @ResponseBody
-    public ResponseEntity<String> changeStatus(@RequestBody BookingDTO.StatusDTO request, HttpSession session) {
-        bookingService.changeStatus(request.getId(), request.getStatus());
-        return ResponseEntity.ok("Sửa đơn thành công!");
-    }
-
 }

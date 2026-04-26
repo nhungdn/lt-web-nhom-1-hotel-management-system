@@ -13,6 +13,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT DISTINCT b FROM Booking b JOIN b.bookingDetails d " +
             "WHERE (MONTH(d.checkInDate) = :month AND YEAR(d.checkInDate) = :year) " +
-            "OR (MONTH(d.checkOutDate) = :month AND YEAR(d.checkOutDate) = :year)")
+            "OR (MONTH(d.checkOutDate) = :month AND YEAR(d.checkOutDate) = :year) " +
+            "ORDER BY b.id DESC")
     List<Booking> findByMonthAndYear(@Param("month") int month, @Param("year") int year);
 }

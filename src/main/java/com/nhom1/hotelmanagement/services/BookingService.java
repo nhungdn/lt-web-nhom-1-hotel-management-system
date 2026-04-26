@@ -255,6 +255,8 @@ public class BookingService {
             bd.setCheckOutDate(end);
             bd.setStatus(detail.getStatus());
 
+            syncRoomStatus(bd);
+
             detailRepo.save(bd);
 
             // Update Service đi kèm (Xóa cũ thêm mới)
@@ -311,6 +313,7 @@ public class BookingService {
         BookingDetail bd = detailRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
         bd.setStatus(BookingDetail.Status.valueOf(status));
+        syncRoomStatus(bd);
         detailRepo.save(bd);
     }
 
@@ -320,6 +323,7 @@ public class BookingService {
             BookingDetail bd = detailRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
             bd.setStatus(BookingDetail.Status.CANCELED);
+            syncRoomStatus(bd);
             detailRepo.save(bd);
         } else {
             // Tìm và update toàn bộ phòng thuộc 1 đơn đặt (Booking)
@@ -329,9 +333,27 @@ public class BookingService {
             List<BookingDetail> details = detailRepo.findAllByBooking(b);
             for (BookingDetail item : details) {
                 item.setStatus(BookingDetail.Status.CANCELED);
+                syncRoomStatus(item);
             }
             detailRepo.saveAll(details);
         }
+    }
+
+    private void syncRoomStatus(BookingDetail detail) {
+        if (detail.getRoom() == null || detail.getStatus() == null) {
+            return;
+        }
+
+        Room room = detail.getRoom();
+        switch (detail.getStatus()) {
+            case CHECKED_IN -> room.setStatus(Room.Status.OCCUPIED);
+            case COMPLETED, CANCELED -> room.setStatus(Room.Status.AVAILABLE);
+            default -> {
+                return;
+            }
+        }
+
+        roomRepo.save(room);
     }
 
     private String formatDateTime(LocalDateTime dateTime) {

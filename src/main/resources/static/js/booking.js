@@ -19,18 +19,20 @@ async function renderEditForm(btn) {
   form.dataset.roomId = detail.roomId ?? detail.room?.roomId ?? "";
   form.dataset.rawCheckIn = detail.checkIn;
   form.dataset.rawCheckOut = detail.checkOut;
+  form.dataset.status = detail.status;
 
   //select để checkin checkout
   const statusSelect = form.querySelector("#status-select");
 
   // Set giá trị hiện tại từ DB
   statusSelect.value = detail.status;
+  statusSelect.classList.remove("yellow", "blue", "green", "red");
   statusSelect.classList.add(getStatusClass(statusSelect.value));
   // Cập nhật màu sắc dựa trên giá trị đang chọn
   statusSelect.onchange = function () {
     statusSelect.classList.remove("yellow", "blue", "green", "red");
     statusSelect.classList.add(getStatusClass(statusSelect.value));
-    sendChangeStatus(detailId, this.value);
+    form.dataset.status = this.value;
   };
 
   // Đổ dữ liệu text vào đúng các div/span
@@ -60,7 +62,7 @@ async function renderEditForm(btn) {
     }
   });
 
-  // Render dịch vụ hiện có
+  // Render dịch vụ đã đặt
   if (detail.services) {
     detail.services.forEach((s) => {
       const clone = template.content.cloneNode(true);
@@ -208,6 +210,11 @@ async function sendEditForm(e) {
     return;
   }
 
+  // thu thập trạng thái đang chọn
+  const statusSelect = form.querySelector("#status-select");
+  const currentStatus = statusSelect?.value || form.dataset.status;
+  form.dataset.status = currentStatus;
+
   // 1. Thu thập dịch vụ cũ (những div.service có sẵn ID)
   const existingServices = Array.from(
     container.querySelectorAll(".existing-service-item"),
@@ -237,7 +244,7 @@ async function sendEditForm(e) {
         roomId: Number(form.dataset.roomId), // Bạn nhớ gán roomId vào dataset ở hàm render
         checkIn: form.dataset.rawCheckIn, // Dùng định dạng ISO gốc từ DB (LocalDateTime.parse cần cái này)
         checkOut: form.dataset.rawCheckOut, // Không dùng chuỗi đã format tiếng Việt "T3, 21/04..."
-        status: "CHECKED_IN", // Hoặc lấy từ 1 select status nếu có
+        status: currentStatus,
         services: [...existingServices, ...newServices],
       },
     ],
@@ -285,30 +292,5 @@ async function sendCancelForm(id) {
     }
   } catch (err) {
     console.error("Gửi form thất bại:", err);
-  }
-}
-
-async function sendChangeStatus(id, newStatus) {
-  const token = document.querySelector('meta[name="_csrf"]')?.content;
-  const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-
-  try {
-    const response = await fetch("/booking/change-status", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        [header]: token,
-      },
-      body: JSON.stringify({ id: id, status: newStatus }),
-    });
-
-    if (response.ok) {
-      console.log("Đã cập nhật trạng thái!");
-      location.reload();
-    } else {
-      alert("Lỗi server khi đổi trạng thái");
-    }
-  } catch (err) {
-    console.error("Lỗi fetch:", err);
   }
 }
