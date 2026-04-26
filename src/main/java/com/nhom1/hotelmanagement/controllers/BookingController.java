@@ -7,8 +7,6 @@ import com.nhom1.hotelmanagement.entities.User;
 import com.nhom1.hotelmanagement.services.BookingService;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,11 +27,11 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    // ✅ THÊM: xử lý route /booking (trang danh sách booking)
+    // trang danh sách booking
     @GetMapping
     public String showBookingList(Model model) {
         model.addAttribute("activePage", "bookings");
-        return "booking/index"; // templates/booking/index.html
+        return "booking/index";
     }
 
     @GetMapping("/status")
@@ -41,42 +39,23 @@ public class BookingController {
             @RequestParam(value = "month", required = false) Integer month,
             @RequestParam(value = "year", required = false) Integer year,
             Model model) {
+
         LocalDate now = LocalDate.now();
         int selectedMonth = (month != null && month >= 1 && month <= 12) ? month : now.getMonthValue();
         int selectedYear = (year != null && year >= 2000 && year <= 2100) ? year : now.getYear();
 
         model.addAttribute("activePage", "bookstat");
-        List<BookingDetailDTO> bookingList = bookingService.getAllBooking().stream()
-                .filter(booking -> hasDetailInMonth(booking, selectedMonth, selectedYear))
-                .toList();
+        // List<BookingDetailDTO> bookingList = bookingService.getAllBooking().stream()
+        // .filter(booking -> hasDetailInMonth(booking, selectedMonth, selectedYear))
+        // .toList();
+
+        List<BookingDetailDTO> bookingList = bookingService.getBookingsByMonth(selectedMonth, selectedYear);
+
         model.addAttribute("bookingList", bookingList);
         model.addAttribute("selectedMonth", selectedMonth);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("currentYear", now.getYear());
         return "bookstat";
-    }
-
-    private boolean hasDetailInMonth(BookingDetailDTO booking, int month, int year) {
-        if (booking == null || booking.getDetails() == null) {
-            return false;
-        }
-
-        return booking.getDetails().stream().anyMatch(detail ->
-                isInMonthYear(detail.getCheckIn(), month, year)
-                        || isInMonthYear(detail.getCheckOut(), month, year));
-    }
-
-    private boolean isInMonthYear(String dateTimeValue, int month, int year) {
-        if (dateTimeValue == null || dateTimeValue.isBlank()) {
-            return false;
-        }
-
-        try {
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeValue);
-            return dateTime.getMonthValue() == month && dateTime.getYear() == year;
-        } catch (DateTimeParseException ex) {
-            return false;
-        }
     }
 
     @PostMapping("/edit")

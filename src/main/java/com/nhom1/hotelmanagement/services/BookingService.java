@@ -66,6 +66,16 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookingDetailDTO> getBookingsByMonth(int month, int year) {
+        // Database chỉ trả về các bản ghi khớp với tháng/năm
+        List<Booking> entities = bookingRepo.findByMonthAndYear(month, year);
+
+        // Chuyển đổi Entity sang DTO
+        return entities.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
     private BookingDetailDTO convertToDto(Booking b) {
         BookingDetailDTO dto = new BookingDetailDTO();
         dto.setBookingId(b.getBookingId());
